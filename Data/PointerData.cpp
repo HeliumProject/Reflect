@@ -1,8 +1,8 @@
-#include "ReflectPch.h"
-#include "Reflect/Data/PointerData.h"
+#include "FoundationPch.h"
+#include "Foundation/Reflect/Data/PointerData.h"
 
-#include "Reflect/ArchiveBinary.h"
-#include "Reflect/ArchiveXML.h"
+#include "Foundation/Reflect/ArchiveBinary.h"
+#include "Foundation/Reflect/ArchiveXML.h"
 
 REFLECT_DEFINE_OBJECT( Helium::Reflect::PointerData );
 
@@ -59,12 +59,11 @@ bool PointerData::Equals(Object* object)
         return true;
     }
     // if they are not equal but one is null we are done
-    else if ( (*m_Data).ReferencesObject() || !(*rhs->m_Data).ReferencesObject() )
+    else if ( !(*m_Data).ReferencesObject() || !(*rhs->m_Data).ReferencesObject() )
     {
         return false;
     }
 
-    // pointers aren't equal so we have to do deep equality test
     return (*m_Data)->Equals( *rhs->m_Data );
 }
 
