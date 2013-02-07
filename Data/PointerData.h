@@ -29,6 +29,9 @@ namespace Helium
             virtual void Serialize(ArchiveXML& archive) HELIUM_OVERRIDE;
             virtual void Deserialize(ArchiveXML& archive) HELIUM_OVERRIDE;
 
+            uint32_t GetLinkIndex() { return m_Data->GetLinkIndex(); }
+            void ClearLinkIndex() { m_Data->ClearLinkIndex(); }
+
 		private:
 			template< class ArchiveT >
             void Serialize(ArchiveT& archive);
