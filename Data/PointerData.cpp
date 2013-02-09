@@ -38,7 +38,14 @@ bool PointerData::Set(Data* data, uint32_t flags)
     }
     else
     {
-        *m_Data = (*rhs->m_Data).ReferencesObject() ? (*rhs->m_Data)->Clone() : NULL;
+        if ( rhs->m_Data->HasLinkIndex() )
+        {
+            m_Data->SetLinkIndex( rhs->m_Data->GetLinkIndex() );
+        }
+        else
+        {
+            *m_Data = (*rhs->m_Data).ReferencesObject() ? (*rhs->m_Data)->Clone() : NULL;
+        }
     }
 
     return true;
