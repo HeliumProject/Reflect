@@ -233,22 +233,6 @@ bool Helium::Reflect::Data::GetValue(Data* ser, T& value)
         value = *data;
         result = true;
     }
-    else
-    {
-        // create a temporary data of the value type
-        DataPtr temp = AssertCast<Data>( Registry::GetInstance()->CreateInstance( dataClass ) );
-
-        // connect the temp data to the temp value
-        T tempValue; temp->ConnectData( &tempValue );
-
-        // cast into the temp value
-        if (Data::CastValue( ser, temp ))
-        {
-            // make the copy
-            value = tempValue;
-            result = true;
-        }
-    }
 
     HELIUM_ASSERT(result);
     return result;
@@ -279,20 +263,6 @@ bool Helium::Reflect::Data::SetValue(Data* ser, T value, bool raiseEvents)
         // if you die here, then you are probably in release and this should crash
         (*data) = value;
         result = true;
-    }
-    else
-    {
-        // create a temporary data of the value type
-        DataPtr temp = AssertCast<Data>( Registry::GetInstance()->CreateInstance( dataClass ) );
-
-        // connect the temp data to the temp value
-        temp->ConnectData( &value );
-
-        // cast into the data
-        if (Data::CastValue( ser, temp ))
-        {
-            result = true;
-        }
     }
 
     if (result)

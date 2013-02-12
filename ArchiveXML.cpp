@@ -488,43 +488,10 @@ void ArchiveXML::DeserializeFields(Object* object)
                     // disconnect
                     latentData->Disconnect();
                 }
-                else // else the type does not match, deserialize it into temp data then attempt to cast it into the field data
-                {
-                    REFLECT_SCOPE_TIMER(("Casting"));
-
-                    // construct current serialization object
-                    ObjectPtr currentObject = Registry::GetInstance()->CreateInstance( field->m_DataClass );
-
-                    // downcast to data
-                    DataPtr currentData = SafeCast<Data>(currentObject);
-                    if (!currentData.ReferencesObject())
-                    {
-                        // this should never happen, the type id in the rtti data is bogus
-                        throw Reflect::TypeInformationException( TXT( "Invalid type id for field %s (%s)" ), field->m_Name, m_Path.c_str() );
-                    }
-
-                    // process into temporary memory
-                    currentData->ConnectField(object, field);
-
-                    // process natively
-                    object->PreDeserialize( field );
-                    DeserializeInstance( (ObjectPtr&)latentData );
-
-                    // attempt cast data into new definition
-                    if ( !Data::CastValue( latentData, currentData, DataFlags::Shallow ) )
-                    {
-                        // handle as unknown
-                        unknown = latentData;
-                    }
-                    else
-                    {
-                        // post process
-                        object->PostDeserialize( field );
-                    }
-
-                    // disconnect
-                    currentData->Disconnect();
-                }
+                else
+				{
+#pragma TODO("Support blind data")
+				}
             }
             else // else the field does not exist in the current class anymore
             {
@@ -609,32 +576,9 @@ void ArchiveXML::DeserializeFields( void* structure, const Structure* type )
                     // disconnect
                     latentData->Disconnect();
                 }
-                else // else the type does not match, deserialize it into temp data then attempt to cast it into the field data
-                {
-                    REFLECT_SCOPE_TIMER(("Casting"));
-
-                    // construct current serialization structure
-                    ObjectPtr currentObject = Registry::GetInstance()->CreateInstance( field->m_DataClass );
-
-                    // downcast to data
-                    DataPtr currentData = SafeCast<Data>(currentObject);
-                    if (!currentData.ReferencesObject())
-                    {
-                        // this should never happen, the type id in the rtti data is bogus
-                        throw Reflect::TypeInformationException( TXT( "Invalid type id for field %s (%s)" ), field->m_Name, m_Path.c_str() );
-                    }
-
-                    // process into temporary memory
-                    currentData->ConnectField(structure, field);
-
-                    // process natively
-                    DeserializeInstance( (ObjectPtr&)latentData );
-
-                    // attempt cast data into new definition
-                    Data::CastValue( latentData, currentData, DataFlags::Shallow );
-
-                    // disconnect
-                    currentData->Disconnect();
+                else
+				{
+#pragma TODO("Support blind data")
                 }
             }
 

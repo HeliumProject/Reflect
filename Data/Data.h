@@ -155,12 +155,6 @@ namespace Helium
             // Data Management
             //
 
-            // check to see if a cast is supported
-            static bool CastSupported(const Class* srcType, const Class* destType);
-
-            // convert value data from one data to another
-            static bool CastValue(Data* src, Data* dest, uint32_t flags = 0);
-
             // copies value data from one data to another
             virtual bool Set(Data* src, uint32_t flags = 0) = 0;
 
