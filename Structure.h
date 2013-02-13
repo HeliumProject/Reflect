@@ -210,7 +210,7 @@ const Helium::Reflect::Structure* STRUCTURE::CreateStructure() \
     return s_Structure; \
 } \
 const Helium::Reflect::Structure* STRUCTURE::s_Structure = NULL; \
-Helium::Reflect::StructureRegistrar< STRUCTURE, BASE > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
+Helium::Reflect::StructureRegistrar< STRUCTURE, STRUCTURE::Base > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
 
 // declares a concrete object with creator
 #define REFLECT_DECLARE_BASE_STRUCTURE( STRUCTURE ) \

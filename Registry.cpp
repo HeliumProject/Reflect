@@ -207,6 +207,11 @@ const Type* Registry::GetType( uint32_t crc ) const
     return NULL;
 }
 
+const Composite* Registry::GetComposite( uint32_t crc ) const
+{
+    return ReflectionCast< const Composite >( GetType( crc ) );
+}
+
 const Class* Registry::GetClass( uint32_t crc ) const
 {
     return ReflectionCast< const Class >( GetType( crc ) );
