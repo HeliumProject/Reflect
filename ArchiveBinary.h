@@ -45,7 +45,7 @@
 //    };
 //
 
-#define REFLECT_ARCHIVE_VERBOSE
+//#define REFLECT_ARCHIVE_VERBOSE
 
 namespace Helium
 {
