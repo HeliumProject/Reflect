@@ -7,9 +7,7 @@
 #include "Foundation/Log.h"
 
 #include "Reflect/Enumeration.h"
-#include "Reflect/Data/DataDeduction.h"
-#include "Reflect/Version.h"
-#include "Reflect/DOM.h"
+#include "Reflect/DataDeduction.h"
 
 #include <io.h>
 
@@ -88,8 +86,6 @@ void Reflect::Initialize()
         TypeRegistrar::RegisterTypes( RegistrarTypes::Enumeration );
         TypeRegistrar::RegisterTypes( RegistrarTypes::Structure );
         TypeRegistrar::RegisterTypes( RegistrarTypes::Class );
-
-        Data::Initialize();
     }
 
 #ifdef REFLECT_DEBUG_INIT_AND_CLEANUP
@@ -108,8 +104,6 @@ void Reflect::Cleanup()
 {
     if ( --g_InitCount == 0 )
     {
-        Data::Cleanup();
-
         TypeRegistrar::UnregisterTypes( RegistrarTypes::Class );
         TypeRegistrar::UnregisterTypes( RegistrarTypes::Structure );
         TypeRegistrar::UnregisterTypes( RegistrarTypes::Enumeration );

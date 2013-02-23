@@ -9,6 +9,12 @@ namespace Helium
 {
     namespace Reflect
     {
+		// Empty struct just for type deduction purposes
+		//  don't worry though, even though this class is non-zero in size on its own,
+		//  your derived struct type can use the memory this takes due to C/C++ standard
+		//  'Empty Base Optimization'
+		struct HELIUM_REFLECT_API EnumBase {};
+
         class HELIUM_REFLECT_API EnumerationElement
         {
         public:

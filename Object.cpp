@@ -1,14 +1,13 @@
 #include "ReflectPch.h"
 #include "Reflect/Object.h"
 
+#include "Foundation/Log.h"
 #include "Foundation/ObjectPool.h"
+
 #include "Reflect/Registry.h"
 #include "Reflect/Class.h"
 #include "Reflect/Registry.h"
-#include "Reflect/Version.h"
-#include "Reflect/ArchiveXML.h"
-#include "Reflect/ArchiveBinary.h"
-#include "Reflect/Data/DataDeduction.h"
+#include "Reflect/DataDeduction.h"
 
 #include <malloc.h>
 
@@ -210,11 +209,6 @@ void Object::PopulateComposite( Reflect::Composite& comp )
 
 }
 
-bool Object::IsCompact() const
-{
-    return false;
-}
-
 void Object::ProcessUnknown(Object* object, uint32_t fieldNameCrc)
 {
     if ( fieldNameCrc )
@@ -227,29 +221,12 @@ void Object::ProcessUnknown(Object* object, uint32_t fieldNameCrc)
     }
 }
 
-void Object::ToXML(tstring& xml)
-{
-    ArchiveXML::ToString( this, xml );
-}
-
-void Object::ToBinary(std::iostream& stream)
-{
-    ArchiveBinary::ToStream( this, stream );
-}
-
-void Object::ToFile( const FilePath& path )
-{
-    ArchivePtr archive = GetArchive( path );
-    archive->Put( this );
-    archive->Close();
-}
-
 ObjectPtr Object::GetTemplate() const
 {
     return ObjectPtr();
 }
 
-DataPtr Object::ShouldSerialize( const Field* field )
+bool Object::ShouldSerialize( const Field* field )
 {
     return field->ShouldSerialize( this );
 }

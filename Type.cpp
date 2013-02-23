@@ -1,9 +1,11 @@
 #include "ReflectPch.h"
 #include "Type.h"
 #include "Registry.h"
-#include "Reflect/Data/Data.h"
+#include "Reflect/Data.h"
 
 #include "Platform/Locks.h"
+
+#include "Foundation/Log.h"
 
 using namespace Helium::Reflect;
 

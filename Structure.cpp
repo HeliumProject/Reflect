@@ -1,6 +1,6 @@
 #include "ReflectPch.h"
 #include "Structure.h"
-#include "Reflect/Data/DataDeduction.h"
+#include "Reflect/DataDeduction.h"
 
 using namespace Helium::Reflect;
 

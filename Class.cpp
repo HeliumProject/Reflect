@@ -1,12 +1,7 @@
 #include "ReflectPch.h"
 #include "Class.h"
-#include "Object.h"
-#include "Registry.h"
-#include "Reflect/Data/DataDeduction.h"
-#include "ArchiveBinary.h"
-#include "Reflect/Data/PointerData.h"
 
-#include "Foundation/Log.h"
+#include "Reflect/Object.h"
 
 using namespace Helium;
 using namespace Helium::Reflect;

@@ -4,13 +4,15 @@
 #include "Platform/Assert.h"
 #include "Platform/Utility.h"
 
-#include "Foundation/Event.h"
 #include "Foundation/Attribute.h"
 #include "Foundation/ConcurrentHashSet.h"
+#include "Foundation/Event.h"
 #include "Foundation/FilePath.h"
 #include "Foundation/ReferenceCounting.h"
+
 #include "Reflect/API.h"
 #include "Reflect/Exceptions.h"
+#include "Reflect/Class.h"
 
 namespace Helium
 {
@@ -137,21 +139,13 @@ namespace Helium
             // Persistence
             //
 
-            // Specifies if the value is directly between the start and end name
-            virtual bool                IsCompact() const;
-
             // This the process callback for sub and primitive objects to have their data be aggregated into the parent instance
             virtual void                ProcessUnknown( Object* object, uint32_t fieldNameCrc );
-
-            // Serialize to a particular data target, just works on this
-            void                        ToXML( tstring& xml );
-            void                        ToBinary( std::iostream& stream );
-            void                        ToFile( const FilePath& path );
 
             // Callbacks are executed at the appropriate time by the archive and cloning APIs
             virtual ObjectPtr           GetTemplate() const;
 
-            virtual StrongPtr< Data >   ShouldSerialize( const Field* field );
+            virtual bool                ShouldSerialize( const Field* field );
             virtual void                PreSerialize( const Field* field );
             virtual void                PostSerialize( const Field* field );
             virtual void                PreDeserialize( const Field* field );

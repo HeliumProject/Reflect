@@ -32,20 +32,18 @@
 
 namespace Helium
 {
-    namespace Reflect
-    {
-        class Type;
-        class Composite;
-        class Structure;
-        class Class;
-        class Enumeration;
-        class Visitor;
+	namespace Reflect
+	{
+		class Type;
+		class Composite;
+		class Structure;
+		class Class;
+		class Enumeration;
+		class Visitor;
+		class Data;
 
-        class Object;
-        typedef Helium::StrongPtr<Object> ObjectPtr;
-        typedef Helium::StrongPtr<const Object> ConstObjectPtr;
-
-        class Data;
-        typedef Helium::StrongPtr<Data> DataPtr;
-    }
+		class Object;
+		typedef Helium::StrongPtr<Object> ObjectPtr;
+		typedef Helium::StrongPtr<const Object> ConstObjectPtr;
+	}
 }
