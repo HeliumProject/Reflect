@@ -1,5 +1,4 @@
-#if 0
-
+#ifdef REFLECT_REFACTOR
 
 template < class T >
 void SimpleStlVectorData<T>::ConnectData(void* data)

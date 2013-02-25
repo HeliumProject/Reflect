@@ -213,11 +213,12 @@ namespace Helium
 			}
 
 			template < class CompositeT, class FieldT >
-			inline Reflect::Field* AddField( FieldT CompositeT::* field, const tchar_t* name, int32_t flags = 0, Data* data = AllocateData<T>() )
+			inline Reflect::Field* AddField( FieldT CompositeT::* field, const tchar_t* name, int32_t flags = 0, Data* data = AllocateData<FieldT>() )
 			{
 				return AddField( name, GetOffset(field), sizeof(FieldT), data, NULL, flags );
 			}
 
+#ifdef REFLECT_REFACTOR
 			template < class CompositeT, class ObjectT >
 			inline Reflect::Field* AddObject( StrongPtr< ObjectT > CompositeT::* field, const tchar_t* name, int32_t flags = 0 )
 			{
@@ -307,6 +308,7 @@ namespace Helium
 					Reflect::GetEnumeration<EnumT>(),
 					flags );
 			}
+#endif
 
 		public:
 			const Composite*                        m_Base;                 // the base type name

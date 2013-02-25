@@ -24,7 +24,7 @@ namespace Helium
 			virtual bool Equals( DataInstance a, DataInstance b ) HELIUM_OVERRIDE;
 
 			virtual void Serialize( DataInstance i, Stream& stream ) HELIUM_OVERRIDE;
-			virtual void Deserialize( DataInstance i, const Stream& stream, bool raiseChanged ) HELIUM_OVERRIDE;
+			virtual void Deserialize( DataInstance i, Stream& stream, bool raiseChanged ) HELIUM_OVERRIDE;
 
 			virtual void Serialize( DataInstance i, String& string) HELIUM_OVERRIDE;
 			virtual void Deserialize( DataInstance i, const String& string, bool raiseChanged ) HELIUM_OVERRIDE;

@@ -7,7 +7,7 @@ namespace Helium
 {
 	namespace Reflect
 	{
-#if 0
+#ifdef REFLECT_REFACTOR
 		template <class T>
 		class HELIUM_REFLECT_API SimpleStlVectorData : public SequenceData
 		{

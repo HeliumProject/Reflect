@@ -6,7 +6,7 @@ namespace Helium
 {
 	namespace Reflect
 	{
-#if 0
+#ifdef REFLECT_REFACTOR
 		class HELIUM_REFLECT_API TypeIDData : public Data
 		{
 		public:

@@ -17,7 +17,7 @@ T* Helium::Reflect::DataInstance::GetAddress(uintptr_t offsetInField) const
 {
 	HELIUM_ASSERT( m_Instance );
 	HELIUM_ASSERT( m_Field );
-	return static_cast< T* >( static_cast< char* >( m_Instance ) + m_Field->m_Offset + offsetInField );
+	return reinterpret_cast< T* >( static_cast< char* >( m_Instance ) + m_Field->m_Offset + offsetInField );
 }
 
 Helium::Reflect::DataHeader::DataHeader()
@@ -39,5 +39,5 @@ uint32_t Helium::Reflect::DataHeader::GetLength( uint32_t extra ) const
 template< class T >
 uint32_t Helium::Reflect::DataHeader::SetLength( uint32_t extra )
 {
-	m_Length = GetLength<T>( extra );
+	return m_Length = GetLength<T>( extra );
 }

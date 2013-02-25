@@ -32,7 +32,7 @@ void Helium::Reflect::SimpleData<T>::Serialize( DataInstance i, Stream& stream )
 #if HELIUM_ENDIAN_BIG
 	Swizzle( *i.GetAddress() );
 #endif
-	stream.Write( i.GetAddress(), sizeof( T ), 1 );
+	stream.Write( i.GetAddress<T>(), sizeof( T ), 1 );
 
 #if HELIUM_ENDIAN_BIG
 	Swizzle( *i.GetAddress() );
@@ -40,7 +40,7 @@ void Helium::Reflect::SimpleData<T>::Serialize( DataInstance i, Stream& stream )
 }
 
 template< class T >
-void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, const Stream& stream, bool raiseChanged )
+void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, Stream& stream, bool raiseChanged )
 {
 	DataHeader header;
 	stream.Read( &header, sizeof( header ), 1 );
@@ -49,7 +49,7 @@ void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, const Stream& 
 #endif
 	if ( header.m_ValueType == GetDataType() )
 	{
-		stream.Read( i.GetAddress(), sizeof( T ), 1 );
+		stream.Read( i.GetAddress<T>(), sizeof( T ), 1 );
 #if HELIUM_ENDIAN_BIG
 		Swizzle( *i.GetAddress() );
 #endif
@@ -65,13 +65,17 @@ void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, const Stream& 
 template< class T >
 void Helium::Reflect::SimpleData<T>::Serialize( DataInstance i, String& string )
 {
-	string.Print( *i.GetAddress() );
+#ifdef REFLECT_REFACTOR
+	string.Print( *i.GetAddress<T>() );
+#endif
 }
 
 template< class T >
 void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, const String& string, bool raiseChanged )
 {
-	string.Parse( i.GetAddress() );
+#ifdef REFLECT_REFACTOR
+	string.Parse( i.GetAddress<T>() );
+#endif
 	i.RaiseChanged( raiseChanged );
 }
 
@@ -93,7 +97,7 @@ Helium::Reflect::SimpleDataType Helium::Reflect::SimpleData<T>::GetDataType()
 // Specializations
 //
 
-#if 0
+#ifdef REFLECT_REFACTOR
 
 template <>
 void Helium::Reflect::SimpleData<tstring>::Serialize(ArchiveBinary& archive)

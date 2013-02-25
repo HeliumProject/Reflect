@@ -1,4 +1,4 @@
-#if 0
+#ifdef REFLECT_REFACTOR
 
 void TypeIDData::ConnectData(void* data)
 {

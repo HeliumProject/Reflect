@@ -121,16 +121,16 @@ namespace Helium
 		//
 		// Scalar data interface, for actual read/write support
 		//
-		class ScalarData : Data
+		class ScalarData : public Data
 		{
 		public:
 			// binary serialization
-			virtual void Serialize( DataInstance i, Stream& stream, bool raiseChanged ) = 0;
-			virtual void Deserialize( DataInstance i, const Stream& stream ) = 0;
+			virtual void Serialize( DataInstance i, Stream& stream ) = 0;
+			virtual void Deserialize( DataInstance i, Stream& stream, bool raiseChanged ) = 0;
 
 			// string serialization
-			virtual void Serialize( DataInstance i, String& string, bool raiseChanged ) = 0;
-			virtual void Deserialize( DataInstance i, const String& string ) = 0;
+			virtual void Serialize( DataInstance i, String& string ) = 0;
+			virtual void Deserialize( DataInstance i, const String& string, bool raiseChanged ) = 0;
 		};
 
 		//
