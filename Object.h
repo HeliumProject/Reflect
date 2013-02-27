@@ -236,7 +236,9 @@ typedef BASE Base; \
 typedef OBJECT This; \
 virtual const Helium::Reflect::Class* GetClass() const HELIUM_OVERRIDE; \
 static const Helium::Reflect::Class* CreateClass(); \
-static const Helium::Reflect::Class* s_Class; \
+static const Helium::Reflect::Class* s_Class;
+
+#define _REFLECT_DECLARE_OBJECT_REGISTRAR( OBJECT, BASE ) \
 static Helium::Reflect::ClassRegistrar< OBJECT, BASE > s_Registrar;
 
 // defines the static type info vars
@@ -253,24 +255,45 @@ const Helium::Reflect::Class* OBJECT::CreateClass() \
     Helium::Reflect::Class::Create< OBJECT >( s_Class, TXT( #OBJECT ), OBJECT::Base::s_Class->m_Name, CREATOR); \
     return s_Class; \
 } \
-const Helium::Reflect::Class* OBJECT::s_Class = NULL; \
+const Helium::Reflect::Class* OBJECT::s_Class = NULL;
+
+#define _REFLECT_DEFINE_OBJECT_REGISTRAR( OBJECT, CREATOR ) \
 Helium::Reflect::ClassRegistrar< OBJECT, OBJECT::Base > OBJECT::s_Registrar( TXT( #OBJECT ) );
 
 // declares an abstract object (an object that either A: cannot be instantiated or B: is never actually serialized)
-#define REFLECT_DECLARE_ABSTRACT( OBJECT, BASE ) \
+#define REFLECT_DECLARE_ABSTRACT_NO_REGISTRAR( OBJECT, BASE ) \
     _REFLECT_DECLARE_OBJECT( OBJECT, BASE )
+
+#define REFLECT_DECLARE_ABSTRACT( OBJECT, BASE ) \
+    REFLECT_DECLARE_ABSTRACT_NO_REGISTRAR( OBJECT, BASE ) \
+    _REFLECT_DECLARE_OBJECT_REGISTRAR( OBJECT, BASE )
+
+// defines the abstract object class
+#define REFLECT_DEFINE_ABSTRACT_NO_REGISTRAR( OBJECT ) \
+    _REFLECT_DEFINE_OBJECT( OBJECT, NULL )
 
 // defines the abstract object class
 #define REFLECT_DEFINE_ABSTRACT( OBJECT ) \
-    _REFLECT_DEFINE_OBJECT( OBJECT, NULL )
+    REFLECT_DEFINE_ABSTRACT_NO_REGISTRAR( OBJECT ) \
+    _REFLECT_DEFINE_OBJECT_REGISTRAR( OBJECT, NULL )
 
 // declares a concrete object with creator
-#define REFLECT_DECLARE_OBJECT( OBJECT, BASE ) \
+#define REFLECT_DECLARE_OBJECT_NO_REGISTRAR( OBJECT, BASE ) \
     _REFLECT_DECLARE_OBJECT( OBJECT, BASE ) \
     _REFLECT_DECLARE_CREATOR( OBJECT )
 
+// declares a concrete object with creator
+#define REFLECT_DECLARE_OBJECT( OBJECT, BASE ) \
+    REFLECT_DECLARE_OBJECT_NO_REGISTRAR( OBJECT, BASE ) \
+    _REFLECT_DECLARE_OBJECT_REGISTRAR( OBJECT, BASE )
+
+// defines a concrete object
+#define REFLECT_DEFINE_OBJECT_NO_REGISTRAR( OBJECT ) \
+    _REFLECT_DEFINE_OBJECT( OBJECT, &OBJECT::CreateObject )
+
 // defines a concrete object
 #define REFLECT_DEFINE_OBJECT( OBJECT ) \
-    _REFLECT_DEFINE_OBJECT( OBJECT, &OBJECT::CreateObject )
+    REFLECT_DEFINE_OBJECT_NO_REGISTRAR( OBJECT ) \
+    _REFLECT_DEFINE_OBJECT_REGISTRAR( OBJECT, &OBJECT::CreateObject )
 
 #include "Reflect/Object.inl"
