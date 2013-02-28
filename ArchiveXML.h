@@ -45,7 +45,7 @@ namespace Helium
             
             // PMD: Added to give more control to caller to step through objects one-by-one.
             ArchiveXML( TCharStream *stream, bool write = false );
-            ~ArchiveXML();
+            virtual ~ArchiveXML();
 
         private:
             ArchiveXML();
