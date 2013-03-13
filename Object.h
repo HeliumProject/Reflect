@@ -145,7 +145,6 @@ namespace Helium
             // Callbacks are executed at the appropriate time by the archive and cloning APIs
             virtual ObjectPtr           GetTemplate() const;
 
-            virtual bool                ShouldSerialize( const Field* field );
             virtual void                PreSerialize( const Field* field );
             virtual void                PostSerialize( const Field* field );
             virtual void                PreDeserialize( const Field* field );

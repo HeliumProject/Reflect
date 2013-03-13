@@ -3,6 +3,7 @@
 #include "Foundation/Endian.h"
 #include "Foundation/Stream.h"
 #include "Foundation/String.h"
+#include "Foundation/Name.h"
 #include "Foundation/Set.h"
 
 #include "Reflect/API.h"
@@ -13,35 +14,30 @@ namespace Helium
 {
 	namespace Reflect
 	{
-		namespace SimpleDataTypes
+		namespace ScalarDataTypes
 		{
 			enum Type
 			{
 				Invalid = 0,
 				Boolean,
-				Character,
 				Integer,
 				FloatingPoint,
+				Character,
 				String,
-				Crc32,
-				
 				Count,
-				Mask = 0xF
 			};
 		}
-		typedef SimpleDataTypes::Type SimpleDataType;
+		typedef ScalarDataTypes::Type ScalarDataType;
 
 		namespace ContainerDataTypes
 		{
 			enum Type
 			{
-				None = 0,
+				Invalid = 0,
 				Set,
 				Sequence,
 				Associative,
-
 				Count,
-				Mask = 0xF0
 			};
 		}
 		typedef ContainerDataTypes::Type ContainerDataType;
@@ -50,14 +46,12 @@ namespace Helium
 		{
 		public:
 			inline DataHeader();
+			inline bool operator==( const DataHeader& rhs ) const;
+			inline void Serialize( Stream& stream ) const;
+			inline void Deserialize( Stream& stream );
 
-			inline void Write( Stream& stream ) const;
-			inline void Read( Stream& stream );
-
-			template< class T >
-			uint32_t GetLength( uint32_t extra = 0 ) const;
-			template< class T >
-			uint32_t SetLength( uint32_t extra = 0 );
+			template< class T > uint32_t GetLength( uint32_t extra = 0 ) const;
+			template< class T > uint32_t SetLength( uint32_t extra = 0 );
 			
 			uint32_t	m_Length;
 			uint8_t		m_ContainerType;
@@ -79,8 +73,8 @@ namespace Helium
 			inline DataInstance();
 			inline DataInstance( void* instance, const Field* field );
 
-			template< class T >
-			inline T* GetAddress( uintptr_t offsetInField = 0 ) const;
+			// resolve the actual memory address of the data
+			template< class T > T* GetAddress( uintptr_t offsetInField = 0 ) const;
 
 			// if we point to an object, notify the host object that it was changed (if doIt is true)
 			inline void RaiseChanged( bool doIt = true ) const;
@@ -90,9 +84,56 @@ namespace Helium
 		};
 
 		//
-		// A Data is an Object that knows how to read/write data
-		//  from any kind of support Archive type (XML and Binary), given
-		//  an address in memory to serialize/deserialize data to/from
+		// Specifies an identifier for an object
+		//
+
+		class HELIUM_REFLECT_API ObjectIdentifier
+		{
+		public:
+			virtual void Identify( Object* object, Name& identity ) = 0;
+		};
+
+		//
+		// Resolves an identifier to an object instance
+		//
+
+		class HELIUM_REFLECT_API ObjectResolver
+		{
+		public:
+			virtual void Resolve( const Name& identity, ObjectPtr& object, const Class* oointerClass ) = 0;
+
+			// helper to extract the class of the pointer
+			template< class T > void Resolve( const Name& identity, StrongPtr< T >& object );
+		};
+
+		//
+		// Resolver class that defers resolution until a later time (after the objects have been loaded)
+		//
+
+		class HELIUM_REFLECT_API DeferredResolver : public ObjectResolver
+		{
+		public:
+			virtual void Resolve( const Name& identity, ObjectPtr& object, const Class* pointerClass ) HELIUM_OVERRIDE;
+
+		protected:
+			struct Entry
+			{
+				Entry()
+					: m_Pointer( NULL )
+					, m_PointerClass( NULL )
+				{
+
+				}
+
+				ObjectPtr*	 m_Pointer;
+				const Class* m_PointerClass;
+				Name         m_Identity;
+			};
+			DynamicArray< Entry > m_Entries;
+		};
+
+		//
+		// Data abstraction object, worker for an entire class of data
 		//
 
 		namespace DataFlags
@@ -121,16 +162,19 @@ namespace Helium
 		//
 		// Scalar data interface, for actual read/write support
 		//
+
 		class ScalarData : public Data
 		{
 		public:
+			REFLECTION_TYPE( ReflectionTypes::ScalarData, ScalarData, Data );
+
 			// binary serialization
-			virtual void Serialize( DataInstance i, Stream& stream ) = 0;
-			virtual void Deserialize( DataInstance i, Stream& stream, bool raiseChanged ) = 0;
+			virtual void Serialize( DataInstance i, Stream& stream, ObjectIdentifier& identifier ) = 0;
+			virtual void Deserialize( DataInstance i, Stream& stream, ObjectResolver& resolver, bool raiseChanged ) = 0;
 
 			// string serialization
-			virtual void Serialize( DataInstance i, String& string ) = 0;
-			virtual void Deserialize( DataInstance i, const String& string, bool raiseChanged ) = 0;
+			virtual void Serialize( DataInstance i, String& string, ObjectIdentifier& identifier ) = 0;
+			virtual void Deserialize( DataInstance i, const String& string, ObjectResolver& resolver, bool raiseChanged ) = 0;
 		};
 
 		//
@@ -140,7 +184,7 @@ namespace Helium
 		class ContainerData : public Data
 		{
 		public:
-			REFLECTION_TYPE( ReflectionTypes::ContainerData, ContainerData, Data )
+			REFLECTION_TYPE( ReflectionTypes::ContainerData, ContainerData, Data );
 
 			virtual size_t GetSize() const = 0;
 			virtual void Clear() = 0;

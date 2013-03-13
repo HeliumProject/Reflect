@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Foundation/String.h"
+
 #include "Reflect/Registry.h"
-#include "Reflect/SimpleData.h"
+#include "Reflect/DataSimple.h"
 
 namespace Helium
 {

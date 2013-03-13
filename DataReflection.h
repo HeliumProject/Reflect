@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Reflect/Data.h"
+#include "Reflect/Structure.h"
 
 namespace Helium
 {
@@ -90,45 +91,57 @@ namespace Helium
 			template< class ArchiveT >
 			void Deserialize(ArchiveT& archive);
 		};
+#endif
 
 		template< class T >
 		Data* AllocateData( const StrongPtr< T >& t )
 		{
+#ifdef REFLECT_REFACTOR
 			PointerData* data = new PointerData;
 			data->m_Class = T::s_Class;
 			HELIUM_ASSERT( data->m_Class );
 			return data;
+#else
+			HELIUM_ASSERT( false );
+			return NULL;
+#endif
 		}
 
-        class HELIUM_REFLECT_API StructureData : public Data
-        {
-        public:
-            typedef void DataType;
-            VoidDataPointer m_Data;
+#ifdef REFLECT_REFACTOR
+		class HELIUM_REFLECT_API StructureData : public Data
+		{
+		public:
+			typedef void DataType;
+			VoidDataPointer m_Data;
 
-            virtual void ConnectData(void* data) HELIUM_OVERRIDE;
+			virtual void ConnectData(void* data) HELIUM_OVERRIDE;
 
-            virtual bool Set(Data* data, uint32_t flags = 0) HELIUM_OVERRIDE;
-            virtual bool Equals(Object* object) HELIUM_OVERRIDE;
-            virtual void Accept(Visitor& visitor) HELIUM_OVERRIDE;
+			virtual bool Set(Data* data, uint32_t flags = 0) HELIUM_OVERRIDE;
+			virtual bool Equals(Object* object) HELIUM_OVERRIDE;
+			virtual void Accept(Visitor& visitor) HELIUM_OVERRIDE;
 
-            virtual void Serialize(ArchiveBinary& archive) HELIUM_OVERRIDE;
-            virtual void Deserialize(ArchiveBinary& archive) HELIUM_OVERRIDE;
+			virtual void Serialize(ArchiveBinary& archive) HELIUM_OVERRIDE;
+			virtual void Deserialize(ArchiveBinary& archive) HELIUM_OVERRIDE;
 
-            virtual void Serialize(ArchiveXML& archive) HELIUM_OVERRIDE;
-            virtual void Deserialize(ArchiveXML& archive) HELIUM_OVERRIDE;
+			virtual void Serialize(ArchiveXML& archive) HELIUM_OVERRIDE;
+			virtual void Deserialize(ArchiveXML& archive) HELIUM_OVERRIDE;
 
-            void AllocateForArrayEntry(void *instance, const Field *field);
-        };
+			void AllocateForArrayEntry(void *instance, const Field *field);
+		};
+#endif
 
 		template< class T >
 		Data* AllocateData( const StructBase& t )
 		{
+#ifdef REFLECT_REFACTOR
 			StructureData* data = new StructureData;
 			data->m_Structure = T::s_Structure;
 			HELIUM_ASSERT( data->m_Structure );
 			return data;
-		}
+#else
+			HELIUM_ASSERT( false );
+			return NULL;
 #endif
+		}
 	}
 }

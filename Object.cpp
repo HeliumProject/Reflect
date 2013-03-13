@@ -226,11 +226,6 @@ ObjectPtr Object::GetTemplate() const
     return ObjectPtr();
 }
 
-bool Object::ShouldSerialize( const Field* field )
-{
-    return field->ShouldSerialize( this );
-}
-
 void Object::PreSerialize( const Reflect::Field* field )
 {
 }

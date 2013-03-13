@@ -18,20 +18,15 @@ bool Helium::Reflect::SimpleData<T>::Equals( DataInstance a, DataInstance b )
 }
 
 template< class T >
-void Helium::Reflect::SimpleData<T>::Serialize( DataInstance i, Stream& stream )
+void Helium::Reflect::SimpleData<T>::Serialize( DataInstance i, Stream& stream, ObjectIdentifier& identifier )
 {
-	DataHeader header;
-	header.m_ValueType = GetDataType();
-	header.SetLength<T>();
-
-#if HELIUM_ENDIAN_BIG
-	header.Swizzle();
-#endif
-	stream.Write( &header, sizeof( header ), 1 );
+	DataHeader header = GetDataHeader();
+	header.Serialize( stream );
 
 #if HELIUM_ENDIAN_BIG
 	Swizzle( *i.GetAddress() );
 #endif
+
 	stream.Write( i.GetAddress<T>(), sizeof( T ), 1 );
 
 #if HELIUM_ENDIAN_BIG
@@ -40,41 +35,45 @@ void Helium::Reflect::SimpleData<T>::Serialize( DataInstance i, Stream& stream )
 }
 
 template< class T >
-void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, Stream& stream, bool raiseChanged )
+void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, Stream& stream, ObjectResolver& resolver, bool raiseChanged )
 {
 	DataHeader header;
-	stream.Read( &header, sizeof( header ), 1 );
-#if HELIUM_ENDIAN_BIG
-	header.Swizzle();
-#endif
-	if ( header.m_ValueType == GetDataType() )
+	header.Deserialize( stream );
+
+	if ( GetDataHeader() == header )
 	{
 		stream.Read( i.GetAddress<T>(), sizeof( T ), 1 );
+
 #if HELIUM_ENDIAN_BIG
-		Swizzle( *i.GetAddress() );
+		Swizzle( *i.GetAddress<T>() );
 #endif
+
 		i.RaiseChanged( raiseChanged );
 	}
 	else
 	{
 		HELIUM_ASSERT( false );
-		stream.Read( NULL, header.m_Length - sizeof( header ), 1 );
+		stream.Seek( header.m_Length - sizeof( header ), SeekOrigins::Current );
 	}
 }
 
 template< class T >
-void Helium::Reflect::SimpleData<T>::Serialize( DataInstance i, String& string )
+void Helium::Reflect::SimpleData<T>::Serialize( DataInstance i, String& string, ObjectIdentifier& identifier )
 {
 #ifdef REFLECT_REFACTOR
 	string.Print( *i.GetAddress<T>() );
+#else
+	HELIUM_ASSERT( false );
 #endif
 }
 
 template< class T >
-void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, const String& string, bool raiseChanged )
+void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, const String& string, ObjectResolver& resolver, bool raiseChanged )
 {
 #ifdef REFLECT_REFACTOR
 	string.Parse( i.GetAddress<T>() );
+#else
+	HELIUM_ASSERT( false );
 #endif
 	i.RaiseChanged( raiseChanged );
 }
@@ -82,16 +81,24 @@ void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, const String& 
 template< class T >
 void Helium::Reflect::SimpleData<T>::Accept( DataInstance i, Visitor& visitor )
 {
-
+	visitor.VisitField( i.GetAddress<T>(), i.m_Field );
 }
 
 template< class T >
-Helium::Reflect::SimpleDataType Helium::Reflect::SimpleData<T>::GetDataType()
+Helium::Reflect::ScalarDataType Helium::Reflect::SimpleData<T>::GetDataType()
 {
 	HELIUM_ASSERT( false );
-	return SimpleDataTypes::Invalid;
+	return ScalarDataTypes::Invalid;
 }
 
+template< class T >
+Helium::Reflect::DataHeader Helium::Reflect::SimpleData<T>::GetDataHeader()
+{
+	DataHeader header;
+	header.m_ValueType = GetDataType();
+	header.SetLength<T>();
+	return header;
+}
 
 //
 // Specializations

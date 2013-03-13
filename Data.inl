@@ -13,6 +13,13 @@ Helium::Reflect::DataInstance::DataInstance(void* instance, const Field* field)
 }
 
 template< class T >
+void Helium::Reflect::ObjectResolver::Resolve( const Name& identity, StrongPtr< T >& object )
+{
+	const Class* pointerClass = Reflect::GetClass< T >();
+	this->Resolve( identity, reinterpret_cast< ObjectPtr& >( object ), pointerClass );
+}
+
+template< class T >
 T* Helium::Reflect::DataInstance::GetAddress(uintptr_t offsetInField) const
 {
 	HELIUM_ASSERT( m_Instance );
@@ -28,6 +35,40 @@ Helium::Reflect::DataHeader::DataHeader()
 	, m_Pad( 0 )
 {
 
+}
+
+bool Helium::Reflect::DataHeader::operator==( const DataHeader& rhs ) const
+{
+	return Helium::MemoryCompare( this, &rhs, sizeof( DataHeader ) ) == 0;
+}
+
+void Helium::Reflect::DataHeader::Serialize( Stream& stream ) const
+{
+	uint32_t length = m_Length;
+
+#if HELIUM_ENDIAN_BIG
+	Swizzle( length );
+#endif
+
+	stream.Write( length );
+	stream.Write( m_ContainerType );
+	stream.Write( m_ValueType );
+	stream.Write( m_KeyType );
+	stream.Write( m_Pad );
+}
+
+void Helium::Reflect::DataHeader::Deserialize( Stream& stream )
+{
+	stream.Read( m_Length );
+
+#if HELIUM_ENDIAN_BIG
+	Swizzle( m_Length );
+#endif
+
+	stream.Read( m_ContainerType );
+	stream.Read( m_ValueType );
+	stream.Read( m_KeyType );
+	stream.Read( m_Pad );
 }
 
 template< class T >
