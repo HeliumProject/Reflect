@@ -80,7 +80,7 @@ namespace Helium
 		};
 
 		template <class KeyT, class KeyClassT, class ValueT, class ValueClassT>
-		class HELIUM_REFLECT_API SimpleStlMapData : public AssociativeData
+		class HELIUM_REFLECT_API SimpleStlMapData : public AssociationData
 		{
 		public:
 			typedef std::map<KeyT, ValueT> DataType;

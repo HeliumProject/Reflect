@@ -1,7 +1,7 @@
 template< class T >
 bool Helium::Reflect::SimpleData<T>::Copy( DataInstance src, DataInstance dest, uint32_t flags )
 {
-	HELIUM_ASSERT( src.m_Field == dest.m_Field ); // NYI
+	HELIUM_ASSERT( src.m_Field == dest.m_Field );
 	T* right = src.GetAddress<T>();
 	T* left = dest.GetAddress<T>();
 	*left = *right;
@@ -11,15 +11,23 @@ bool Helium::Reflect::SimpleData<T>::Copy( DataInstance src, DataInstance dest, 
 template< class T >
 bool Helium::Reflect::SimpleData<T>::Equals( DataInstance a, DataInstance b )
 {
-	HELIUM_ASSERT( a.m_Field == b.m_Field ); // NYI
+	HELIUM_ASSERT( a.m_Field == b.m_Field );
 	T* right = a.GetAddress<T>();
 	T* left = b.GetAddress<T>();
 	return *left == *right;
 }
 
 template< class T >
+void Helium::Reflect::SimpleData<T>::Accept( DataInstance i, Visitor& visitor )
+{
+	visitor.VisitField( i.GetAddress<T>(), i.m_Field );
+}
+
+template< class T >
 void Helium::Reflect::SimpleData<T>::Serialize( DataInstance i, Stream& stream, ObjectIdentifier& identifier )
 {
+	HELIUM_COMPILE_ASSERT( std::is_fundamental< T >::value );
+
 	DataHeader header = GetDataHeader();
 	header.Serialize( stream );
 
@@ -27,7 +35,7 @@ void Helium::Reflect::SimpleData<T>::Serialize( DataInstance i, Stream& stream, 
 	Swizzle( *i.GetAddress() );
 #endif
 
-	stream.Write( i.GetAddress<T>(), sizeof( T ), 1 );
+	stream.Write( i.GetAddress<T>() );
 
 #if HELIUM_ENDIAN_BIG
 	Swizzle( *i.GetAddress() );
@@ -37,12 +45,14 @@ void Helium::Reflect::SimpleData<T>::Serialize( DataInstance i, Stream& stream, 
 template< class T >
 void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, Stream& stream, ObjectResolver& resolver, bool raiseChanged )
 {
+	HELIUM_COMPILE_ASSERT( std::is_fundamental< T >::value );
+
 	DataHeader header;
 	header.Deserialize( stream );
 
 	if ( GetDataHeader() == header )
 	{
-		stream.Read( i.GetAddress<T>(), sizeof( T ), 1 );
+		stream.Read( *i.GetAddress<T>() );
 
 #if HELIUM_ENDIAN_BIG
 		Swizzle( *i.GetAddress<T>() );
@@ -60,33 +70,36 @@ void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, Stream& stream
 template< class T >
 void Helium::Reflect::SimpleData<T>::Serialize( DataInstance i, String& string, ObjectIdentifier& identifier )
 {
-#ifdef REFLECT_REFACTOR
-	string.Print( *i.GetAddress<T>() );
-#else
-	HELIUM_ASSERT( false );
-#endif
+	HELIUM_COMPILE_ASSERT( std::is_fundamental< T >::value );
+
+	std::stringstream str;
+	str << *i.GetAddress<T>();
+	string = str.str().c_str();
 }
 
 template< class T >
 void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, const String& string, ObjectResolver& resolver, bool raiseChanged )
 {
-#ifdef REFLECT_REFACTOR
-	string.Parse( i.GetAddress<T>() );
-#else
-	HELIUM_ASSERT( false );
-#endif
-	i.RaiseChanged( raiseChanged );
-}
+	HELIUM_COMPILE_ASSERT( std::is_fundamental< T >::value );
 
-template< class T >
-void Helium::Reflect::SimpleData<T>::Accept( DataInstance i, Visitor& visitor )
-{
-	visitor.VisitField( i.GetAddress<T>(), i.m_Field );
+	std::stringstream str ( string.GetData() );
+	str >> *i.GetAddress<T>();
 }
 
 template< class T >
 Helium::Reflect::ScalarDataType Helium::Reflect::SimpleData<T>::GetDataType()
 {
+	HELIUM_COMPILE_ASSERT( std::is_fundamental< T >::value );
+
+	if ( std::is_integral< T >::value )
+	{
+		return ScalarDataTypes::Integer;
+	}
+	else if ( std::is_floating_point< T >::value )
+	{
+		return ScalarDataTypes::FloatingPoint;
+	}
+
 	HELIUM_ASSERT( false );
 	return ScalarDataTypes::Invalid;
 }
@@ -104,144 +117,42 @@ Helium::Reflect::DataHeader Helium::Reflect::SimpleData<T>::GetDataHeader()
 // Specializations
 //
 
-#ifdef REFLECT_REFACTOR
-
-template <>
-void Helium::Reflect::SimpleData<tstring>::Serialize(ArchiveBinary& archive)
+template<>
+inline void Helium::Reflect::SimpleData<uint8_t>::Serialize( DataInstance i, String& string, ObjectIdentifier& identifier )
 {
-	archive.GetStream().WriteString( *m_Data ); 
-}
+	uint16_t v = *i.GetAddress<uint8_t>();
 
-template <>
-void Helium::Reflect::SimpleData<tstring>::Deserialize(ArchiveBinary& archive)
-{
-	archive.GetStream().ReadString( *m_Data );
-}
-
-template <>
-void Helium::Reflect::SimpleData<tstring>::Serialize(ArchiveXML& archive)
-{
-	archive.GetStream() << TXT( "<![CDATA[" ) << *m_Data << TXT( "]]>" );
-}
-
-template <>
-void Helium::Reflect::SimpleData<tstring>::Deserialize(ArchiveXML& archive)
-{
-	std::streamsize size = archive.GetStream().ElementsAvailable(); 
-	m_Data->resize( (size_t)size );
-	archive.GetStream().ReadBuffer( const_cast<tchar_t*>( (*m_Data).c_str() ), size );
+	std::stringstream str;
+	str << v;
+	string = str.str().c_str();
 }
 
 template<>
-tostream& Helium::Reflect::SimpleData<tstring>::operator>>(tostream& stream) const
+inline void Helium::Reflect::SimpleData<uint8_t>::Deserialize( DataInstance i, const String& string, ObjectResolver& resolver, bool raiseChanged )
 {
-	stream << *m_Data;
-
-	return stream;
+	std::stringstream str ( string.GetData() );
+	uint16_t v = 0;
+	str >> v;
+	
+	*i.GetAddress<uint8_t>() = static_cast<uint8_t>( v );
 }
 
 template<>
-tistream& Helium::Reflect::SimpleData<tstring>::operator<<(tistream& stream)
+inline void Helium::Reflect::SimpleData<int8_t>::Serialize( DataInstance i, String& string, ObjectIdentifier& identifier )
 {
-	std::streamsize size = stream.rdbuf()->in_avail();
-	m_Data->resize( (size_t) size);
-	stream.read( const_cast<tchar_t*>( (*m_Data).c_str()), size );
+	int16_t v = *i.GetAddress<int8_t>();
 
-	return stream;
-}
-
-template <>
-void Helium::Reflect::SimpleData<uint8_t>::Serialize(ArchiveBinary& archive)
-{
-	const uint8_t* data = m_Data;
-	archive.GetStream().Write( data ); 
-}
-
-template <>
-void Helium::Reflect::SimpleData<uint8_t>::Deserialize(ArchiveBinary& archive)
-{
-	const uint8_t* data = m_Data;
-	archive.GetStream().Read( data ); 
-}
-
-template <>
-void Helium::Reflect::SimpleData<uint8_t>::Serialize(ArchiveXML& archive)
-{
-	uint16_t tmp = *m_Data;
-	archive.GetStream() << tmp;
-}
-
-template <>
-void Helium::Reflect::SimpleData<uint8_t>::Deserialize(ArchiveXML& archive)
-{
-	uint16_t tmp;
-	archive.GetStream() >> tmp;
-	*m_Data = (uint8_t)tmp;
+	std::stringstream str;
+	str << v;
+	string = str.str().c_str();
 }
 
 template<>
-tostream& Helium::Reflect::SimpleData<uint8_t>::operator>>(tostream& stream) const
+inline void Helium::Reflect::SimpleData<int8_t>::Deserialize( DataInstance i, const String& string, ObjectResolver& resolver, bool raiseChanged )
 {
-	uint16_t val = *m_Data;
-	stream << val;
-	return stream;
+	std::stringstream str ( string.GetData() );
+	int16_t v = 0;
+	str >> v;
+	
+	*i.GetAddress<int8_t>() = static_cast<int8_t>( v );
 }
-
-template<>
-tistream& Helium::Reflect::SimpleData<uint8_t>::operator<<(tistream& stream)
-{
-	uint16_t val;
-	stream >> val;
-	*m_Data = (uint8_t)val;
-	return stream;
-}
-
-template <>
-void Helium::Reflect::SimpleData<int8_t>::Serialize(ArchiveBinary& archive)
-{
-	const int8_t* data = m_Data;
-	archive.GetStream().Write( data ); 
-}
-
-template <>
-void Helium::Reflect::SimpleData<int8_t>::Deserialize(ArchiveBinary& archive)
-{
-	const int8_t* data = m_Data;
-	archive.GetStream().Read( data ); 
-}
-
-template <>
-void Helium::Reflect::SimpleData<int8_t>::Serialize(ArchiveXML& archive)
-{
-	int16_t tmp = *m_Data;
-	archive.GetStream() << tmp;
-}
-
-template <>
-void Helium::Reflect::SimpleData<int8_t>::Deserialize(ArchiveXML& archive)
-{
-	int16_t tmp;
-	archive.GetStream() >> tmp;
-	*m_Data = (char)tmp;
-}
-
-template<>
-tostream& Helium::Reflect::SimpleData<int8_t>::operator>>(tostream& stream) const
-{
-	int16_t val = *m_Data;
-	stream << val;
-
-	return stream;
-}
-
-template<>
-tistream& Helium::Reflect::SimpleData<int8_t>::operator<<(tistream& stream)
-{
-	int16_t val;
-	stream >> val;
-	*m_Data = (uint8_t)val;
-
-	return stream;
-}
-
-#endif

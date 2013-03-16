@@ -53,7 +53,7 @@ namespace Helium
 					ContainerData,
 						SetData,
 						SequenceData,
-						AssociativeData,
+						AssociationData,
 
 				Count,
 			};

@@ -209,18 +209,6 @@ void Object::PopulateComposite( Reflect::Composite& comp )
 
 }
 
-void Object::ProcessUnknown(Object* object, uint32_t fieldNameCrc)
-{
-    if ( fieldNameCrc )
-    {
-        Log::Debug( TXT( "%s did not process %s (unknown field: %d), discarding\n" ), GetClass()->m_Name, object->GetClass()->m_Name, fieldNameCrc );
-    }
-    else
-    {
-        Log::Debug( TXT( "%s did not process %s, discarding\n" ), GetClass()->m_Name, object->GetClass()->m_Name );
-    }
-}
-
 ObjectPtr Object::GetTemplate() const
 {
     return ObjectPtr();

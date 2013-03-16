@@ -139,9 +139,6 @@ namespace Helium
             // Persistence
             //
 
-            // This the process callback for sub and primitive objects to have their data be aggregated into the parent instance
-            virtual void                ProcessUnknown( Object* object, uint32_t fieldNameCrc );
-
             // Callbacks are executed at the appropriate time by the archive and cloning APIs
             virtual ObjectPtr           GetTemplate() const;
 

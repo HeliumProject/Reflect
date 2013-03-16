@@ -19,10 +19,8 @@ namespace Helium
 			enum Type
 			{
 				Invalid = 0,
-				Boolean,
 				Integer,
 				FloatingPoint,
-				Character,
 				String,
 				Count,
 			};
@@ -36,7 +34,7 @@ namespace Helium
 				Invalid = 0,
 				Set,
 				Sequence,
-				Associative,
+				Association,
 				Count,
 			};
 		}
@@ -100,7 +98,7 @@ namespace Helium
 		class HELIUM_REFLECT_API ObjectResolver
 		{
 		public:
-			virtual void Resolve( const Name& identity, ObjectPtr& object, const Class* oointerClass ) = 0;
+			virtual void Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass ) = 0;
 
 			// helper to extract the class of the pointer
 			template< class T > void Resolve( const Name& identity, StrongPtr< T >& object );
@@ -113,7 +111,7 @@ namespace Helium
 		class HELIUM_REFLECT_API DeferredResolver : public ObjectResolver
 		{
 		public:
-			virtual void Resolve( const Name& identity, ObjectPtr& object, const Class* pointerClass ) HELIUM_OVERRIDE;
+			virtual void Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass ) HELIUM_OVERRIDE;
 
 		protected:
 			struct Entry
@@ -144,7 +142,7 @@ namespace Helium
 			};
 		}
 
-		class Data : public ReflectionInfo
+		class HELIUM_REFLECT_API Data : public ReflectionInfo
 		{
 		public:
 			REFLECTION_TYPE( ReflectionTypes::Data, Data, ReflectionInfo );
@@ -163,7 +161,7 @@ namespace Helium
 		// Scalar data interface, for actual read/write support
 		//
 
-		class ScalarData : public Data
+		class HELIUM_REFLECT_API ScalarData : public Data
 		{
 		public:
 			REFLECTION_TYPE( ReflectionTypes::ScalarData, ScalarData, Data );
@@ -181,7 +179,7 @@ namespace Helium
 		// Polymorphic access to container data
 		//
 
-		class ContainerData : public Data
+		class HELIUM_REFLECT_API ContainerData : public Data
 		{
 		public:
 			REFLECTION_TYPE( ReflectionTypes::ContainerData, ContainerData, Data );
@@ -194,7 +192,7 @@ namespace Helium
 		// Set containers
 		//
 
-		class SetData : public ContainerData
+		class HELIUM_REFLECT_API SetData : public ContainerData
 		{
 		public:
 			REFLECTION_TYPE( ReflectionTypes::SetData, SetData, ContainerData );
@@ -212,7 +210,7 @@ namespace Helium
 		// Sequential containers (Dynamic Arrays, Deque, etc...)
 		//
 
-		class SequenceData : public ContainerData
+		class HELIUM_REFLECT_API SequenceData : public ContainerData
 		{
 		public:
 			REFLECTION_TYPE( ReflectionTypes::SequenceData, SequenceData, ContainerData );
@@ -233,13 +231,13 @@ namespace Helium
 		};
 
 		//
-		// Associative containers (Map, Hashtable, Hashmap, etc...)
+		// Association containers (Map, Hashtable, Hashmap, etc...)
 		//
 
-		class AssociativeData : public ContainerData
+		class HELIUM_REFLECT_API AssociationData : public ContainerData
 		{
 		public:
-			REFLECTION_TYPE( ReflectionTypes::AssociativeData, AssociativeData, ContainerData );
+			REFLECTION_TYPE( ReflectionTypes::AssociationData, AssociationData, ContainerData );
 
 			virtual Data* GetKeyData() const = 0;
 			virtual Data* GetValueData() const = 0;

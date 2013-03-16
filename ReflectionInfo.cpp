@@ -15,7 +15,7 @@ const tchar_t* ReflectionTypes::Strings[ ReflectionTypes::Count ] =
 	TXT("ContainerData"),
 	TXT("SetData"),
 	TXT("SequenceData"),
-	TXT("AssociativeData")
+	TXT("AssociationData")
 };
 
 ReflectionInfo::ReflectionInfo()

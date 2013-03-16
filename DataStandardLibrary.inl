@@ -616,7 +616,7 @@ void SimpleStlSetData<DataT, DataClassT>::Deserialize( ArchiveT& archive )
         DataClassT* data = SafeCast<DataClassT>(*itr);
         if (!data)
         {
-            throw LogisticException( TXT( "Set value type has changed, this is unpossible" ) );
+            throw Reflect::Exception( TXT( "Set value type has changed, this is unpossible" ) );
         }
 
         m_Data->insert( *data->m_Data );
@@ -837,7 +837,7 @@ void SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::Deserialize(Archive
 
     if (components.size() % 2 != 0)
     {
-        throw Reflect::DataFormatException( TXT( "Unmatched map objects" ) );
+        throw Reflect::Exception( TXT( "Unmatched map objects" ) );
     }
 
     // if we are referring to a real field, clear its contents

@@ -20,10 +20,10 @@ void DataInstance::RaiseChanged( bool doIt ) const
 	}
 }
 
-void DeferredResolver::Resolve( const Name& identity, ObjectPtr& object, const Class* pointerClass )
+void DeferredResolver::Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass )
 {
 	Entry entry;
-	entry.m_Pointer = &object;
+	entry.m_Pointer = &pointer;
 	entry.m_PointerClass = pointerClass;
 	entry.m_Identity = identity;
 	m_Entries.Add( entry );
