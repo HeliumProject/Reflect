@@ -85,7 +85,7 @@ void Reflect::Initialize()
 
         TypeRegistrar::RegisterTypes( RegistrarTypes::Enumeration );
         TypeRegistrar::RegisterTypes( RegistrarTypes::Structure );
-        TypeRegistrar::RegisterTypes( RegistrarTypes::Class );
+        TypeRegistrar::RegisterTypes( RegistrarTypes::Object );
     }
 
 #ifdef REFLECT_DEBUG_INIT_AND_CLEANUP
@@ -104,7 +104,7 @@ void Reflect::Cleanup()
 {
     if ( --g_InitCount == 0 )
     {
-        TypeRegistrar::UnregisterTypes( RegistrarTypes::Class );
+        TypeRegistrar::UnregisterTypes( RegistrarTypes::Object );
         TypeRegistrar::UnregisterTypes( RegistrarTypes::Structure );
         TypeRegistrar::UnregisterTypes( RegistrarTypes::Enumeration );
 

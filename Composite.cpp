@@ -60,6 +60,12 @@ Composite::Composite()
 
 Composite::~Composite()
 {
+	delete m_Default;
+}
+
+Composite* Composite::Create()
+{
+	return new Composite();
 }
 
 void Composite::Register() const

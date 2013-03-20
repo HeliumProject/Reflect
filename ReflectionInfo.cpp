@@ -9,7 +9,6 @@ const tchar_t* ReflectionTypes::Strings[ ReflectionTypes::Count ] =
 	TXT("Type"),
 	TXT("Enumeration"),
 	TXT("Composite"),
-	TXT("Structure"),
 	TXT("Class"),
 	TXT("Data"),
 	TXT("ContainerData"),
@@ -17,6 +16,8 @@ const tchar_t* ReflectionTypes::Strings[ ReflectionTypes::Count ] =
 	TXT("SequenceData"),
 	TXT("AssociationData")
 };
+
+HELIUM_COMPILE_ASSERT( sizeof( ReflectionTypes::Strings ) / sizeof( ReflectionTypes::Strings[0] ) == ReflectionTypes::Count );
 
 ReflectionInfo::ReflectionInfo()
 {

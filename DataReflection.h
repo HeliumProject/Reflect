@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Reflect/Data.h"
-#include "Reflect/Structure.h"
+#include "Reflect/Composite.h"
 
 namespace Helium
 {
@@ -131,7 +131,7 @@ namespace Helium
 #endif
 
 		template< class T >
-		Data* AllocateData( const StructBase& t )
+		Data* AllocateData( const Structure& t )
 		{
 #ifdef REFLECT_REFACTOR
 			StructureData* data = new StructureData;

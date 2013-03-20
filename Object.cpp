@@ -36,7 +36,7 @@ struct ObjectRefCountSupport::StaticData
 ObjectRefCountSupport::StaticData* ObjectRefCountSupport::sm_pStaticData = NULL;
 
 const Class* Object::s_Class = NULL;
-ClassRegistrar< Object, void > Object::s_Registrar( TXT("Object") );
+ObjectRegistrar< Object, void > Object::s_Registrar( TXT("Object") );
 
 /// Retrieve a reference count proxy from the global pool.
 ///

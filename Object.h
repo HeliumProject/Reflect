@@ -21,9 +21,8 @@ namespace Helium
         class Type;
         class Field;
         class Composite;
-        class Structure;
         class Class;
-        template< class ClassT, class BaseT > class ClassRegistrar;
+        template< class ClassT, class BaseT > class ObjectRegistrar;
         class Object;
         class Data;
 
@@ -118,7 +117,7 @@ namespace Helium
 
             // Reflection data
             static const Class* s_Class;
-            static ClassRegistrar< Object, void > s_Registrar;
+            static ObjectRegistrar< Object, void > s_Registrar;
 
             // Pointer serialization
             typedef PointerData PointerDataClass;
@@ -227,7 +226,7 @@ typedef OBJECT This; \
 virtual const Helium::Reflect::Class* GetClass() const HELIUM_OVERRIDE; \
 static const Helium::Reflect::Class* CreateClass(); \
 static const Helium::Reflect::Class* s_Class; \
-static Helium::Reflect::ClassRegistrar< OBJECT, BASE > s_Registrar;
+static Helium::Reflect::ObjectRegistrar< OBJECT, BASE > s_Registrar;
 
 // defines the static type info vars
 #define _REFLECT_DEFINE_OBJECT( OBJECT, CREATOR ) \
@@ -244,7 +243,7 @@ const Helium::Reflect::Class* OBJECT::CreateClass() \
     return s_Class; \
 } \
 const Helium::Reflect::Class* OBJECT::s_Class = NULL; \
-Helium::Reflect::ClassRegistrar< OBJECT, OBJECT::Base > OBJECT::s_Registrar( TXT( #OBJECT ) );
+Helium::Reflect::ObjectRegistrar< OBJECT, OBJECT::Base > OBJECT::s_Registrar( TXT( #OBJECT ) );
 
 // declares an abstract object (an object that either A: cannot be instantiated or B: is never actually serialized)
 #define REFLECT_DECLARE_ABSTRACT( OBJECT, BASE ) \

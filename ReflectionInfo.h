@@ -44,7 +44,6 @@ namespace Helium
 				Type,
 					Enumeration,
 					Composite,
-						Structure,
 						Class,
 				
 				// data abstraction class hierarchy

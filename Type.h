@@ -43,7 +43,7 @@ namespace Helium
             {
                 Enumeration,
                 Structure,
-                Class,
+                Object,
                 Count,
             };
         }

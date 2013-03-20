@@ -36,12 +36,12 @@ namespace Helium
 	{
 		class Type;
 		class Composite;
-		class Structure;
 		class Class;
 		class Enumeration;
 		class Visitor;
 		class Data;
 
+		struct Structure;
 		class Object;
 		typedef Helium::StrongPtr<Object> ObjectPtr;
 		typedef Helium::StrongPtr<const Object> ConstObjectPtr;

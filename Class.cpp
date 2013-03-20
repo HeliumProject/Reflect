@@ -14,7 +14,8 @@ Class::Class()
 
 Class::~Class()
 {
-
+	// prevent base class from deleting our object
+	Composite::m_Default = NULL;
 }
 
 Class* Class::Create()

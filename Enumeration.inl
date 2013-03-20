@@ -1,33 +1,55 @@
-template< class EnumerationT >
-Helium::Reflect::EnumerationRegistrar< EnumerationT >::EnumerationRegistrar(const tchar_t* name)
-    : TypeRegistrar( name )
+template< class T >
+void Helium::Reflect::Enumeration::Create( Enumeration const*& pointer, const tchar_t* name )
 {
-    HELIUM_ASSERT( EnumerationT::s_Enumeration == NULL );
-    TypeRegistrar::AddToList( RegistrarTypes::Enumeration, this );
+	Enumeration* type = new Enumeration();
+	pointer = type;
+
+	type->m_Size = sizeof(T);
+	type->m_Name = name;
+
+	T::EnumerateEnum( *type );
+}
+
+bool Helium::Reflect::Enumeration::IsFlagSet(uint32_t value, uint32_t flag)
+{
+	return ((value & flag) == flag);
+}
+
+void Helium::Reflect::Enumeration::SetFlags(uint32_t& value, uint32_t flags)
+{
+	value |= flags;
 }
 
 template< class EnumerationT >
-Helium::Reflect::EnumerationRegistrar< EnumerationT >::~EnumerationRegistrar()
+Helium::Reflect::EnumRegistrar< EnumerationT >::EnumRegistrar(const tchar_t* name)
+	: TypeRegistrar( name )
 {
-    Unregister();
-    TypeRegistrar::RemoveFromList( RegistrarTypes::Enumeration, this );
+	HELIUM_ASSERT( EnumerationT::s_Enumeration == NULL );
+	TypeRegistrar::AddToList( RegistrarTypes::Enumeration, this );
 }
 
 template< class EnumerationT >
-void Helium::Reflect::EnumerationRegistrar< EnumerationT >::Register()
+Helium::Reflect::EnumRegistrar< EnumerationT >::~EnumRegistrar()
 {
-    if( EnumerationT::s_Enumeration == NULL )
-    {
-        AddTypeToRegistry( EnumerationT::CreateEnumeration() );
-    }
+	Unregister();
+	TypeRegistrar::RemoveFromList( RegistrarTypes::Enumeration, this );
 }
 
 template< class EnumerationT >
-void Helium::Reflect::EnumerationRegistrar< EnumerationT >::Unregister()
+void Helium::Reflect::EnumRegistrar< EnumerationT >::Register()
 {
-    if( EnumerationT::s_Enumeration != NULL )
-    {
-        RemoveTypeFromRegistry( EnumerationT::s_Enumeration );
-        EnumerationT::s_Enumeration = NULL;
-    }
+	if( EnumerationT::s_Enumeration == NULL )
+	{
+		AddTypeToRegistry( EnumerationT::CreateEnumeration() );
+	}
+}
+
+template< class EnumerationT >
+void Helium::Reflect::EnumRegistrar< EnumerationT >::Unregister()
+{
+	if( EnumerationT::s_Enumeration != NULL )
+	{
+		RemoveTypeFromRegistry( EnumerationT::s_Enumeration );
+		EnumerationT::s_Enumeration = NULL;
+	}
 }

@@ -72,7 +72,18 @@ namespace Helium
 		};
 
 		//
-		// Composite (struct or class)
+		// Empty struct just for type deduction purposes (for stand alone structs, not Object classes)
+		//  don't worry though, even though this class is non-zero in size on its own,
+		//  your derived struct type can use the memory this takes due to C/C++ standard
+		//  'Empty Base Optimization'
+		//
+
+		struct HELIUM_REFLECT_API Structure
+		{
+		};
+
+		//
+		// Composite (C++ `struct` or `class`)
 		//
 
 		class HELIUM_REFLECT_API Composite : public Type
@@ -85,116 +96,43 @@ namespace Helium
 			~Composite();
 
 		public:
+			// protect external allocation to keep inlined code in this dll
+			static Composite* Create();
+
+			// creator for structure types
+			template< class StructureT >
+			static void Create( Composite const*& pointer, const tchar_t* name, const tchar_t* baseName );
+
+			// shared logic with class types
 			template< class CompositeT >
-			static void Create( const tchar_t* name, const tchar_t* baseName, PopulateCompositeFunc populate, Composite* info )
-			{
-				// the size
-				info->m_Size = sizeof( CompositeT );
+			static void Create( const tchar_t* name, const tchar_t* baseName, PopulateCompositeFunc populate, Composite* info );
 
-				// the name of this composite
-				info->m_Name = name;
-
-				// lookup base class
-				if ( baseName )
-				{
-					info->m_Base = Reflect::Registry::GetInstance()->GetClass( baseName );
-
-					// if you hit this break your base class is not registered yet!
-					HELIUM_ASSERT( info->m_Base );
-
-					// populate base classes' derived class list (unregister will remove it)
-					info->m_Base->AddDerived( info );
-				}
-
-				// c++ can give us the address of base class static functions,
-				//  so check each base class to see if this is really a base class enumerate function
-				bool baseAccept = false;
-				{
-					const Reflect::Composite* base = info->m_Base;
-					while ( !baseAccept && base )
-					{
-						if (base)
-						{
-							baseAccept = base->m_Populate && base->m_Populate == populate;
-							base = base->m_Base;
-						}
-						else
-						{
-							HELIUM_BREAK(); // if you hit this break your base class is not registered yet!
-							baseName = NULL;
-						}
-					}
-				}
-
-				// if our enumerate function isn't one from a base class
-				if ( !baseAccept )
-				{
-					// the accept function will populate our field data
-					info->m_Populate = populate;
-				}
-
-				// populate reflection information
-				if ( info->m_Populate )
-				{
-					info->m_Populate( *info );
-				}
-			}
-
-			// Overloaded functions from Type
+			// overloaded functions from Type
 			virtual void Register() const HELIUM_OVERRIDE;
 			virtual void Unregister() const HELIUM_OVERRIDE;
 
-			// Inheritance Hierarchy
+			// inheritance hierarchy
 			bool IsType(const Composite* type) const;
 			void AddDerived( const Composite* derived ) const;
 			void RemoveDerived( const Composite* derived ) const;
 
-			//
-			// Equals compares all reflect-aware data, this is only really safe for data types, since
-			//  users could add non-reflect aware fields that would not be used in the comparison.
-			//  We could possibly use the default comparison operator (if the compiler generates one)
-			//  to affirm that non-reflect aware fields are equals, but this would not work for non-reflect
-			//  aware field pointers (since their pointer values would be used by the comparison operator).
-			//
-
+			// Compare two composite instances of *this* type
 			bool Equals( void* a, void* b ) const;
 
-			//
-			// Visits fields recursively, used to interactively traverse structures
-			//
-
+			// visits fields recursively, used to interactively traverse structures
 			void Visit( void* instance, Visitor& visitor ) const;
 
-			// 
-			// Copies data from one instance to another by finding a common base class and cloning all of the
-			//  fields from the source object into the destination object.
-			// 
-
+			// copies data from one instance to another by finding a common base class and cloning all of the fields from the source object into the destination object.
 			void Copy( void* source, void* destination ) const;
 
-			//
-			// Find a field in this composite
-			//
-
+			// find a field in this composite
 			const Field* FindFieldByName(uint32_t crc) const;
 			const Field* FindFieldByIndex(uint32_t index) const;
 			const Field* FindFieldByOffset(uint32_t offset) const;
 
-			// 
-			// Finds the field info given a pointer to a member variable on a class.
-			// FieldT is the member variable's type and CompositeT is the class that the 
-			// member variable belongs to.
-			// 
-
+			// finds the field info given a pointer to a member variable on a class.
 			template< class CompositeT, typename FieldT >
-			const Field* FindField( FieldT CompositeT::* pointerToMember ) const
-			{
-				return FindFieldByOffset( Reflect::Composite::GetOffset<CompositeT, FieldT>( pointerToMember ) );
-			}
-
-			//
-			// Add fields to the composite
-			//
+			const Field* FindField( FieldT CompositeT::* pointerToMember ) const;
 
 			// computes the number of fields in all our base classes (the base index for our fields)
 			uint32_t GetBaseFieldCount() const;
@@ -202,113 +140,13 @@ namespace Helium
 			// concrete field population functions, called from template functions below with deducted data
 			Reflect::Field* AddField( const tchar_t* name, const uint32_t offset, uint32_t size, Data* data, const Type* type = NULL, int32_t flags = 0 );
 
-			//
-			// Reflection Generation Functions
-			//
-
+			// compute the offset from the 'this' pointer for the specified pointer-to-member
 			template < class CompositeT, class FieldT >
-			static inline uint32_t GetOffset( FieldT CompositeT::* field )
-			{
-				return (uint32_t) (uintptr_t) &( ((CompositeT*)NULL)->*field); 
-			}
+			static inline uint32_t GetOffset( FieldT CompositeT::* field );
 
+			// deduce and allocate the appropriate data object and append field data to the composite
 			template < class CompositeT, class FieldT >
-			inline Reflect::Field* AddField( FieldT CompositeT::* field, const tchar_t* name, int32_t flags = 0, Data* data = AllocateData<FieldT>() )
-			{
-				return AddField( name, GetOffset(field), sizeof(FieldT), data, NULL, flags );
-			}
-
-#ifdef REFLECT_REFACTOR
-			template < class CompositeT, class ObjectT >
-			inline Reflect::Field* AddObject( StrongPtr< ObjectT > CompositeT::* field, const tchar_t* name, int32_t flags = 0 )
-			{
-				return AddField( name, GetOffset(field), sizeof(uintptr_t), new ObjectT::PointerDataClass, Reflect::GetClass<ObjectT>(), flags );
-			}
-
-			template < class CompositeT, class ObjectT >
-			inline Reflect::Field* AddField( std::vector< StrongPtr< ObjectT > > CompositeT::* field, const tchar_t* name, int32_t flags = 0 )
-			{
-				return AddField(
-					name,
-					GetOffset(field),
-					sizeof(std::vector< StrongPtr< ObjectT > >),
-					Reflect::GetClass<Reflect::ObjectStlVectorData>(),
-					Reflect::GetClass<ObjectT>(),
-					flags );
-			}
-
-			template < class CompositeT, class ObjectT >
-			inline Reflect::Field* AddField( std::set< StrongPtr< ObjectT > > CompositeT::* field, const tchar_t* name, int32_t flags = 0 )
-			{
-				return AddField(
-					name,
-					GetOffset(field),
-					sizeof(std::set< StrongPtr< ObjectT > >),
-					Reflect::GetClass<Reflect::ObjectStlSetData>(),
-					Reflect::GetClass<ObjectT>(),
-					flags );
-			}
-
-			template < class CompositeT, class KeyT, class ObjectT >
-			inline Reflect::Field* AddField( std::map< KeyT, StrongPtr< ObjectT > > CompositeT::* field, const tchar_t* name, int32_t flags = 0 )
-			{
-				return AddField( 
-					name, 
-					GetOffset(field), 
-					sizeof(std::map< KeyT, StrongPtr< ObjectT > >), 
-					Reflect::GetClass<Reflect::SimpleObjectStlMapData< KeyT > >(), 
-					Reflect::GetClass<ObjectT>(), 
-					flags );
-			}
-
-			template < class CompositeT, class FieldT >
-			inline Reflect::Field* AddStructureField( FieldT CompositeT::* field, const tchar_t* name, int32_t flags = 0 )
-			{
-				return AddField(
-					name,
-					GetOffset(field),
-					sizeof(FieldT),
-					Reflect::GetClass<Reflect::StructureData>(),
-					Reflect::GetStructure<FieldT>(),
-					flags );
-			}
-
-			template < class CompositeT, class FieldT >
-			inline Reflect::Field* AddStructureField( DynamicArray< FieldT > CompositeT::* field, const tchar_t* name, int32_t flags = 0 )
-			{
-				return AddField(
-					name,
-					GetOffset(field),
-					sizeof(DynamicArray< FieldT >),
-					Reflect::GetClass<Reflect::StructureDynamicArrayData>(),
-					Reflect::GetStructure<FieldT>(),
-					flags );
-			}
-
-			template < class CompositeT, class FieldT >
-			inline Reflect::Field* AddEnumerationField( FieldT CompositeT::* field, const tchar_t* name, int32_t flags = 0 )
-			{
-				return AddField(
-					name,
-					GetOffset(field),
-					sizeof(FieldT),
-					Reflect::GetClass<Reflect::EnumerationData>(),
-					Reflect::GetEnumeration<FieldT>(),
-					flags );
-			}
-
-			template < class CompositeT, class EnumT, class FieldT >
-			inline Reflect::Field* AddBitfieldField( FieldT CompositeT::* field, const tchar_t* name, int32_t flags = 0 )
-			{
-				return AddField(
-					name,
-					GetOffset(field),
-					sizeof(FieldT),
-					Reflect::GetClass<Reflect::BitfieldData>(),
-					Reflect::GetEnumeration<EnumT>(),
-					flags );
-			}
-#endif
+			inline Reflect::Field* AddField( FieldT CompositeT::* field, const tchar_t* name, int32_t flags = 0, Data* data = AllocateData<FieldT>() );
 
 		public:
 			const Composite*                        m_Base;                 // the base type name
@@ -318,5 +156,81 @@ namespace Helium
 			PopulateCompositeFunc                   m_Populate;             // function to populate this structure
 			void*                                   m_Default;              // default instance
 		};
+
+		template< class ClassT, class BaseT >
+		class StructureRegistrar : public TypeRegistrar
+		{
+		public:
+			StructureRegistrar(const tchar_t* name);
+			~StructureRegistrar();
+
+			virtual void Register();
+			virtual void Unregister();
+		};
+
+		template< class ClassT >
+		class StructureRegistrar< ClassT, void > : public TypeRegistrar
+		{
+		public:
+			StructureRegistrar(const tchar_t* name);
+			~StructureRegistrar();
+
+			virtual void Register();
+			virtual void Unregister();
+		};
 	}
 }
+
+// declares type checking functions
+#define _REFLECT_DECLARE_BASE_STRUCTURE( STRUCTURE ) \
+public: \
+typedef STRUCTURE This; \
+static const Helium::Reflect::Composite* CreateComposite(); \
+static const Helium::Reflect::Composite* s_Composite; \
+static Helium::Reflect::StructureRegistrar< STRUCTURE, void > s_Registrar;
+
+#define _REFLECT_DECLARE_DERIVED_STRUCTURE( STRUCTURE, BASE ) \
+public: \
+typedef BASE Base; \
+typedef STRUCTURE This; \
+static const Helium::Reflect::Composite* CreateComposite(); \
+static const Helium::Reflect::Composite* s_Composite; \
+static Helium::Reflect::StructureRegistrar< STRUCTURE, BASE > s_Registrar;
+
+// defines the static type info vars
+#define _REFLECT_DEFINE_BASE_STRUCTURE( STRUCTURE ) \
+const Helium::Reflect::Structure* STRUCTURE::CreateComposite() \
+{ \
+	HELIUM_ASSERT( s_Composite == NULL ); \
+	Helium::Reflect::Structure::Create<STRUCTURE>( s_Composite, TXT( #STRUCTURE ), NULL ); \
+	return s_Composite; \
+} \
+const Helium::Reflect::Structure* STRUCTURE::s_Composite = NULL; \
+Helium::Reflect::StructureRegistrar< STRUCTURE, void > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
+
+#define _REFLECT_DEFINE_DERIVED_STRUCTURE( STRUCTURE ) \
+const Helium::Reflect::Structure* STRUCTURE::CreateComposite() \
+{ \
+	HELIUM_ASSERT( s_Composite == NULL ); \
+	HELIUM_ASSERT( STRUCTURE::Base::s_Composite != NULL ); \
+	Helium::Reflect::Structure::Create<STRUCTURE>( s_Composite, TXT( #STRUCTURE ), STRUCTURE::Base::s_Composite->m_Name ); \
+	return s_Composite; \
+} \
+const Helium::Reflect::Composite* STRUCTURE::s_Composite = NULL; \
+Helium::Reflect::StructureRegistrar< STRUCTURE, STRUCTURE::Base > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
+
+// declares a concrete object with creator
+#define REFLECT_DECLARE_BASE_STRUCTURE( STRUCTURE ) \
+	_REFLECT_DECLARE_BASE_STRUCTURE( STRUCTURE )
+
+#define REFLECT_DECLARE_DERIVED_STRUCTURE( STRUCTURE, BASE ) \
+	_REFLECT_DECLARE_DERIVED_STRUCTURE( STRUCTURE, BASE )
+
+// defines a concrete object
+#define REFLECT_DEFINE_BASE_STRUCTURE( STRUCTURE ) \
+	_REFLECT_DEFINE_BASE_STRUCTURE( STRUCTURE )
+
+#define REFLECT_DEFINE_DERIVED_STRUCTURE( STRUCTURE ) \
+	_REFLECT_DEFINE_DERIVED_STRUCTURE( STRUCTURE  )
+
+#include "Reflect/Composite.inl"

@@ -10,7 +10,7 @@ namespace Helium
 {
     namespace Reflect
     {
-        class Structure;
+        struct Structure;
         class Field;
 
         class HELIUM_REFLECT_API Visitor : public Helium::AtomicRefCountBase< Visitor >, NonCopyable
