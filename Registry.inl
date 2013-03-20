@@ -4,6 +4,12 @@ const Helium::Reflect::Type* Helium::Reflect::Registry::GetType( const tchar_t* 
     return GetType( crc );
 }
 
+const Helium::Reflect::Composite* Helium::Reflect::Registry::GetComposite( const tchar_t* name ) const
+{
+    uint32_t crc = Crc32( name );
+    return GetComposite( crc );
+}
+
 const Helium::Reflect::Class* Helium::Reflect::Registry::GetClass( const tchar_t* name ) const
 {
     uint32_t crc = Crc32( name );
