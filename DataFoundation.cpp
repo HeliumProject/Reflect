@@ -21,12 +21,12 @@ bool StringData::Equals( DataInstance a, DataInstance b )
 	return left == right;
 }
 
-void StringData::Serialize( DataInstance i, String& string, ObjectIdentifier& identifier )
+void StringData::Print( DataInstance i, String& string, ObjectIdentifier& identifier )
 {
 	string = i.As<String>();
 }
 
-void StringData::Deserialize( DataInstance i, const String& string, ObjectResolver& resolver, bool raiseChanged )
+void StringData::Parse( const String& string, DataInstance i, ObjectResolver& resolver, bool raiseChanged )
 {
 	i.As<String>() = string;
 }

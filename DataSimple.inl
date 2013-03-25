@@ -24,7 +24,7 @@ void Helium::Reflect::SimpleData<T>::Accept( DataInstance i, Visitor& visitor )
 }
 
 template< class T >
-void Helium::Reflect::SimpleData<T>::Serialize( DataInstance i, String& string, ObjectIdentifier& identifier )
+void Helium::Reflect::SimpleData<T>::Print( DataInstance i, String& string, ObjectIdentifier& identifier )
 {
 	HELIUM_COMPILE_ASSERT( std::is_fundamental< T >::value );
 
@@ -34,7 +34,7 @@ void Helium::Reflect::SimpleData<T>::Serialize( DataInstance i, String& string, 
 }
 
 template< class T >
-void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, const String& string, ObjectResolver& resolver, bool raiseChanged )
+void Helium::Reflect::SimpleData<T>::Parse( const String& string, DataInstance i, ObjectResolver& resolver, bool raiseChanged )
 {
 	HELIUM_COMPILE_ASSERT( std::is_fundamental< T >::value );
 
@@ -47,7 +47,7 @@ void Helium::Reflect::SimpleData<T>::Deserialize( DataInstance i, const String& 
 //
 
 template<>
-inline void Helium::Reflect::SimpleData<uint8_t>::Serialize( DataInstance i, String& string, ObjectIdentifier& identifier )
+inline void Helium::Reflect::SimpleData<uint8_t>::Print( DataInstance i, String& string, ObjectIdentifier& identifier )
 {
 	uint16_t v = i.As<uint8_t>();
 
@@ -57,7 +57,7 @@ inline void Helium::Reflect::SimpleData<uint8_t>::Serialize( DataInstance i, Str
 }
 
 template<>
-inline void Helium::Reflect::SimpleData<uint8_t>::Deserialize( DataInstance i, const String& string, ObjectResolver& resolver, bool raiseChanged )
+inline void Helium::Reflect::SimpleData<uint8_t>::Parse( const String& string, DataInstance i, ObjectResolver& resolver, bool raiseChanged )
 {
 	std::stringstream str ( string.GetData() );
 	uint16_t v = 0;
@@ -67,7 +67,7 @@ inline void Helium::Reflect::SimpleData<uint8_t>::Deserialize( DataInstance i, c
 }
 
 template<>
-inline void Helium::Reflect::SimpleData<int8_t>::Serialize( DataInstance i, String& string, ObjectIdentifier& identifier )
+inline void Helium::Reflect::SimpleData<int8_t>::Print( DataInstance i, String& string, ObjectIdentifier& identifier )
 {
 	int16_t v = i.As<int8_t>();
 
@@ -77,7 +77,7 @@ inline void Helium::Reflect::SimpleData<int8_t>::Serialize( DataInstance i, Stri
 }
 
 template<>
-inline void Helium::Reflect::SimpleData<int8_t>::Deserialize( DataInstance i, const String& string, ObjectResolver& resolver, bool raiseChanged )
+inline void Helium::Reflect::SimpleData<int8_t>::Parse( const String& string, DataInstance i, ObjectResolver& resolver, bool raiseChanged )
 {
 	std::stringstream str ( string.GetData() );
 	int16_t v = 0;

@@ -127,9 +127,11 @@ namespace Helium
 		public:
 			REFLECTION_TYPE( ReflectionTypes::ScalarData, ScalarData, Data );
 
-			// string serialization
-			virtual void Serialize( DataInstance i, String& string, ObjectIdentifier& identifier ) = 0;
-			virtual void Deserialize( DataInstance i, const String& string, ObjectResolver& resolver, bool raiseChanged ) = 0;
+			// value -> string
+			virtual void Print( DataInstance i, String& string, ObjectIdentifier& identifier ) = 0;
+
+			// string -> value
+			virtual void Parse( const String& string, DataInstance i, ObjectResolver& resolver, bool raiseChanged ) = 0;
 		};
 
 		//
