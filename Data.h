@@ -14,51 +14,6 @@ namespace Helium
 {
 	namespace Reflect
 	{
-		namespace ScalarDataTypes
-		{
-			enum Type
-			{
-				Invalid = 0,
-				Integer,
-				FloatingPoint,
-				String,
-				Count,
-			};
-		}
-		typedef ScalarDataTypes::Type ScalarDataType;
-
-		namespace ContainerDataTypes
-		{
-			enum Type
-			{
-				Invalid = 0,
-				Set,
-				Sequence,
-				Association,
-				Count,
-			};
-		}
-		typedef ContainerDataTypes::Type ContainerDataType;
-
-		class HELIUM_REFLECT_API DataHeader
-		{
-		public:
-			inline DataHeader();
-			inline bool operator==( const DataHeader& rhs ) const;
-			inline void Serialize( Stream& stream ) const;
-			inline void Deserialize( Stream& stream );
-
-			template< class T > uint32_t GetLength( uint32_t extra = 0 ) const;
-			template< class T > uint32_t SetLength( uint32_t extra = 0 );
-			
-			uint32_t	m_Length;
-			uint8_t		m_ContainerType;
-			uint8_t		m_ValueType;
-			uint8_t		m_KeyType;
-			uint8_t		m_Pad;
-		};
-		HELIUM_COMPILE_ASSERT( sizeof( DataHeader ) == 8 );
-
 		//
 		// A pointer to some typed data (owned by the object itself or someone else
 		//
@@ -68,17 +23,23 @@ namespace Helium
 		class HELIUM_REFLECT_API DataInstance
 		{
 		public:
-			inline DataInstance();
-			inline DataInstance( void* instance, const Field* field );
+			// compute address from base and field combination
+			inline DataInstance( const Field* field, Object* object );
+			inline DataInstance( Structure* baseAddress, const Field* field, Object* object );
+			inline DataInstance( void* finalAddress, const Field* field, Object* object );
+
+			// copy constructor to support pass-by-value
+			inline DataInstance( const DataInstance& rhs );
 
 			// resolve the actual memory address of the data
-			template< class T > T* GetAddress( uintptr_t offsetInField = 0 ) const;
+			template< class T > T& As() const;
 
 			// if we point to an object, notify the host object that it was changed (if doIt is true)
 			inline void RaiseChanged( bool doIt = true ) const;
 
-			void*			m_Instance;
+			Object*			m_Object;
 			const Field*	m_Field;
+			void*			m_Address;
 		};
 
 		//
@@ -165,10 +126,6 @@ namespace Helium
 		{
 		public:
 			REFLECTION_TYPE( ReflectionTypes::ScalarData, ScalarData, Data );
-
-			// binary serialization
-			virtual void Serialize( DataInstance i, Stream& stream, ObjectIdentifier& identifier ) = 0;
-			virtual void Deserialize( DataInstance i, Stream& stream, ObjectResolver& resolver, bool raiseChanged ) = 0;
 
 			// string serialization
 			virtual void Serialize( DataInstance i, String& string, ObjectIdentifier& identifier ) = 0;

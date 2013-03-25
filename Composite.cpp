@@ -24,14 +24,14 @@ Field::Field()
 
 }
 
-bool Field::IsDefaultValue( void* instance ) const
+bool Field::IsDefaultValue( void* address, Object* object ) const
 {
-	DataInstance i ( instance, this );
-	DataInstance d ( m_Composite->m_Default, this );
+	DataInstance i ( address, this, object );
+	DataInstance d ( m_Composite->m_Default, this, object );
 	return m_Data->Equals( i, d );
 }
 
-bool Field::ShouldSerialize( void* instance ) const
+bool Field::ShouldSerialize( void* address, Object* object ) const
 {
 	// never write discard fields
 	if ( m_Flags & FieldFlags::Discard )
@@ -45,7 +45,7 @@ bool Field::ShouldSerialize( void* instance ) const
 		return true;
 	}
 
-	return !IsDefaultValue( instance );
+	return !IsDefaultValue( address, object );
 }
 
 Composite::Composite()
@@ -136,14 +136,14 @@ void Composite::RemoveDerived( const Composite* derived ) const
 	derived->m_NextSibling = NULL;
 }
 
-bool Composite::Equals(void* a, void* b) const
+bool Composite::Equals(void* addressA, Object* objectA, void* addressB, Object* objectB) const
 {
-	if (a == b)
+	if (addressA == addressB)
 	{
 		return true;
 	}
 
-	if (!a || !b)
+	if (!addressA || !addressB)
 	{
 		return false;
 	}
@@ -153,8 +153,8 @@ bool Composite::Equals(void* a, void* b) const
 	for ( ; itr != end; ++itr )
 	{
 		const Field* field = &*itr;
-		DataInstance aData ( a, field );
-		DataInstance bData ( b, field );
+		DataInstance aData ( addressA, field, objectA );
+		DataInstance bData ( addressB, field, objectB );
 		bool equality = field->m_Data->Equals( aData, bData );
 		if ( !equality )
 		{
@@ -165,9 +165,9 @@ bool Composite::Equals(void* a, void* b) const
 	return true;
 }
 
-void Composite::Visit(void* instance, Visitor& visitor) const
+void Composite::Visit(void* address, Object* object, Visitor& visitor) const
 {
-	if (!instance)
+	if (!address)
 	{
 		return;
 	}
@@ -178,18 +178,13 @@ void Composite::Visit(void* instance, Visitor& visitor) const
 	{
 		const Field* field = &*itr;
 
-		if ( !visitor.VisitField( instance, field ) )
-		{
-			continue;
-		}
-
-		field->m_Data->Accept( DataInstance ( instance, field ), visitor );
+		field->m_Data->Accept( DataInstance ( address, field, object ), visitor );
 	}
 }
 
-void Composite::Copy( void* source, void* destination ) const
+void Composite::Copy( void* addressSource, Object* objectSource, void* addressDestination, Object* objectDestination ) const
 {
-	if ( source != destination )
+	if ( addressSource != addressDestination )
 	{
 		DynamicArray< Field >::ConstIterator itr = m_Fields.Begin();
 		DynamicArray< Field >::ConstIterator end = m_Fields.End();
@@ -198,8 +193,8 @@ void Composite::Copy( void* source, void* destination ) const
 			const Field* field = &*itr;
 
 			// create data objects
-			DataInstance lhs ( destination, field );
-			DataInstance rhs ( source, field );
+			DataInstance lhs ( addressDestination, field, objectDestination );
+			DataInstance rhs ( addressSource, field, objectSource );
 
 			// for normal data types, run overloaded assignement operator via data's vtable
 			// for reference container types, this deep copies containers (which is bad for 

@@ -56,10 +56,10 @@ namespace Helium
 			Field();
 
 			// allocate and connect to the default
-			bool IsDefaultValue( void* instance ) const;
+			bool IsDefaultValue( void* address, Object* object ) const;
 
 			// determine if this field should be serialized
-			bool ShouldSerialize( void* instance ) const;
+			bool ShouldSerialize( void* address, Object* object ) const;
 
 			const Composite*        m_Composite;    // the type we are a field of
 			const tchar_t*          m_Name;         // name of this field
@@ -117,13 +117,13 @@ namespace Helium
 			void RemoveDerived( const Composite* derived ) const;
 
 			// Compare two composite instances of *this* type
-			bool Equals( void* a, void* b ) const;
+			bool Equals( void* addressA, Object* objectA, void* addressB, Object* objectB ) const;
 
 			// visits fields recursively, used to interactively traverse structures
-			void Visit( void* instance, Visitor& visitor ) const;
+			void Visit( void* address, Object* object, Visitor& visitor ) const;
 
 			// copies data from one instance to another by finding a common base class and cloning all of the fields from the source object into the destination object.
-			void Copy( void* source, void* destination ) const;
+			void Copy( void* addressSource, Object* objectSource, void* addressDestination, Object* objectDestination ) const;
 
 			// find a field in this composite
 			const Field* FindFieldByName(uint32_t crc) const;

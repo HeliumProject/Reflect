@@ -239,14 +239,14 @@ void Object::Accept( Visitor& visitor )
 
     const Class* type = GetClass();
 
-    type->Visit( this, visitor );
+    type->Visit( this, this, visitor );
 }
 
 bool Object::Equals( Object* object )
 {
     const Class* type = GetClass();
 
-    return type->Equals( this, object );
+    return type->Equals( this, this, object, object );
 }
 
 void Object::CopyTo( Object* object )
@@ -289,7 +289,7 @@ void Object::CopyTo( Object* object )
             }
         }
 
-        type->Copy( this, object );
+        type->Copy( this, this, object, object );
     }
 }
 
@@ -301,7 +301,7 @@ ObjectPtr Object::Clone()
     clone->PreDeserialize( NULL );
 
     const Class* type = GetClass();
-    type->Copy( this, clone );
+    type->Copy( this, this, clone, clone );
 
     clone->PostDeserialize( NULL );
     PostSerialize( NULL );

@@ -15,10 +15,6 @@ namespace Helium
 			virtual bool Copy( DataInstance src, DataInstance dest, uint32_t flags ) HELIUM_OVERRIDE;
 			virtual bool Equals( DataInstance a, DataInstance b ) HELIUM_OVERRIDE;
 			virtual void Accept( DataInstance i, Visitor& visitor ) HELIUM_OVERRIDE;
-
-			virtual void Serialize( DataInstance i, Stream& stream, ObjectIdentifier& identifier ) HELIUM_OVERRIDE;
-			virtual void Deserialize( DataInstance i, Stream& stream, ObjectResolver& resolver, bool raiseChanged ) HELIUM_OVERRIDE;
-
 			virtual void Serialize( DataInstance i, String& string, ObjectIdentifier& identifier) HELIUM_OVERRIDE;
 			virtual void Deserialize( DataInstance i, const String& string, ObjectResolver& resolver, bool raiseChanged ) HELIUM_OVERRIDE;
 		};
