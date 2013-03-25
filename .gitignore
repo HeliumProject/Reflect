@@ -1,0 +1,11 @@
+# posix
+*.o
+*.a
+*.so
+
+# windows
+*.obj
+*.lib
+*.dll
+*.pdb
+*.ilk
