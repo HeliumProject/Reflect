@@ -91,6 +91,38 @@ void ObjectRefCountSupport::Release( RefCountProxy< Object >* pProxy )
 /// This should only be called immediately prior to application exit.
 void ObjectRefCountSupport::Shutdown()
 {
+#if HELIUM_ENABLE_MEMORY_TRACKING
+    ConcurrentHashSet< RefCountProxy< Reflect::Object >* >::ConstAccessor refCountProxyAccessor;
+    if( Reflect::ObjectRefCountSupport::GetFirstActiveProxy( refCountProxyAccessor ) )
+    {
+        HELIUM_TRACE(
+            TraceLevels::Error,
+            TXT( "%" ) TPRIuSZ TXT( " reference counted object(s) still active during shutdown!\n" ),
+            Reflect::ObjectRefCountSupport::GetActiveProxyCount() );
+  
+#if 0
+        refCountProxyAccessor.Release();
+#else
+        Reflect::ObjectRefCountSupport::GetFirstActiveProxy( refCountProxyAccessor );
+        while( refCountProxyAccessor.IsValid() )
+        {
+            RefCountProxy< Reflect::Object >* pProxy = *refCountProxyAccessor;
+            HELIUM_ASSERT( pProxy );
+
+            HELIUM_TRACE(
+                TraceLevels::Error,
+                TXT( "   - 0x%p: (%" ) TPRIu16 TXT( " strong ref(s), %" ) TPRIu16 TXT( " weak ref(s))\n" ),
+                pProxy,
+                pProxy->GetStrongRefCount(),
+                pProxy->GetWeakRefCount() );
+
+            ++refCountProxyAccessor;
+        }
+        refCountProxyAccessor.Release();
+#endif
+    }
+#endif  // HELIUM_ENABLE_MEMORY_TRACKING
+
     delete sm_pStaticData;
     sm_pStaticData = NULL;
 }
