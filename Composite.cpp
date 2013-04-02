@@ -148,17 +148,20 @@ bool Composite::Equals(void* addressA, Object* objectA, void* addressB, Object* 
 		return false;
 	}
 
-	DynamicArray< Field >::ConstIterator itr = m_Fields.Begin();
-	DynamicArray< Field >::ConstIterator end = m_Fields.End();
-	for ( ; itr != end; ++itr )
+	for ( const Composite* current = this; current != NULL; current = current->m_Base )
 	{
-		const Field* field = &*itr;
-		DataInstance aData ( addressA, field, objectA );
-		DataInstance bData ( addressB, field, objectB );
-		bool equality = field->m_Data->Equals( aData, bData );
-		if ( !equality )
+		DynamicArray< Field >::ConstIterator itr = current->m_Fields.Begin();
+		DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
+		for ( ; itr != end; ++itr )
 		{
-			return false;
+			const Field* field = &*itr;
+			DataInstance aData ( addressA, field, objectA );
+			DataInstance bData ( addressB, field, objectB );
+			bool equality = field->m_Data->Equals( aData, bData );
+			if ( !equality )
+			{
+				return false;
+			}
 		}
 	}
 
@@ -172,13 +175,16 @@ void Composite::Visit(void* address, Object* object, Visitor& visitor) const
 		return;
 	}
 
-	DynamicArray< Field >::ConstIterator itr = m_Fields.Begin();
-	DynamicArray< Field >::ConstIterator end = m_Fields.End();
-	for ( ; itr != end; ++itr )
+	for ( const Composite* current = this; current != NULL; current = current->m_Base )
 	{
-		const Field* field = &*itr;
+		DynamicArray< Field >::ConstIterator itr = current->m_Fields.Begin();
+		DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
+		for ( ; itr != end; ++itr )
+		{
+			const Field* field = &*itr;
 
-		field->m_Data->Accept( DataInstance ( address, field, object ), visitor );
+			field->m_Data->Accept( DataInstance ( address, field, object ), visitor );
+		}
 	}
 }
 
@@ -186,21 +192,24 @@ void Composite::Copy( void* addressSource, Object* objectSource, void* addressDe
 {
 	if ( addressSource != addressDestination )
 	{
-		DynamicArray< Field >::ConstIterator itr = m_Fields.Begin();
-		DynamicArray< Field >::ConstIterator end = m_Fields.End();
-		for ( ; itr != end; ++itr )
+		for ( const Composite* current = this; current != NULL; current = current->m_Base )
 		{
-			const Field* field = &*itr;
+			DynamicArray< Field >::ConstIterator itr = current->m_Fields.Begin();
+			DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
+			for ( ; itr != end; ++itr )
+			{
+				const Field* field = &*itr;
 
-			// create data objects
-			DataInstance lhs ( addressDestination, field, objectDestination );
-			DataInstance rhs ( addressSource, field, objectSource );
+				// create data objects
+				DataInstance lhs ( addressDestination, field, objectDestination );
+				DataInstance rhs ( addressSource, field, objectSource );
 
-			// for normal data types, run overloaded assignement operator via data's vtable
-			// for reference container types, this deep copies containers (which is bad for 
-			//  non-cloneable (FieldFlags::Share) reference containers)
-			bool result = field->m_Data->Copy(rhs, lhs, field->m_Flags & FieldFlags::Share ? DataFlags::Shallow : 0);
-			HELIUM_ASSERT(result);
+				// for normal data types, run overloaded assignement operator via data's vtable
+				// for reference container types, this deep copies containers (which is bad for 
+				//  non-cloneable (FieldFlags::Share) reference containers)
+				bool result = field->m_Data->Copy(rhs, lhs, field->m_Flags & FieldFlags::Share ? DataFlags::Shallow : 0);
+				HELIUM_ASSERT(result);
+			}
 		}
 	}
 }
