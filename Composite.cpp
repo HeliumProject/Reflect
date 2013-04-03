@@ -188,31 +188,34 @@ bool Composite::Equals(void* a, void* b) const
         return false;
     }
 
-    DynamicArray< Field >::ConstIterator itr = m_Fields.Begin();
-    DynamicArray< Field >::ConstIterator end = m_Fields.End();
-    for ( ; itr != end; ++itr )
-    {
-        const Field* field = &*itr;
+    for ( const Composite* current = this; current != NULL; current = current->m_Base )
+	{
+		DynamicArray< Field >::ConstIterator itr = current->m_Fields.Begin();
+		DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
+		for ( ; itr != end; ++itr )
+		{
+			const Field* field = &*itr;
 
-        // create data objects
-        DataPtr aData = field->CreateData();
-        DataPtr bData = field->CreateData();
+			// create data objects
+			DataPtr aData = field->CreateData();
+			DataPtr bData = field->CreateData();
 
-        // connnect
-        aData->ConnectField(a, field);
-        bData->ConnectField(b, field);
+			// connnect
+			aData->ConnectField(a, field);
+			bData->ConnectField(b, field);
 
-        bool equality = aData->Equals( bData );
+			bool equality = aData->Equals( bData );
 
-        // disconnect
-        aData->Disconnect();
-        bData->Disconnect();
+			// disconnect
+			aData->Disconnect();
+			bData->Disconnect();
 
-        if ( !equality )
-        {
-            return false;
-        }
-    }
+			if ( !equality )
+			{
+				return false;
+			}
+		}
+	}
 
     return true;
 }
@@ -224,25 +227,28 @@ void Composite::Visit(void* instance, Visitor& visitor) const
         return;
     }
 
-    DynamicArray< Field >::ConstIterator itr = m_Fields.Begin();
-    DynamicArray< Field >::ConstIterator end = m_Fields.End();
-    for ( ; itr != end; ++itr )
-    {
-        const Field* field = &*itr;
+    for ( const Composite* current = this; current != NULL; current = current->m_Base )
+	{
+		DynamicArray< Field >::ConstIterator itr = current->m_Fields.Begin();
+		DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
+		for ( ; itr != end; ++itr )
+		{
+			const Field* field = &*itr;
 
-        if ( !visitor.VisitField( instance, field ) )
-        {
-            continue;
-        }
+			if ( !visitor.VisitField( instance, field ) )
+			{
+				continue;
+			}
 
-        DataPtr data = field->CreateData();
+			DataPtr data = field->CreateData();
 
-        data->ConnectField( instance, field );
+			data->ConnectField( instance, field );
 
-        data->Accept( visitor );
+			data->Accept( visitor );
 
-        data->Disconnect();
-    }
+			data->Disconnect();
+		}
+	}
 }
 
 void Composite::Copy( void* source, void* destination ) const
@@ -258,30 +264,33 @@ void Composite::Copy( void* source, void* destination ) const
         }
         else
         {
-            DynamicArray< Field >::ConstIterator itr = m_Fields.Begin();
-            DynamicArray< Field >::ConstIterator end = m_Fields.End();
-            for ( ; itr != end; ++itr )
-            {
-                const Field* field = &*itr;
+		    for ( const Composite* current = this; current != NULL; current = current->m_Base )
+			{
+				DynamicArray< Field >::ConstIterator itr = current->m_Fields.Begin();
+				DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
+				for ( ; itr != end; ++itr )
+				{
+					const Field* field = &*itr;
 
-                // create data objects
-                DataPtr lhs = field->CreateData();
-                DataPtr rhs = field->CreateData();
+					// create data objects
+					DataPtr lhs = field->CreateData();
+					DataPtr rhs = field->CreateData();
 
-                // connnect
-                lhs->ConnectField(destination, field);
-                rhs->ConnectField(source, field);
+					// connnect
+					lhs->ConnectField(destination, field);
+					rhs->ConnectField(source, field);
 
-                // for normal data types, run overloaded assignement operator via data's vtable
-                // for reference container types, this deep copies containers (which is bad for 
-                //  non-cloneable (FieldFlags::Share) reference containers)
-                bool result = lhs->Set(rhs, field->m_Flags & FieldFlags::Share ? DataFlags::Shallow : 0);
-                HELIUM_ASSERT(result);
+					// for normal data types, run overloaded assignement operator via data's vtable
+					// for reference container types, this deep copies containers (which is bad for 
+					//  non-cloneable (FieldFlags::Share) reference containers)
+					bool result = lhs->Set(rhs, field->m_Flags & FieldFlags::Share ? DataFlags::Shallow : 0);
+					HELIUM_ASSERT(result);
 
-                // disconnect
-                lhs->Disconnect();
-                rhs->Disconnect();
-            }
+					// disconnect
+					lhs->Disconnect();
+					rhs->Disconnect();
+				}
+			}
         }
     }
 }
