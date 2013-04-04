@@ -17,20 +17,20 @@ using namespace Helium::Reflect;
 /// Static reference count proxy management data.
 struct ObjectRefCountSupport::StaticData
 {
-    /// Number of proxy objects to allocate per block for the proxy pool.
-    static const size_t POOL_BLOCK_SIZE = 1024;
+	/// Number of proxy objects to allocate per block for the proxy pool.
+	static const size_t POOL_BLOCK_SIZE = 1024;
 
-    /// Proxy object pool.
-    ObjectPool< RefCountProxy< Object > > proxyPool;
+	/// Proxy object pool.
+	ObjectPool< RefCountProxy< Object > > proxyPool;
 #if HELIUM_ENABLE_MEMORY_TRACKING
-    /// Active reference count proxies.
-    ConcurrentHashSet< RefCountProxy< Object >* > activeProxySet;
+	/// Active reference count proxies.
+	ConcurrentHashSet< RefCountProxy< Object >* > activeProxySet;
 #endif
 
-    /// @name Construction/Destruction
-    //@{
-    StaticData();
-    //@}
+	/// @name Construction/Destruction
+	//@{
+	StaticData();
+	//@}
 };
 
 ObjectRefCountSupport::StaticData* ObjectRefCountSupport::sm_pStaticData = NULL;
@@ -45,26 +45,26 @@ ObjectRegistrar< Object, void > Object::s_Registrar( TXT("Object") );
 /// @see Release()
 RefCountProxy< Object >* ObjectRefCountSupport::Allocate()
 {
-    // Lazy initialization of the proxy management data.  Even though this isn't thread-safe, it should still be fine as
-    // the proxy system should be initialized from the main thread before any sub-threads are spawned (i.e. during
-    // startup type initialization).
-    StaticData* pStaticData = sm_pStaticData;
-    if( !pStaticData )
-    {
-        pStaticData = new StaticData;
-        HELIUM_ASSERT( pStaticData );
-        sm_pStaticData = pStaticData;
-    }
+	// Lazy initialization of the proxy management data.  Even though this isn't thread-safe, it should still be fine as
+	// the proxy system should be initialized from the main thread before any sub-threads are spawned (i.e. during
+	// startup type initialization).
+	StaticData* pStaticData = sm_pStaticData;
+	if( !pStaticData )
+	{
+		pStaticData = new StaticData;
+		HELIUM_ASSERT( pStaticData );
+		sm_pStaticData = pStaticData;
+	}
 
-    RefCountProxy< Object >* pProxy = pStaticData->proxyPool.Allocate();
-    HELIUM_ASSERT( pProxy );
+	RefCountProxy< Object >* pProxy = pStaticData->proxyPool.Allocate();
+	HELIUM_ASSERT( pProxy );
 
 #if HELIUM_ENABLE_MEMORY_TRACKING
-    ConcurrentHashSet< RefCountProxy< Object >* >::Accessor activeProxySetAccessor;
-    HELIUM_VERIFY( pStaticData->activeProxySet.Insert( activeProxySetAccessor, pProxy ) );
+	ConcurrentHashSet< RefCountProxy< Object >* >::Accessor activeProxySetAccessor;
+	HELIUM_VERIFY( pStaticData->activeProxySet.Insert( activeProxySetAccessor, pProxy ) );
 #endif
 
-    return pProxy;
+	return pProxy;
 }
 
 /// Release a reference count proxy back to the global pool.
@@ -74,16 +74,16 @@ RefCountProxy< Object >* ObjectRefCountSupport::Allocate()
 /// @see Allocate()
 void ObjectRefCountSupport::Release( RefCountProxy< Object >* pProxy )
 {
-    HELIUM_ASSERT( pProxy );
+	HELIUM_ASSERT( pProxy );
 
-    StaticData* pStaticData = sm_pStaticData;
-    HELIUM_ASSERT( pStaticData );
+	StaticData* pStaticData = sm_pStaticData;
+	HELIUM_ASSERT( pStaticData );
 
 #if HELIUM_ENABLE_MEMORY_TRACKING
-    HELIUM_VERIFY( pStaticData->activeProxySet.Remove( pProxy ) );
+	HELIUM_VERIFY( pStaticData->activeProxySet.Remove( pProxy ) );
 #endif
 
-    pStaticData->proxyPool.Release( pProxy );
+	pStaticData->proxyPool.Release( pProxy );
 }
 
 /// Release the name table and free all allocated memory.
@@ -92,39 +92,39 @@ void ObjectRefCountSupport::Release( RefCountProxy< Object >* pProxy )
 void ObjectRefCountSupport::Shutdown()
 {
 #if HELIUM_ENABLE_MEMORY_TRACKING
-    ConcurrentHashSet< RefCountProxy< Reflect::Object >* >::ConstAccessor refCountProxyAccessor;
-    if( Reflect::ObjectRefCountSupport::GetFirstActiveProxy( refCountProxyAccessor ) )
-    {
-        HELIUM_TRACE(
-            TraceLevels::Error,
-            TXT( "%" ) TPRIuSZ TXT( " reference counted object(s) still active during shutdown!\n" ),
-            Reflect::ObjectRefCountSupport::GetActiveProxyCount() );
+	ConcurrentHashSet< RefCountProxy< Reflect::Object >* >::ConstAccessor refCountProxyAccessor;
+	if( Reflect::ObjectRefCountSupport::GetFirstActiveProxy( refCountProxyAccessor ) )
+	{
+		HELIUM_TRACE(
+			TraceLevels::Error,
+			TXT( "%" ) TPRIuSZ TXT( " reference counted object(s) still active during shutdown!\n" ),
+			Reflect::ObjectRefCountSupport::GetActiveProxyCount() );
   
 #if 0
-        refCountProxyAccessor.Release();
+		refCountProxyAccessor.Release();
 #else
-        Reflect::ObjectRefCountSupport::GetFirstActiveProxy( refCountProxyAccessor );
-        while( refCountProxyAccessor.IsValid() )
-        {
-            RefCountProxy< Reflect::Object >* pProxy = *refCountProxyAccessor;
-            HELIUM_ASSERT( pProxy );
+		Reflect::ObjectRefCountSupport::GetFirstActiveProxy( refCountProxyAccessor );
+		while( refCountProxyAccessor.IsValid() )
+		{
+			RefCountProxy< Reflect::Object >* pProxy = *refCountProxyAccessor;
+			HELIUM_ASSERT( pProxy );
 
-            HELIUM_TRACE(
-                TraceLevels::Error,
-                TXT( "   - 0x%p: (%" ) TPRIu16 TXT( " strong ref(s), %" ) TPRIu16 TXT( " weak ref(s))\n" ),
-                pProxy,
-                pProxy->GetStrongRefCount(),
-                pProxy->GetWeakRefCount() );
+			HELIUM_TRACE(
+				TraceLevels::Error,
+				TXT( "   - 0x%p: (%" ) TPRIu16 TXT( " strong ref(s), %" ) TPRIu16 TXT( " weak ref(s))\n" ),
+				pProxy,
+				pProxy->GetStrongRefCount(),
+				pProxy->GetWeakRefCount() );
 
-            ++refCountProxyAccessor;
-        }
-        refCountProxyAccessor.Release();
+			++refCountProxyAccessor;
+		}
+		refCountProxyAccessor.Release();
 #endif
-    }
+	}
 #endif  // HELIUM_ENABLE_MEMORY_TRACKING
 
-    delete sm_pStaticData;
-    sm_pStaticData = NULL;
+	delete sm_pStaticData;
+	sm_pStaticData = NULL;
 }
 
 #if HELIUM_ENABLE_MEMORY_TRACKING
@@ -140,9 +140,9 @@ void ObjectRefCountSupport::Shutdown()
 /// @see GetFirstActiveProxy()
 size_t ObjectRefCountSupport::GetActiveProxyCount()
 {
-    HELIUM_ASSERT( sm_pStaticData );
+	HELIUM_ASSERT( sm_pStaticData );
 
-    return sm_pStaticData->activeProxySet.GetSize();
+	return sm_pStaticData->activeProxySet.GetSize();
 }
 
 /// Initialize a constant accessor to the first active reference count proxy.
@@ -154,11 +154,11 @@ size_t ObjectRefCountSupport::GetActiveProxyCount()
 ///
 /// @see GetActiveProxyCount()
 bool ObjectRefCountSupport::GetFirstActiveProxy(
-    ConcurrentHashSet< RefCountProxy< Object >* >::ConstAccessor& rAccessor )
+	ConcurrentHashSet< RefCountProxy< Object >* >::ConstAccessor& rAccessor )
 {
-    HELIUM_ASSERT( sm_pStaticData );
+	HELIUM_ASSERT( sm_pStaticData );
 
-    return sm_pStaticData->activeProxySet.First( rAccessor );
+	return sm_pStaticData->activeProxySet.First( rAccessor );
 }
 #endif
 
@@ -180,21 +180,20 @@ Object::~Object()
 
 void* Object::operator new( size_t bytes )
 {
-    Helium::DefaultAllocator allocator;
-    void* memory = Helium::AllocateAlignmentHelper( allocator, bytes );
-
-    return memory;
+	Helium::DefaultAllocator allocator;
+	void* memory = allocator.AllocateAligned( HELIUM_SIMD_ALIGNMENT, bytes );
+	return memory;
 }
 
 void* Object::operator new( size_t /*bytes*/, void* memory )
 {
-    return memory;
+	return memory;
 }
 
 void Object::operator delete( void *ptr, size_t bytes )
 {
-    Helium::DefaultAllocator allocator;
-    allocator.Free( ptr );
+	Helium::DefaultAllocator allocator;
+	allocator.FreeAligned( ptr );
 }
 
 void Object::operator delete( void* /*ptr*/, void* /*memory*/ )
@@ -214,26 +213,26 @@ void Object::PreDestroy()
 /// been cleared.  It should never be called manually.
 void Object::Destroy()
 {
-    delete this;
+	delete this;
 }
 
 const Reflect::Class* Object::GetClass() const
 {
-    return Reflect::GetClass<Object>();
+	return Reflect::GetClass<Object>();
 }
 
 bool Object::IsClass( const Reflect::Class* type ) const
 {
-    const Class* thisType = GetClass();
-    HELIUM_ASSERT( thisType );
-    return thisType->IsType( type );
+	const Class* thisType = GetClass();
+	HELIUM_ASSERT( thisType );
+	return thisType->IsType( type );
 }
 
 const Reflect::Class* Object::CreateClass()
 {
-    HELIUM_ASSERT( s_Class == NULL );
-    Class::Create<Object>( s_Class, TXT("Object"), NULL );
-    return s_Class;
+	HELIUM_ASSERT( s_Class == NULL );
+	Class::Create<Object>( s_Class, TXT("Object"), NULL );
+	return s_Class;
 }
 
 void Object::PopulateComposite( Reflect::Composite& comp )
@@ -243,7 +242,7 @@ void Object::PopulateComposite( Reflect::Composite& comp )
 
 ObjectPtr Object::GetTemplate() const
 {
-    return ObjectPtr();
+	return ObjectPtr();
 }
 
 void Object::PreSerialize( const Reflect::Field* field )
@@ -264,19 +263,19 @@ void Object::PostDeserialize( const Reflect::Field* field )
 
 void Object::Accept( Visitor& visitor )
 {
-    if ( !visitor.VisitObject( this ) )
-    {
-        return;
-    }
+	if ( !visitor.VisitObject( this ) )
+	{
+		return;
+	}
 
-    const Class* type = GetClass();
+	const Class* type = GetClass();
 
     type->Visit( this, this, visitor );
 }
 
 bool Object::Equals( Object* object )
 {
-    const Class* type = GetClass();
+	const Class* type = GetClass();
 
     return type->Equals( this, this, object, object );
 }
@@ -327,21 +326,21 @@ void Object::CopyTo( Object* object )
 
 ObjectPtr Object::Clone()
 {
-    ObjectPtr clone = Registry::GetInstance()->CreateInstance( GetClass() );
+	ObjectPtr clone = Registry::GetInstance()->CreateInstance( GetClass() );
 
-    PreSerialize( NULL );
-    clone->PreDeserialize( NULL );
+	PreSerialize( NULL );
+	clone->PreDeserialize( NULL );
 
     const Class* type = GetClass();
     type->Copy( this, this, clone, clone );
 
-    clone->PostDeserialize( NULL );
-    PostSerialize( NULL );
+	clone->PostDeserialize( NULL );
+	PostSerialize( NULL );
 
-    return clone;
+	return clone;
 }
 
 void Object::RaiseChanged( const Field* field ) const
 {
-    e_Changed.Raise( ObjectChangeArgs( this, field ) );
+	e_Changed.Raise( ObjectChangeArgs( this, field ) );
 }
