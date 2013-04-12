@@ -19,11 +19,11 @@ namespace Helium
 			virtual void Parse( const String& string, DataInstance i, ObjectResolver& resolver, bool raiseChanged ) HELIUM_OVERRIDE;
 		};
 
-		inline Data* AllocateData( const CharString& t )
+		inline Data* AllocateData( const CharString&, const CharString& )
 		{
 			return new StringData;
 		}
-		inline Data* AllocateData( const WideString& t )
+		inline Data* AllocateData( const WideString&, const WideString& )
 		{
 			throw Reflect::Exception("Wide strings are not supported");
 		}

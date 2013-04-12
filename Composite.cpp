@@ -13,13 +13,14 @@ using namespace Helium;
 using namespace Helium::Reflect;
 
 Field::Field()
-	: m_Composite( NULL )
-	, m_Name( NULL )
-	, m_Flags( 0 )
-	, m_Index( -1 )
-	, m_Type( NULL )
-	, m_Data( NULL )
-	, m_Offset( -1 )
+: m_Composite( NULL )
+, m_Name( NULL )
+, m_Size( 0 )
+, m_Count( 1 )
+, m_Offset( 0 )
+, m_Flags( 0 )
+, m_Index( ~0 )
+, m_Data( NULL )
 {
 
 }
@@ -283,27 +284,10 @@ uint32_t Composite::GetBaseFieldCount() const
 	return count;
 }
 
-Reflect::Field* Composite::AddField( const tchar_t* name, const uint32_t offset, uint32_t size, Data* data, const Type* type, int32_t flags )
+Reflect::Field* Composite::AddField( const tchar_t* name, uint32_t size, uint32_t count, uint32_t offset, uint32_t flags, Data* data )
 {
 	// deduction of the data class has failed, you must provide one yourself!
 	HELIUM_ASSERT( data );
-
-#ifdef REFLECT_REFACTOR
-	if ( data == Reflect::GetClass< PointerData >() )
-	{
-		const Class* classType = ReflectionCast< Class >( type );
-		[
-		// if you hit this, then you need to make sure you register your class before you register fields that are pointers of that type
-		HELIUM_ASSERT( classType != NULL );
-	}
-	else if ( data == Reflect::GetClass< EnumerationData >() || data == Reflect::GetClass< BitfieldData >() )
-	{
-		const Enumeration* enumerationType = ReflectionCast< Enumeration >( type );
-
-		// if you hit this, then you need to make sure you register your enums before you register objects that use them
-		HELIUM_ASSERT( enumerationType != NULL );
-	}
-#endif
 
 	Field field;
 	field.m_Composite = this;
@@ -312,7 +296,6 @@ Reflect::Field* Composite::AddField( const tchar_t* name, const uint32_t offset,
 	field.m_Offset = offset;
 	field.m_Flags = flags;
 	field.m_Index = GetBaseFieldCount() + (uint32_t)m_Fields.GetSize();
-	field.m_Type = type;
 	field.m_Data = data;
 	m_Fields.Add( field );
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <typeinfo>
+#include <type_traits>
 
 #include "Foundation/Attribute.h"
 #include "Foundation/DynamicArray.h"
@@ -8,24 +8,6 @@
 
 #include "Reflect/Type.h"
 #include "Reflect/Visitor.h"
-
-//
-//  Composite Binary format:
-//
-//  struct Field
-//  {
-//      int32_t name;               // string pool index of the name of this field
-//      int32_t serializer_id;      // string pool index of the name of the data type
-//  };
-//
-//  struct Composite
-//  {
-//      int32_t short_name;         // string pool index of the name for this type
-//      int32_t count;              // number of field infos to follow
-//      Field[] fields;             // field rtti data
-//      int32_t term;               // -1
-//  };
-//
 
 namespace Helium
 {
@@ -36,7 +18,7 @@ namespace Helium
 
 		namespace FieldFlags
 		{
-			enum Enum
+			enum Type
 			{
 				Discard     = 1 << 0,       // disposable fields are not serialized
 				Force       = 1 << 1,       // forced fields are always serialized
@@ -47,7 +29,7 @@ namespace Helium
 		}
 
 		//
-		// Field (an object of a composite)
+		// Field (member data of a composite)
 		//
 
 		class HELIUM_REFLECT_API Field : public PropertyCollection
@@ -61,14 +43,14 @@ namespace Helium
 			// determine if this field should be serialized
 			bool ShouldSerialize( void* address, Object* object ) const;
 
-			const Composite*        m_Composite;    // the type we are a field of
-			const tchar_t*          m_Name;         // name of this field
-			uint32_t                m_Size;         // the size of this field
-			uintptr_t               m_Offset;       // the offset to the field
-			uint32_t                m_Flags;        // flags for special behavior
-			uint32_t                m_Index;        // the unique id of this field
-			const Type*             m_Type;         // the type of this field (NULL for POD types)
-			Data*					m_Data;			// type id of the data to use
+			const Composite* m_Composite; // the type we are a field of
+			const tchar_t*   m_Name;      // name of this field
+			uint32_t         m_Size;      // the size of this field
+			uint32_t         m_Count;     // the static array size
+			uintptr_t        m_Offset;    // the offset to the field
+			uint32_t         m_Flags;     // flags for special behavior
+			uint32_t         m_Index;     // the unique id of this field
+			Data*            m_Data;      // type id of the data to use
 		};
 
 		//
@@ -138,23 +120,35 @@ namespace Helium
 			uint32_t GetBaseFieldCount() const;
 
 			// concrete field population functions, called from template functions below with deducted data
-			Reflect::Field* AddField( const tchar_t* name, const uint32_t offset, uint32_t size, Data* data, const Type* type = NULL, int32_t flags = 0 );
+			Reflect::Field* AddField( const tchar_t* name, uint32_t size, uint32_t count, uint32_t offset, uint32_t flags, Data* data );
 
 			// compute the offset from the 'this' pointer for the specified pointer-to-member
 			template < class CompositeT, class FieldT >
 			static inline uint32_t GetOffset( FieldT CompositeT::* field );
 
+			// compute the count of a static array
+			template < class T, size_t N >
+			static inline size_t GetArrayCount( T (&array)[N] );
+
+			// compute the count of a normal type (1)
+			template < class T >
+			static inline size_t GetCount( std::false_type /*is_array*/ );
+
+			// compute the count of an array type (1)
+			template < class T >
+			static inline size_t GetCount( std::true_type  /*is_array*/  );
+
 			// deduce and allocate the appropriate data object and append field data to the composite
 			template < class CompositeT, class FieldT >
-			inline Reflect::Field* AddField( FieldT CompositeT::* field, const tchar_t* name, int32_t flags = 0, Data* data = AllocateData<FieldT>() );
+			inline Reflect::Field* AddField( FieldT CompositeT::* field, const tchar_t* name, int32_t flags = 0, Data* data = NULL );
 
 		public:
-			const Composite*                        m_Base;                 // the base type name
-			mutable const Composite*                m_FirstDerived;         // head of the derived linked list, mutable since its populated by other objects
-			mutable const Composite*                m_NextSibling;          // next in the derived linked list, mutable since its populated by other objects
-			DynamicArray< Field >                   m_Fields;               // fields in this composite
-			PopulateCompositeFunc                   m_Populate;             // function to populate this structure
-			void*                                   m_Default;              // default instance
+			const Composite*         m_Base;         // the base type name
+			mutable const Composite* m_FirstDerived; // head of the derived linked list, mutable since its populated by other objects
+			mutable const Composite* m_NextSibling;  // next in the derived linked list, mutable since its populated by other objects
+			DynamicArray< Field >    m_Fields;       // fields in this composite
+			PopulateCompositeFunc    m_Populate;     // function to populate this structure
+			void*                    m_Default;      // default instance
 		};
 
 		template< class ClassT, class BaseT >

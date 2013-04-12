@@ -1,3 +1,7 @@
+//
+// Composite
+//
+
 template< class StructureT >
 void Helium::Reflect::Composite::Create( Composite const*& pointer, const tchar_t* name, const tchar_t* baseName )
 {
@@ -77,11 +81,39 @@ uint32_t Helium::Reflect::Composite::GetOffset( FieldT CompositeT::* field )
 	return (uint32_t) (uintptr_t) &( ((CompositeT*)NULL)->*field); 
 }
 
+template < class T, size_t N >
+size_t Helium::Reflect::Composite::GetArrayCount( T (&/* array */)[N] )
+{
+	return N;
+}
+
+template < class T >
+size_t Helium::Reflect::Composite::GetCount( std::false_type /* is_array */ )
+{
+	return 1;
+}
+
+template < class T >
+size_t Helium::Reflect::Composite::GetCount( std::true_type /* is_array */ )
+{
+	T temp;
+	return GetArrayCount( temp );
+}
+
 template < class CompositeT, class FieldT >
 Helium::Reflect::Field* Helium::Reflect::Composite::AddField( FieldT CompositeT::* field, const tchar_t* name, int32_t flags, Data* data )
 {
-	return AddField( name, GetOffset(field), sizeof(FieldT), data, NULL, flags );
+	if ( data == NULL )
+	{
+		data = AllocateData<FieldT>();
+	}
+
+	Field* field = AddField( name, sizeof(FieldT), GetCount( std::is_array< FieldT >::value ), GetOffset(field), flags, data );
 }
+
+//
+// StructureRegistrar
+//
 
 template< class StructureT, class BaseT >
 Helium::Reflect::StructureRegistrar< StructureT, BaseT >::StructureRegistrar(const tchar_t* name)

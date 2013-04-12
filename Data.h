@@ -209,16 +209,17 @@ namespace Helium
 		};
 
 		//
-		// Data class deduction function
-		//  This function gets overloaded with different arument types to select the appropriate data class
-		//  Function overloading semantics provide for easier selection of a type T than using templates
+		// Data class allocation
+		//  Function overloading semantics provide for easier selection of a type T than using only templates
+		//   The first parameter gets overloaded with different arument types for the compiler to select the appropriate function
+		//   The second parameter ensures the bare type in the template argument is available for further deduction
 		//
 
 		template< class T >
 		Data* AllocateData()
 		{
 			T t;
-			return AllocateData( t );
+			return AllocateData( t, t );
 		}
 	}
 }

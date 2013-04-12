@@ -15,7 +15,7 @@ namespace Helium
 		//  your derived struct type can use the memory this takes due to C/C++ standard
 		//  'Empty Base Optimization'
 		//
-		struct HELIUM_REFLECT_API Enum
+		struct HELIUM_REFLECT_API EnumerationBase
 		{
 		};
 

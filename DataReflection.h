@@ -94,7 +94,7 @@ namespace Helium
 #endif
 
 		template< class T >
-		Data* AllocateData( const StrongPtr< T >& t )
+		Data* AllocateData( const StrongPtr< T >&, const T& )
 		{
 #ifdef REFLECT_REFACTOR
 			PointerData* data = new PointerData;
@@ -131,7 +131,7 @@ namespace Helium
 #endif
 
 		template< class T >
-		Data* AllocateData( const Structure& t )
+		Data* AllocateData( const Structure&, const T& )
 		{
 #ifdef REFLECT_REFACTOR
 			StructureData* data = new StructureData;
