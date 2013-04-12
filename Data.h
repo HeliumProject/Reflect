@@ -218,7 +218,7 @@ namespace Helium
 		template< class T >
 		Data* AllocateData()
 		{
-			T t;
+			T t = T ();
 			return AllocateData( t, t );
 		}
 	}
