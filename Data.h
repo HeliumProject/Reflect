@@ -164,8 +164,8 @@ namespace Helium
 		public:
 			REFLECTION_TYPE( ReflectionTypes::ContainerData, ContainerData, Data );
 
-			virtual size_t GetSize() const = 0;
-			virtual void Clear() = 0;
+			virtual size_t GetSize( DataInstance i ) const = 0;
+			virtual void Clear( DataInstance i ) = 0;
 		};
 
 		//
