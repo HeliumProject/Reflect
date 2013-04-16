@@ -1,3 +1,20 @@
+template<> Helium::Reflect::SimpleData< uint8_t >::SimpleData()   : ScalarData( ScalarTypes::Unsigned8 ) {}
+template<> Helium::Reflect::SimpleData< uint16_t >::SimpleData()  : ScalarData( ScalarTypes::Unsigned16 ) {}
+template<> Helium::Reflect::SimpleData< uint32_t >::SimpleData()  : ScalarData( ScalarTypes::Unsigned32 ) {}
+template<> Helium::Reflect::SimpleData< uint64_t >::SimpleData()  : ScalarData( ScalarTypes::Unsigned64 ) {}
+template<> Helium::Reflect::SimpleData< int8_t >::SimpleData()    : ScalarData( ScalarTypes::Signed8 ) {}
+template<> Helium::Reflect::SimpleData< int16_t >::SimpleData()   : ScalarData( ScalarTypes::Signed16 ) {}
+template<> Helium::Reflect::SimpleData< int32_t >::SimpleData()   : ScalarData( ScalarTypes::Signed32 ) {}
+template<> Helium::Reflect::SimpleData< int64_t >::SimpleData()   : ScalarData( ScalarTypes::Signed64 ) {}
+template<> Helium::Reflect::SimpleData< float32_t >::SimpleData() : ScalarData( ScalarTypes::Float32 ) {}
+template<> Helium::Reflect::SimpleData< float64_t >::SimpleData() : ScalarData( ScalarTypes::Float64 ) {}
+
+template< class T >
+Helium::Reflect::SimpleData<T>::SimpleData()
+{
+	HELIUM_COMPILE_ASSERT( false );
+}
+
 template< class T >
 bool Helium::Reflect::SimpleData<T>::Copy( DataInstance src, DataInstance dest, uint32_t flags )
 {

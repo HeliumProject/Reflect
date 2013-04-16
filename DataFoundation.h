@@ -12,6 +12,7 @@ namespace Helium
 		class HELIUM_REFLECT_API StringData : public ScalarData
 		{
 		public:
+			StringData();
 			virtual bool Copy( DataInstance src, DataInstance dest, uint32_t flags ) HELIUM_OVERRIDE;
 			virtual bool Equals( DataInstance a, DataInstance b ) HELIUM_OVERRIDE;
 			virtual void Accept( DataInstance i, Visitor& visitor ) HELIUM_OVERRIDE;

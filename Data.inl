@@ -42,3 +42,15 @@ void Helium::Reflect::ObjectResolver::Resolve( const Name& identity, StrongPtr< 
 	const Class* pointerClass = Reflect::GetClass< T >();
 	this->Resolve( identity, reinterpret_cast< ObjectPtr& >( object ), pointerClass );
 }
+
+Helium::Reflect::DeferredResolver::Entry::Entry()
+	: m_Pointer( NULL )
+	, m_PointerClass( NULL )
+{
+
+}
+
+Helium::Reflect::ScalarData::ScalarData( ScalarType t )
+	: m_Type( t )
+{
+}

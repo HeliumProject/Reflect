@@ -77,12 +77,7 @@ namespace Helium
 		protected:
 			struct Entry
 			{
-				Entry()
-					: m_Pointer( NULL )
-					, m_PointerClass( NULL )
-				{
-
-				}
+				inline Entry();
 
 				ObjectPtr*	 m_Pointer;
 				const Class* m_PointerClass;
@@ -122,16 +117,42 @@ namespace Helium
 		// Scalar data interface, for actual read/write support
 		//
 
+		namespace ScalarTypes
+		{
+			enum Type
+			{
+				Boolean,
+				Unsigned8,
+				Unsigned16,
+				Unsigned32,
+				Unsigned64,
+				Signed8,
+				Signed16,
+				Signed32,
+				Signed64,
+				Float32,
+				Float64,
+				String,
+			};
+		}
+		typedef ScalarTypes::Type ScalarType;
+
 		class HELIUM_REFLECT_API ScalarData : public Data
 		{
 		public:
 			REFLECTION_TYPE( ReflectionTypes::ScalarData, ScalarData, Data );
+
+			// setup type
+			inline ScalarData( ScalarType t );
 
 			// value -> string
 			virtual void Print( DataInstance i, String& string, ObjectIdentifier& identifier ) = 0;
 
 			// string -> value
 			virtual void Parse( const String& string, DataInstance i, ObjectResolver& resolver, bool raiseChanged ) = 0;
+
+			// innate type
+			const ScalarType m_Type;
 		};
 
 		//

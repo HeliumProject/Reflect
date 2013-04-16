@@ -4,6 +4,11 @@
 using namespace Helium;
 using namespace Helium::Reflect;
 
+StringData::StringData() :
+ScalarData( ScalarTypes::String )
+{
+}
+
 bool StringData::Copy( DataInstance src, DataInstance dest, uint32_t flags )
 {
 	HELIUM_ASSERT( src.m_Field == dest.m_Field );
