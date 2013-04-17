@@ -20,26 +20,34 @@ namespace Helium
 
 		class Field;
 
-		class HELIUM_REFLECT_API DataInstance
+		class HELIUM_REFLECT_API DataPointer
 		{
 		public:
 			// compute address from base and field combination
-			inline DataInstance( const Field* field, Object* object );
-			inline DataInstance( Structure* baseAddress, const Field* field, Object* object );
-			inline DataInstance( void* finalAddress, const Field* field, Object* object );
-
-			// copy constructor to support pass-by-value
-			inline DataInstance( const DataInstance& rhs );
+			inline DataPointer( const Field* field, Object* object );
+			inline DataPointer( void* address, const Field* field, Object* object );
+			inline DataPointer( const DataPointer& rhs );
 
 			// resolve the actual memory address of the data
-			template< class T > T& As() const;
+			template< class T > T& As();
 
 			// if we point to an object, notify the host object that it was changed (if doIt is true)
-			inline void RaiseChanged( bool doIt = true ) const;
+			inline void RaiseChanged( bool doIt = true );
 
-			Object*			m_Object;
-			const Field*	m_Field;
-			void*			m_Address;
+			void*        m_Address;
+			const Field* m_Field;
+			Object*      m_Object;
+		};
+
+		class Data;
+
+		class HELIUM_REFLECT_API DataVariable : public DataPointer, NonCopyable
+		{
+		public:
+			inline DataVariable( Data* data );
+			inline ~DataVariable();
+
+			Data*      m_Data;
 		};
 
 		//
@@ -103,14 +111,24 @@ namespace Helium
 		public:
 			REFLECTION_TYPE( ReflectionTypes::Data, Data, ReflectionInfo );
 
+			inline Data( size_t size );
+
+			// call the constructor
+			virtual void Construct( DataPointer pointer ) = 0;
+
+			// call the destructor
+			virtual void Destruct( DataPointer pointer ) = 0;
+
 			// copies value from one instance to another
-			virtual bool Copy( DataInstance src, DataInstance dest, uint32_t flags = 0) = 0;
+			virtual bool Copy( DataPointer src, DataPointer dest, uint32_t flags = 0) = 0;
 
 			// tests for equivalence across instances
-			virtual bool Equals( DataInstance a, DataInstance b ) = 0;
+			virtual bool Equals( DataPointer a, DataPointer b ) = 0;
 
 			// explore contents
-			virtual void Accept( DataInstance i, Visitor& visitor ) = 0;
+			virtual void Accept( DataPointer p, Visitor& visitor ) = 0;
+
+			const size_t m_Size;
 		};
 
 		//
@@ -142,16 +160,14 @@ namespace Helium
 		public:
 			REFLECTION_TYPE( ReflectionTypes::ScalarData, ScalarData, Data );
 
-			// setup type
-			inline ScalarData( ScalarType t );
+			inline ScalarData( size_t size, ScalarType type );
 
 			// value -> string
-			virtual void Print( DataInstance i, String& string, ObjectIdentifier& identifier ) = 0;
+			virtual void Print( DataPointer pointer, String& string, ObjectIdentifier& identifier ) = 0;
 
 			// string -> value
-			virtual void Parse( const String& string, DataInstance i, ObjectResolver& resolver, bool raiseChanged ) = 0;
+			virtual void Parse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged ) = 0;
 
-			// innate type
 			const ScalarType m_Type;
 		};
 
@@ -164,8 +180,8 @@ namespace Helium
 		public:
 			REFLECTION_TYPE( ReflectionTypes::ContainerData, ContainerData, Data );
 
-			virtual size_t GetSize( DataInstance i ) const = 0;
-			virtual void Clear( DataInstance i ) = 0;
+			virtual size_t GetLength( DataPointer container ) const = 0;
+			virtual void   Clear( DataPointer container ) = 0;
 		};
 
 		//
@@ -179,11 +195,11 @@ namespace Helium
 
 			virtual Data* GetItemData() const = 0;
 
-			virtual void GetItems( DynamicArray< DataInstance >& items ) const = 0;
+			virtual void  GetItems( DataPointer set, DynamicArray< DataPointer >& items ) const = 0;
 
-			virtual void AddItem( DataInstance value ) = 0;
-			virtual void RemoveItem( DataInstance value ) = 0;
-			virtual bool ContainsItem( DataInstance value ) const = 0;
+			virtual void  InsertItem( DataPointer set, DataPointer item ) = 0;
+			virtual void  RemoveItem( DataPointer set, DataPointer item ) = 0;
+			virtual bool  ContainsItem( DataPointer set, DataPointer item ) const = 0;
 		};
 
 		//
@@ -195,19 +211,17 @@ namespace Helium
 		public:
 			REFLECTION_TYPE( ReflectionTypes::SequenceData, SequenceData, ContainerData );
 
-			virtual Data* GetItemData() const = 0;
+			virtual Data*       GetItemData() const = 0;
 
-			virtual void SetSize( size_t size ) = 0;
+			virtual void        GetItems( DataPointer sequence, DynamicArray< DataPointer >& items ) const = 0;
 
-			virtual void GetItems( DynamicArray< DataInstance >& items ) const = 0;
-			virtual DataInstance GetItem( size_t at ) = 0;
-
-			virtual void SetItem( size_t at, DataInstance value ) = 0;
-			virtual void Insert( size_t at, DataInstance value ) = 0;
-			virtual void Remove( size_t at ) = 0;
-			
-			virtual void MoveUp( Set< size_t >& items ) = 0;
-			virtual void MoveDown( Set< size_t >& items ) = 0;
+			virtual void        SetLength( DataPointer sequence, size_t length ) = 0;
+			virtual DataPointer GetItem( DataPointer sequence, size_t at ) = 0;
+			virtual void        SetItem( DataPointer sequence, size_t at, DataPointer value ) = 0;
+			virtual void        Insert( DataPointer sequence, size_t at, DataPointer value ) = 0;
+			virtual void        Remove( DataPointer sequence, size_t at ) = 0;
+			virtual void        MoveUp( DataPointer sequence, Set< size_t >& items ) = 0;
+			virtual void        MoveDown( DataPointer sequence, Set< size_t >& items ) = 0;
 		};
 
 		//
@@ -219,14 +233,14 @@ namespace Helium
 		public:
 			REFLECTION_TYPE( ReflectionTypes::AssociationData, AssociationData, ContainerData );
 
-			virtual Data* GetKeyData() const = 0;
-			virtual Data* GetValueData() const = 0;
+			virtual Data*       GetKeyData() const = 0;
+			virtual Data*       GetValueData() const = 0;
 
-			virtual void GetItems( DynamicArray<DataInstance>& keys, DynamicArray<DataInstance>& values ) = 0;
-			virtual DataInstance GetItem( DataInstance key ) = 0;
+			virtual void        GetItems( DataPointer association, DynamicArray<DataPointer>& keys, DynamicArray<DataPointer>& values ) = 0;
 
-			virtual void SetItem( DataInstance key, DataInstance value ) = 0;
-			virtual void RemoveItem( DataInstance key ) = 0;
+			virtual DataPointer GetItem( DataPointer association, DataPointer key ) = 0;
+			virtual void        SetItem( DataPointer association, DataPointer key, DataPointer value ) = 0;
+			virtual void        RemoveItem( DataPointer association, DataPointer key ) = 0;
 		};
 
 		//

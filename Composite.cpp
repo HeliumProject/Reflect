@@ -27,9 +27,9 @@ Field::Field()
 
 bool Field::IsDefaultValue( void* address, Object* object ) const
 {
-	DataInstance i ( address, this, object );
-	DataInstance d ( m_Composite->m_Default, this, object );
-	return m_Data->Equals( i, d );
+	DataPointer value ( address, this, object );
+	DataPointer default ( m_Composite->m_Default, this, object );
+	return m_Data->Equals( value, default );
 }
 
 bool Field::ShouldSerialize( void* address, Object* object ) const
@@ -156,9 +156,9 @@ bool Composite::Equals(void* addressA, Object* objectA, void* addressB, Object* 
 		for ( ; itr != end; ++itr )
 		{
 			const Field* field = &*itr;
-			DataInstance aData ( addressA, field, objectA );
-			DataInstance bData ( addressB, field, objectB );
-			bool equality = field->m_Data->Equals( aData, bData );
+			DataPointer a ( addressA, field, objectA );
+			DataPointer b ( addressB, field, objectB );
+			bool equality = field->m_Data->Equals( a, b );
 			if ( !equality )
 			{
 				return false;
@@ -184,7 +184,7 @@ void Composite::Visit(void* address, Object* object, Visitor& visitor) const
 		{
 			const Field* field = &*itr;
 
-			field->m_Data->Accept( DataInstance ( address, field, object ), visitor );
+			field->m_Data->Accept( DataPointer ( address, field, object ), visitor );
 		}
 	}
 }
@@ -200,15 +200,13 @@ void Composite::Copy( void* addressSource, Object* objectSource, void* addressDe
 			for ( ; itr != end; ++itr )
 			{
 				const Field* field = &*itr;
-
-				// create data objects
-				DataInstance lhs ( addressDestination, field, objectDestination );
-				DataInstance rhs ( addressSource, field, objectSource );
+				DataPointer pointerSource ( addressSource, field, objectSource );
+				DataPointer pointerDestination ( addressDestination, field, objectDestination );
 
 				// for normal data types, run overloaded assignement operator via data's vtable
 				// for reference container types, this deep copies containers (which is bad for 
 				//  non-cloneable (FieldFlags::Share) reference containers)
-				bool result = field->m_Data->Copy(rhs, lhs, field->m_Flags & FieldFlags::Share ? DataFlags::Shallow : 0);
+				bool result = field->m_Data->Copy(pointerSource, pointerDestination, field->m_Flags & FieldFlags::Share ? DataFlags::Shallow : 0);
 				HELIUM_ASSERT(result);
 			}
 		}

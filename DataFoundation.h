@@ -13,11 +13,13 @@ namespace Helium
 		{
 		public:
 			StringData();
-			virtual bool Copy( DataInstance src, DataInstance dest, uint32_t flags ) HELIUM_OVERRIDE;
-			virtual bool Equals( DataInstance a, DataInstance b ) HELIUM_OVERRIDE;
-			virtual void Accept( DataInstance i, Visitor& visitor ) HELIUM_OVERRIDE;
-			virtual void Print( DataInstance i, String& string, ObjectIdentifier& identifier ) HELIUM_OVERRIDE;
-			virtual void Parse( const String& string, DataInstance i, ObjectResolver& resolver, bool raiseChanged ) HELIUM_OVERRIDE;
+			virtual void Construct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual void Destruct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual bool Copy( DataPointer src, DataPointer dest, uint32_t flags ) HELIUM_OVERRIDE;
+			virtual bool Equals( DataPointer a, DataPointer b ) HELIUM_OVERRIDE;
+			virtual void Accept( DataPointer pointer, Visitor& visitor ) HELIUM_OVERRIDE;
+			virtual void Print( DataPointer pointer, String& string, ObjectIdentifier& identifier ) HELIUM_OVERRIDE;
+			virtual void Parse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged ) HELIUM_OVERRIDE;
 		};
 
 		inline Data* AllocateData( const CharString&, const CharString& )

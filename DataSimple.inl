@@ -1,13 +1,13 @@
-template<> Helium::Reflect::SimpleData< uint8_t >::SimpleData()   : ScalarData( ScalarTypes::Unsigned8 ) {}
-template<> Helium::Reflect::SimpleData< uint16_t >::SimpleData()  : ScalarData( ScalarTypes::Unsigned16 ) {}
-template<> Helium::Reflect::SimpleData< uint32_t >::SimpleData()  : ScalarData( ScalarTypes::Unsigned32 ) {}
-template<> Helium::Reflect::SimpleData< uint64_t >::SimpleData()  : ScalarData( ScalarTypes::Unsigned64 ) {}
-template<> Helium::Reflect::SimpleData< int8_t >::SimpleData()    : ScalarData( ScalarTypes::Signed8 ) {}
-template<> Helium::Reflect::SimpleData< int16_t >::SimpleData()   : ScalarData( ScalarTypes::Signed16 ) {}
-template<> Helium::Reflect::SimpleData< int32_t >::SimpleData()   : ScalarData( ScalarTypes::Signed32 ) {}
-template<> Helium::Reflect::SimpleData< int64_t >::SimpleData()   : ScalarData( ScalarTypes::Signed64 ) {}
-template<> Helium::Reflect::SimpleData< float32_t >::SimpleData() : ScalarData( ScalarTypes::Float32 ) {}
-template<> Helium::Reflect::SimpleData< float64_t >::SimpleData() : ScalarData( ScalarTypes::Float64 ) {}
+template<> Helium::Reflect::SimpleData< uint8_t >::SimpleData()   : ScalarData( 1, ScalarTypes::Unsigned8 ) {}
+template<> Helium::Reflect::SimpleData< uint16_t >::SimpleData()  : ScalarData( 2, ScalarTypes::Unsigned16 ) {}
+template<> Helium::Reflect::SimpleData< uint32_t >::SimpleData()  : ScalarData( 4, ScalarTypes::Unsigned32 ) {}
+template<> Helium::Reflect::SimpleData< uint64_t >::SimpleData()  : ScalarData( 8, ScalarTypes::Unsigned64 ) {}
+template<> Helium::Reflect::SimpleData< int8_t >::SimpleData()    : ScalarData( 1, ScalarTypes::Signed8 ) {}
+template<> Helium::Reflect::SimpleData< int16_t >::SimpleData()   : ScalarData( 2, ScalarTypes::Signed16 ) {}
+template<> Helium::Reflect::SimpleData< int32_t >::SimpleData()   : ScalarData( 4, ScalarTypes::Signed32 ) {}
+template<> Helium::Reflect::SimpleData< int64_t >::SimpleData()   : ScalarData( 8, ScalarTypes::Signed64 ) {}
+template<> Helium::Reflect::SimpleData< float32_t >::SimpleData() : ScalarData( 4, ScalarTypes::Float32 ) {}
+template<> Helium::Reflect::SimpleData< float64_t >::SimpleData() : ScalarData( 8, ScalarTypes::Float64 ) {}
 
 template< class T >
 Helium::Reflect::SimpleData<T>::SimpleData()
@@ -16,7 +16,19 @@ Helium::Reflect::SimpleData<T>::SimpleData()
 }
 
 template< class T >
-bool Helium::Reflect::SimpleData<T>::Copy( DataInstance src, DataInstance dest, uint32_t flags )
+void Helium::Reflect::SimpleData<T>::Construct( DataPointer pointer )
+{
+	new ( pointer.m_Address ) T;
+}
+
+template< class T >
+void Helium::Reflect::SimpleData<T>::Destruct( DataPointer pointer )
+{
+	static_cast< T* >( pointer.m_Address )->~T();
+}
+
+template< class T >
+bool Helium::Reflect::SimpleData<T>::Copy( DataPointer src, DataPointer dest, uint32_t flags )
 {
 	HELIUM_ASSERT( src.m_Field == dest.m_Field );
 	T& right = src.As<T>();
@@ -26,7 +38,7 @@ bool Helium::Reflect::SimpleData<T>::Copy( DataInstance src, DataInstance dest, 
 }
 
 template< class T >
-bool Helium::Reflect::SimpleData<T>::Equals( DataInstance a, DataInstance b )
+bool Helium::Reflect::SimpleData<T>::Equals( DataPointer a, DataPointer b )
 {
 	HELIUM_ASSERT( a.m_Field == b.m_Field );
 	T& right = a.As<T>();
@@ -35,28 +47,28 @@ bool Helium::Reflect::SimpleData<T>::Equals( DataInstance a, DataInstance b )
 }
 
 template< class T >
-void Helium::Reflect::SimpleData<T>::Accept( DataInstance i, Visitor& visitor )
+void Helium::Reflect::SimpleData<T>::Accept( DataPointer pointer, Visitor& visitor )
 {
-	visitor.VisitField( this, i.m_Address, i.m_Field, i.m_Object );
+	visitor.VisitField( this, pointer.m_Address, pointer.m_Field, pointer.m_Object );
 }
 
 template< class T >
-void Helium::Reflect::SimpleData<T>::Print( DataInstance i, String& string, ObjectIdentifier& identifier )
+void Helium::Reflect::SimpleData<T>::Print( DataPointer pointer, String& string, ObjectIdentifier& identifier )
 {
 	HELIUM_COMPILE_ASSERT( std::is_fundamental< T >::value );
 
 	std::stringstream str;
-	str << i.As<T>();
+	str << pointer.As<T>();
 	string = str.str().c_str();
 }
 
 template< class T >
-void Helium::Reflect::SimpleData<T>::Parse( const String& string, DataInstance i, ObjectResolver& resolver, bool raiseChanged )
+void Helium::Reflect::SimpleData<T>::Parse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged )
 {
 	HELIUM_COMPILE_ASSERT( std::is_fundamental< T >::value );
 
 	std::stringstream str ( string.GetData() );
-	str >> i.As<T>();
+	str >> pointer.As<T>();
 }
 
 //
@@ -64,9 +76,9 @@ void Helium::Reflect::SimpleData<T>::Parse( const String& string, DataInstance i
 //
 
 template<>
-inline void Helium::Reflect::SimpleData<uint8_t>::Print( DataInstance i, String& string, ObjectIdentifier& identifier )
+inline void Helium::Reflect::SimpleData<uint8_t>::Print( DataPointer pointer, String& string, ObjectIdentifier& identifier )
 {
-	uint16_t v = i.As<uint8_t>();
+	uint16_t v = pointer.As<uint8_t>();
 
 	std::stringstream str;
 	str << v;
@@ -74,19 +86,19 @@ inline void Helium::Reflect::SimpleData<uint8_t>::Print( DataInstance i, String&
 }
 
 template<>
-inline void Helium::Reflect::SimpleData<uint8_t>::Parse( const String& string, DataInstance i, ObjectResolver& resolver, bool raiseChanged )
+inline void Helium::Reflect::SimpleData<uint8_t>::Parse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged )
 {
 	std::stringstream str ( string.GetData() );
 	uint16_t v = 0;
 	str >> v;
 	
-	i.As<uint8_t>() = static_cast<uint8_t>( v );
+	pointer.As<uint8_t>() = static_cast<uint8_t>( v );
 }
 
 template<>
-inline void Helium::Reflect::SimpleData<int8_t>::Print( DataInstance i, String& string, ObjectIdentifier& identifier )
+inline void Helium::Reflect::SimpleData<int8_t>::Print( DataPointer pointer, String& string, ObjectIdentifier& identifier )
 {
-	int16_t v = i.As<int8_t>();
+	int16_t v = pointer.As<int8_t>();
 
 	std::stringstream str;
 	str << v;
@@ -94,11 +106,11 @@ inline void Helium::Reflect::SimpleData<int8_t>::Print( DataInstance i, String& 
 }
 
 template<>
-inline void Helium::Reflect::SimpleData<int8_t>::Parse( const String& string, DataInstance i, ObjectResolver& resolver, bool raiseChanged )
+inline void Helium::Reflect::SimpleData<int8_t>::Parse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged )
 {
 	std::stringstream str ( string.GetData() );
 	int16_t v = 0;
 	str >> v;
 	
-	i.As<int8_t>() = static_cast<int8_t>( v );
+	pointer.As<int8_t>() = static_cast<int8_t>( v );
 }

@@ -1,39 +1,53 @@
-Helium::Reflect::DataInstance::DataInstance( const Field* field, Object* object )
-	: m_Object( object )
+Helium::Reflect::DataPointer::DataPointer( const Field* field, Object* object )
+	: m_Address( 0x0 )
 	, m_Field( field )
-	, m_Address( 0x0 )
+	, m_Object( object )
 {
 	m_Address = reinterpret_cast< char* >( object ) + m_Field->m_Offset;
 }
 
-Helium::Reflect::DataInstance::DataInstance( Structure* baseAddress, const Field* field, Object* object )
-	: m_Object( object )
+Helium::Reflect::DataPointer::DataPointer( void* address, const Field* field, Object* object )
+	: m_Address( address )
 	, m_Field( field )
-	, m_Address( 0x0 )
-{
-	m_Address = reinterpret_cast< char* >( baseAddress ) + m_Field->m_Offset;
-}
-
-Helium::Reflect::DataInstance::DataInstance( void* finalAddress, const Field* field, Object* object )
-	: m_Object( object )
-	, m_Field( field )
-	, m_Address( finalAddress )
+	, m_Object( object )
 {
 
 }
 
-Helium::Reflect::DataInstance::DataInstance( const DataInstance& rhs )
-	: m_Object( rhs.m_Object )
+Helium::Reflect::DataPointer::DataPointer( const DataPointer& rhs )
+	: m_Address( rhs.m_Address )
 	, m_Field( rhs.m_Field )
-	, m_Address( rhs.m_Address )
+	, m_Object( rhs.m_Object )
 {
 
 }
 
 template< class T >
-T& Helium::Reflect::DataInstance::As() const
+T& Helium::Reflect::DataPointer::As()
 {
 	return *reinterpret_cast< T* >( m_Address );
+}
+
+void Helium::Reflect::DataPointer::RaiseChanged( bool doIt )
+{
+	if ( doIt && m_Object )
+	{
+		m_Object->RaiseChanged( m_Field );
+	}
+}
+
+Helium::Reflect::DataVariable::DataVariable( Data* data )
+	: DataPointer( NULL, NULL, NULL )
+	, m_Data( data )
+{
+	m_Address = new unsigned char[ m_Data->m_Size ];
+	m_Data->Construct( *this );
+}
+
+Helium::Reflect::DataVariable::~DataVariable()
+{
+	m_Data->Destruct( *this );
+	delete[] m_Address;
 }
 
 template< class T >
@@ -50,7 +64,13 @@ Helium::Reflect::DeferredResolver::Entry::Entry()
 
 }
 
-Helium::Reflect::ScalarData::ScalarData( ScalarType t )
-	: m_Type( t )
+Helium::Reflect::Data::Data( size_t size )
+	: m_Size( size )
+{
+}
+
+Helium::Reflect::ScalarData::ScalarData( size_t size, ScalarType t )
+	: Data( size )
+	, m_Type( t )
 {
 }

@@ -5,11 +5,21 @@ using namespace Helium;
 using namespace Helium::Reflect;
 
 StringData::StringData() :
-ScalarData( ScalarTypes::String )
+ScalarData( sizeof( String ), ScalarTypes::String )
 {
 }
 
-bool StringData::Copy( DataInstance src, DataInstance dest, uint32_t flags )
+void Helium::Reflect::StringData::Construct( DataPointer pointer )
+{
+	new ( pointer.m_Address ) String;
+}
+
+void Helium::Reflect::StringData::Destruct( DataPointer pointer )
+{
+	static_cast< String* >( pointer.m_Address )->~String();
+}
+
+bool StringData::Copy( DataPointer src, DataPointer dest, uint32_t flags )
 {
 	HELIUM_ASSERT( src.m_Field == dest.m_Field );
 	String& right = src.As<String>();
@@ -18,7 +28,7 @@ bool StringData::Copy( DataInstance src, DataInstance dest, uint32_t flags )
 	return true;
 }
 
-bool StringData::Equals( DataInstance a, DataInstance b )
+bool StringData::Equals( DataPointer a, DataPointer b )
 {
 	HELIUM_ASSERT( a.m_Field == b.m_Field );
 	String& right = a.As<String>();
@@ -26,17 +36,17 @@ bool StringData::Equals( DataInstance a, DataInstance b )
 	return left == right;
 }
 
-void StringData::Print( DataInstance i, String& string, ObjectIdentifier& identifier )
+void StringData::Print( DataPointer pointer, String& string, ObjectIdentifier& identifier )
 {
-	string = i.As<String>();
+	string = pointer.As<String>();
 }
 
-void StringData::Parse( const String& string, DataInstance i, ObjectResolver& resolver, bool raiseChanged )
+void StringData::Parse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged )
 {
-	i.As<String>() = string;
+	pointer.As<String>() = string;
 }
 
-void StringData::Accept( DataInstance i, Visitor& visitor )
+void StringData::Accept( DataPointer pointer, Visitor& visitor )
 {
-	visitor.VisitField( this, i.m_Address, i.m_Field, i.m_Object );
+	visitor.VisitField( this, pointer.m_Address, pointer.m_Field, pointer.m_Object );
 }
