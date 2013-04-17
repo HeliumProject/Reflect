@@ -25,14 +25,14 @@ Field::Field()
 
 }
 
-bool Field::IsDefaultValue( void* address, Object* object ) const
+bool Field::IsDefaultValue( void* address, Object* object, uint32_t index ) const
 {
-	DataPointer value ( address, this, object );
-	DataPointer default ( m_Composite->m_Default, this, object );
+	DataPointer value ( this, address, object, index );
+	DataPointer default ( this, m_Composite->m_Default, object, index );
 	return m_Data->Equals( value, default );
 }
 
-bool Field::ShouldSerialize( void* address, Object* object ) const
+bool Field::ShouldSerialize( void* address, Object* object, uint32_t index ) const
 {
 	// never write discard fields
 	if ( m_Flags & FieldFlags::Discard )
@@ -46,7 +46,7 @@ bool Field::ShouldSerialize( void* address, Object* object ) const
 		return true;
 	}
 
-	return !IsDefaultValue( address, object );
+	return !IsDefaultValue( address, object, index );
 }
 
 Composite::Composite()
@@ -137,14 +137,14 @@ void Composite::RemoveDerived( const Composite* derived ) const
 	derived->m_NextSibling = NULL;
 }
 
-bool Composite::Equals(void* addressA, Object* objectA, void* addressB, Object* objectB) const
+bool Composite::Equals(void* compositeA, Object* objectA, void* compositeB, Object* objectB) const
 {
-	if (addressA == addressB)
+	if (compositeA == compositeB)
 	{
 		return true;
 	}
 
-	if (!addressA || !addressB)
+	if (!compositeA || !compositeB)
 	{
 		return false;
 	}
@@ -156,8 +156,8 @@ bool Composite::Equals(void* addressA, Object* objectA, void* addressB, Object* 
 		for ( ; itr != end; ++itr )
 		{
 			const Field* field = &*itr;
-			DataPointer a ( addressA, field, objectA );
-			DataPointer b ( addressB, field, objectB );
+			DataPointer a ( field, compositeA, objectA );
+			DataPointer b ( field, compositeB, objectB );
 			bool equality = field->m_Data->Equals( a, b );
 			if ( !equality )
 			{
@@ -169,9 +169,9 @@ bool Composite::Equals(void* addressA, Object* objectA, void* addressB, Object* 
 	return true;
 }
 
-void Composite::Visit(void* address, Object* object, Visitor& visitor) const
+void Composite::Visit(void* composite, Object* object, Visitor& visitor) const
 {
-	if (!address)
+	if (!composite)
 	{
 		return;
 	}
@@ -184,14 +184,14 @@ void Composite::Visit(void* address, Object* object, Visitor& visitor) const
 		{
 			const Field* field = &*itr;
 
-			field->m_Data->Accept( DataPointer ( address, field, object ), visitor );
+			field->m_Data->Accept( DataPointer ( field, composite, object ), visitor );
 		}
 	}
 }
 
-void Composite::Copy( void* addressSource, Object* objectSource, void* addressDestination, Object* objectDestination ) const
+void Composite::Copy( void* compositeSource, Object* objectSource, void* compositeDestination, Object* objectDestination ) const
 {
-	if ( addressSource != addressDestination )
+	if ( compositeSource != compositeDestination )
 	{
 		for ( const Composite* current = this; current != NULL; current = current->m_Base )
 		{
@@ -200,8 +200,8 @@ void Composite::Copy( void* addressSource, Object* objectSource, void* addressDe
 			for ( ; itr != end; ++itr )
 			{
 				const Field* field = &*itr;
-				DataPointer pointerSource ( addressSource, field, objectSource );
-				DataPointer pointerDestination ( addressDestination, field, objectDestination );
+				DataPointer pointerSource ( field, compositeSource, objectSource );
+				DataPointer pointerDestination ( field, compositeDestination, objectDestination );
 
 				// for normal data types, run overloaded assignement operator via data's vtable
 				// for reference container types, this deep copies containers (which is bad for 

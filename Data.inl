@@ -1,17 +1,17 @@
-Helium::Reflect::DataPointer::DataPointer( const Field* field, Object* object )
+Helium::Reflect::DataPointer::DataPointer( const Field* field, Object* object, uint32_t index )
 	: m_Address( 0x0 )
 	, m_Field( field )
 	, m_Object( object )
 {
-	m_Address = reinterpret_cast< char* >( object ) + m_Field->m_Offset;
+	m_Address = reinterpret_cast< char* >( object ) + ( m_Field->m_Offset + ( ( m_Field->m_Size / m_Field->m_Count ) * index ) );
 }
 
-Helium::Reflect::DataPointer::DataPointer( void* address, const Field* field, Object* object )
-	: m_Address( address )
+Helium::Reflect::DataPointer::DataPointer( const Field* field, void* composite, Object* object, uint32_t index )
+	: m_Address( 0x0 )
 	, m_Field( field )
 	, m_Object( object )
 {
-
+	m_Address = reinterpret_cast< char* >( composite ) + ( m_Field->m_Offset + ( ( m_Field->m_Size / m_Field->m_Count ) * index ) );
 }
 
 Helium::Reflect::DataPointer::DataPointer( const DataPointer& rhs )
@@ -37,7 +37,7 @@ void Helium::Reflect::DataPointer::RaiseChanged( bool doIt )
 }
 
 Helium::Reflect::DataVariable::DataVariable( Data* data )
-	: DataPointer( NULL, NULL, NULL )
+	: DataPointer( NULL, NULL, static_cast< Object* >( NULL ) )
 	, m_Data( data )
 {
 	m_Address = new unsigned char[ m_Data->m_Size ];

@@ -24,8 +24,8 @@ namespace Helium
 		{
 		public:
 			// compute address from base and field combination
-			inline DataPointer( const Field* field, Object* object );
-			inline DataPointer( void* address, const Field* field, Object* object );
+			inline DataPointer( const Field* field, Object* object, uint32_t index = 0 );
+			inline DataPointer( const Field* field, void* composite, Object* object, uint32_t index = 0 );
 			inline DataPointer( const DataPointer& rhs );
 
 			// resolve the actual memory address of the data
