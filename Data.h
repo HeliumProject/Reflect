@@ -113,14 +113,20 @@ namespace Helium
 
 			inline Data( size_t size );
 
-			// call the constructor
+			template< class T > void DefaultConstruct( DataPointer pointer );
+			template< class T > void DefaultDestruct( DataPointer pointer );
+			template< class T > bool DefaultCopy( DataPointer src, DataPointer dest, uint32_t flags );
+			template< class T > bool DefaultEquals( DataPointer a, DataPointer b );
+			template< class T > void DefaultAccept( DataPointer p, Visitor& visitor );
+
+			// call the constructor (in-place)
 			virtual void Construct( DataPointer pointer ) = 0;
 
-			// call the destructor
+			// call the destructor (in-place)
 			virtual void Destruct( DataPointer pointer ) = 0;
 
 			// copies value from one instance to another
-			virtual bool Copy( DataPointer src, DataPointer dest, uint32_t flags = 0) = 0;
+			virtual bool Copy( DataPointer src, DataPointer dest, uint32_t flags = 0 ) = 0;
 
 			// tests for equivalence across instances
 			virtual bool Equals( DataPointer a, DataPointer b ) = 0;
@@ -128,6 +134,7 @@ namespace Helium
 			// explore contents
 			virtual void Accept( DataPointer p, Visitor& visitor ) = 0;
 
+			// sizeof(), in bytes
 			const size_t m_Size;
 		};
 
@@ -161,6 +168,9 @@ namespace Helium
 			REFLECTION_TYPE( ReflectionTypes::ScalarData, ScalarData, Data );
 
 			inline ScalarData( size_t size, ScalarType type );
+
+			template< class T > void DefaultPrint( DataPointer pointer, String& string, ObjectIdentifier& identifier );
+			template< class T > void DefaultParse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged );
 
 			// value -> string
 			virtual void Print( DataPointer pointer, String& string, ObjectIdentifier& identifier ) = 0;

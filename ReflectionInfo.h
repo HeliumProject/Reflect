@@ -49,6 +49,11 @@ namespace Helium
 				// data abstraction class hierarchy
 				Data,
 					ScalarData,
+					EnumerationData,
+					BitfieldData,
+					StructureData,
+					PointerData,
+					TypeIDData,
 					ContainerData,
 						SetData,
 						SequenceData,

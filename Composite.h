@@ -128,19 +128,27 @@ namespace Helium
 
 			// compute the count of a static array
 			template < class T, size_t N >
-			static inline size_t GetArrayCount( T (&array)[N] );
+			static inline uint32_t GetArrayCount( T (&array)[N] );
 
 			// compute the count of a normal type (1)
 			template < class T >
-			static inline size_t GetCount( std::false_type /*is_array*/ );
+			static inline uint32_t GetCount( std::false_type /*is_array*/ );
 
 			// compute the count of an array type (1)
 			template < class T >
-			static inline size_t GetCount( std::true_type  /*is_array*/  );
+			static inline uint32_t GetCount( std::true_type  /*is_array*/  );
+
+			// create data object
+			template < class T >
+			static inline Data* AllocateData( std::false_type /*is_array*/ );
+
+			// create data object
+			template < class T >
+			static inline Data* AllocateData( std::true_type  /*is_array*/  );
 
 			// deduce and allocate the appropriate data object and append field data to the composite
 			template < class CompositeT, class FieldT >
-			inline Reflect::Field* AddField( FieldT CompositeT::* field, const tchar_t* name, int32_t flags = 0, Data* data = NULL );
+			inline Reflect::Field* AddField( FieldT CompositeT::* field, const tchar_t* name, uint32_t flags = 0, Data* data = NULL );
 
 		public:
 			const Composite*         m_Base;         // the base type name
@@ -193,13 +201,13 @@ static Helium::Reflect::StructureRegistrar< STRUCTURE, BASE > s_Registrar;
 
 // defines the static type info vars
 #define _REFLECT_DEFINE_BASE_STRUCTURE( STRUCTURE ) \
-const Helium::Reflect::Structure* STRUCTURE::CreateComposite() \
+const Helium::Reflect::Composite* STRUCTURE::CreateComposite() \
 { \
 	HELIUM_ASSERT( s_Composite == NULL ); \
-	Helium::Reflect::Structure::Create<STRUCTURE>( s_Composite, TXT( #STRUCTURE ), NULL ); \
+	Helium::Reflect::Composite::Create<STRUCTURE>( s_Composite, TXT( #STRUCTURE ), NULL ); \
 	return s_Composite; \
 } \
-const Helium::Reflect::Structure* STRUCTURE::s_Composite = NULL; \
+const Helium::Reflect::Composite* STRUCTURE::s_Composite = NULL; \
 Helium::Reflect::StructureRegistrar< STRUCTURE, void > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
 
 #define _REFLECT_DEFINE_DERIVED_STRUCTURE( STRUCTURE ) \

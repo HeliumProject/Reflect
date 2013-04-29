@@ -82,33 +82,45 @@ uint32_t Helium::Reflect::Composite::GetOffset( FieldT CompositeT::* field )
 }
 
 template < class T, size_t N >
-size_t Helium::Reflect::Composite::GetArrayCount( T (&/* array */)[N] )
+uint32_t Helium::Reflect::Composite::GetArrayCount( T (&/* array */)[N] )
 {
 	return N;
 }
 
 template < class T >
-size_t Helium::Reflect::Composite::GetCount( std::false_type /* is_array */ )
+uint32_t Helium::Reflect::Composite::GetCount( std::false_type /* is_array */ )
 {
 	return 1;
 }
 
 template < class T >
-size_t Helium::Reflect::Composite::GetCount( std::true_type /* is_array */ )
+uint32_t Helium::Reflect::Composite::GetCount( std::true_type /* is_array */ )
 {
 	T temp;
 	return GetArrayCount( temp );
 }
 
+template < class T >
+Helium::Reflect::Data* Helium::Reflect::Composite::AllocateData( std::false_type /* is_array */ )
+{
+	return Reflect::AllocateData< T >();
+}
+
+template < class T >
+Helium::Reflect::Data* Helium::Reflect::Composite::AllocateData( std::true_type /* is_array */ )
+{
+	return Reflect::AllocateData< std::remove_extent< T >::type >();
+}
+
 template < class CompositeT, class FieldT >
-Helium::Reflect::Field* Helium::Reflect::Composite::AddField( FieldT CompositeT::* field, const tchar_t* name, int32_t flags, Data* data )
+Helium::Reflect::Field* Helium::Reflect::Composite::AddField( FieldT CompositeT::* field, const tchar_t* name, uint32_t flags, Data* data )
 {
 	if ( data == NULL )
 	{
-		data = AllocateData<FieldT>();
+		data = AllocateData<FieldT>( std::is_array< FieldT >() );
 	}
 
-	Field* field = AddField( name, sizeof(FieldT), GetCount( std::is_array< FieldT >::value ), GetOffset(field), flags, data );
+	return AddField( name, sizeof(FieldT), GetCount< FieldT >( std::is_array< FieldT >() ), GetOffset(field), flags, data );
 }
 
 //
@@ -119,7 +131,7 @@ template< class StructureT, class BaseT >
 Helium::Reflect::StructureRegistrar< StructureT, BaseT >::StructureRegistrar(const tchar_t* name)
 	: TypeRegistrar( name )
 {
-	HELIUM_ASSERT( StructureT::s_Structure == NULL );
+	HELIUM_ASSERT( StructureT::s_Composite == NULL );
 	TypeRegistrar::AddToList( RegistrarTypes::Structure, this );
 }
 
@@ -133,20 +145,20 @@ Helium::Reflect::StructureRegistrar< StructureT, BaseT >::~StructureRegistrar()
 template< class StructureT, class BaseT >
 void Helium::Reflect::StructureRegistrar< StructureT, BaseT >::Register()
 {
-	if ( StructureT::s_Structure == NULL )
+	if ( StructureT::s_Composite == NULL )
 	{
 		BaseT::s_Registrar.Register();
-		AddTypeToRegistry( StructureT::CreateStructure() );
+		AddTypeToRegistry( StructureT::CreateComposite() );
 	}
 }
 
 template< class StructureT, class BaseT >
 void Helium::Reflect::StructureRegistrar< StructureT, BaseT >::Unregister()
 {
-	if ( StructureT::s_Structure != NULL )
+	if ( StructureT::s_Composite != NULL )
 	{
-		RemoveTypeFromRegistry( StructureT::s_Structure );
-		StructureT::s_Structure = NULL;
+		RemoveTypeFromRegistry( StructureT::s_Composite );
+		StructureT::s_Composite = NULL;
 	}
 }
 
@@ -154,7 +166,7 @@ template< class StructureT >
 Helium::Reflect::StructureRegistrar< StructureT, void >::StructureRegistrar(const tchar_t* name)
 	: TypeRegistrar( name )
 {
-	HELIUM_ASSERT( StructureT::s_Structure == NULL );
+	HELIUM_ASSERT( StructureT::s_Composite == NULL );
 	TypeRegistrar::AddToList( RegistrarTypes::Structure, this );
 }
 
@@ -168,18 +180,18 @@ Helium::Reflect::StructureRegistrar< StructureT, void >::~StructureRegistrar()
 template< class StructureT >
 void Helium::Reflect::StructureRegistrar< StructureT, void >::Register()
 {
-	if ( StructureT::s_Structure == NULL )
+	if ( StructureT::s_Composite == NULL )
 	{
-		AddTypeToRegistry( StructureT::CreateStructure() );
+		AddTypeToRegistry( StructureT::CreateComposite() );
 	}
 }
 
 template< class StructureT >
 void Helium::Reflect::StructureRegistrar< StructureT, void >::Unregister()
 {
-	if ( StructureT::s_Structure != NULL )
+	if ( StructureT::s_Composite != NULL )
 	{
-		RemoveTypeFromRegistry( StructureT::s_Structure );
-		StructureT::s_Structure = NULL;
+		RemoveTypeFromRegistry( StructureT::s_Composite );
+		StructureT::s_Composite = NULL;
 	}
 }

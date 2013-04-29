@@ -64,13 +64,70 @@ Helium::Reflect::DeferredResolver::Entry::Entry()
 
 }
 
+template< class T >
+void Helium::Reflect::Data::DefaultConstruct( DataPointer pointer )
+{
+	new ( pointer.m_Address ) T;
+}
+
+template< class T >
+void Helium::Reflect::Data::DefaultDestruct( DataPointer pointer )
+{
+	static_cast< T* >( pointer.m_Address )->~T();
+}
+
+template< class T >
+bool Helium::Reflect::Data::DefaultCopy( DataPointer src, DataPointer dest, uint32_t flags )
+{
+	HELIUM_ASSERT( src.m_Field == dest.m_Field );
+	T& right = src.As<T>();
+	T& left = dest.As<T>();
+	left = right;
+	return true;
+}
+
+template< class T >
+bool Helium::Reflect::Data::DefaultEquals( DataPointer a, DataPointer b )
+{
+	HELIUM_ASSERT( a.m_Field == b.m_Field );
+	T& right = a.As<T>();
+	T& left = b.As<T>();
+	return left == right;
+}
+
+template< class T >
+void Helium::Reflect::Data::DefaultAccept( DataPointer pointer, Visitor& visitor )
+{
+	visitor.VisitField( this, pointer.m_Address, pointer.m_Field, pointer.m_Object );
+}
+
 Helium::Reflect::Data::Data( size_t size )
 	: m_Size( size )
 {
 }
 
-Helium::Reflect::ScalarData::ScalarData( size_t size, ScalarType t )
+Helium::Reflect::ScalarData::ScalarData( size_t size, ScalarType type )
 	: Data( size )
-	, m_Type( t )
+	, m_Type( type )
 {
+}
+
+template< class T >
+void Helium::Reflect::ScalarData::DefaultPrint( DataPointer pointer, String& string, ObjectIdentifier& identifier )
+{
+	std::stringstream str;
+	str << pointer.As<T>();
+	string = str.str().c_str();
+}
+
+template< class T >
+void Helium::Reflect::ScalarData::DefaultParse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged )
+{
+	std::stringstream str ( string.GetData() );
+	str >> pointer.As<T>();
+
+	if ( raiseChanged && pointer.m_Object )
+	{
+		pointer.m_Object->RaiseChanged( pointer.m_Field ); 
+	}
 }

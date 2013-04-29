@@ -8,46 +8,37 @@ namespace Helium
 	namespace Reflect
 	{
 #ifdef REFLECT_REFACTOR
-		class HELIUM_REFLECT_API TypeIDData : public Data
+		class EnumerationData : public Data
 		{
 		public:
-			typedef TypeID DataType;
-			DataPointer<DataType> m_Data;
+			REFLECTION_TYPE( ReflectionTypes::EnumerationData, EnumerationData, Data );
 
-			virtual void ConnectData(void* data) HELIUM_OVERRIDE;
+			EnumerationData();
+			virtual void Construct( DataPointer pointer );
+			virtual void Destruct( DataPointer pointer );
+			virtual bool Copy( DataPointer src, DataPointer dest, uint32_t flags = 0);
+			virtual bool Equals( DataPointer a, DataPointer b );
+			virtual void Accept( DataPointer p, Visitor& visitor );
 
-			virtual bool Set(Data* data, uint32_t flags = 0) HELIUM_OVERRIDE;
-			virtual bool Equals(Object* object) HELIUM_OVERRIDE;
-
-			virtual void Serialize(ArchiveBinary& archive) HELIUM_OVERRIDE;
-			virtual void Deserialize(ArchiveBinary& archive) HELIUM_OVERRIDE;
-
-			virtual void Serialize(ArchiveXML& archive) HELIUM_OVERRIDE;
-			virtual void Deserialize(ArchiveXML& archive) HELIUM_OVERRIDE;
+			const Enumeration* m_Enumeration;
 		};
+#endif
 
-		class HELIUM_REFLECT_API EnumerationData : public Data
+		template< class T >
+		Data* AllocateData( const EnumerationBase&, T )
 		{
-		public:
-			typedef uint32_t DataType;
-			DataPointer<DataType> m_Data;
-			tstring m_String;
+#ifdef REFLECT_REFACTOR
+			EnumerationData* data = new EnumerationData;
+			data->m_Enumeration = T::s_Enumeration;
+			HELIUM_ASSERT( data->m_Enumeration );
+			return data;
+#else
+			HELIUM_ASSERT( false );
+			return NULL;
+#endif
+		}
 
-			virtual void ConnectData(void* data) HELIUM_OVERRIDE;
-
-			virtual bool Set(Data* src, uint32_t flags = 0) HELIUM_OVERRIDE;
-			virtual bool Equals(Object* object) HELIUM_OVERRIDE;
-
-			virtual void Serialize(ArchiveBinary& archive) HELIUM_OVERRIDE;
-			virtual void Deserialize(ArchiveBinary& archive) HELIUM_OVERRIDE;
-
-			virtual void Serialize(ArchiveXML& archive) HELIUM_OVERRIDE;
-			virtual void Deserialize(ArchiveXML& archive) HELIUM_OVERRIDE;
-
-			virtual tostream& operator>>(tostream& stream) const HELIUM_OVERRIDE;
-			virtual tistream& operator<<(tistream& stream) HELIUM_OVERRIDE;
-		};
-
+#ifdef REFLECT_REFACTOR
 		class HELIUM_REFLECT_API BitfieldData : public EnumerationData
 		{
 		public:
@@ -143,5 +134,26 @@ namespace Helium
 			return NULL;
 #endif
 		}
+
+#ifdef REFLECT_REFACTOR
+		class HELIUM_REFLECT_API TypeIDData : public Data
+		{
+		public:
+			typedef TypeID DataType;
+			DataPointer<DataType> m_Data;
+
+			virtual void ConnectData(void* data) HELIUM_OVERRIDE;
+
+			virtual bool Set(Data* data, uint32_t flags = 0) HELIUM_OVERRIDE;
+			virtual bool Equals(Object* object) HELIUM_OVERRIDE;
+
+			virtual void Serialize(ArchiveBinary& archive) HELIUM_OVERRIDE;
+			virtual void Deserialize(ArchiveBinary& archive) HELIUM_OVERRIDE;
+
+			virtual void Serialize(ArchiveXML& archive) HELIUM_OVERRIDE;
+			virtual void Deserialize(ArchiveXML& archive) HELIUM_OVERRIDE;
+		};
+
+#endif
 	}
 }

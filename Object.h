@@ -228,7 +228,7 @@ static const Helium::Reflect::Class* CreateClass(); \
 static const Helium::Reflect::Class* s_Class;
 
 #define _REFLECT_DECLARE_OBJECT_REGISTRAR( OBJECT, BASE ) \
-static Helium::Reflect::ClassRegistrar< OBJECT, BASE > s_Registrar;
+static Helium::Reflect::ObjectRegistrar< OBJECT, BASE > s_Registrar;
 
 // defines the static type info vars
 #define _REFLECT_DEFINE_OBJECT( OBJECT, CREATOR ) \
@@ -247,7 +247,7 @@ const Helium::Reflect::Class* OBJECT::CreateClass() \
 const Helium::Reflect::Class* OBJECT::s_Class = NULL;
 
 #define _REFLECT_DEFINE_OBJECT_REGISTRAR( OBJECT, CREATOR ) \
-Helium::Reflect::ClassRegistrar< OBJECT, OBJECT::Base > OBJECT::s_Registrar( TXT( #OBJECT ) );
+Helium::Reflect::ObjectRegistrar< OBJECT, OBJECT::Base > OBJECT::s_Registrar( TXT( #OBJECT ) );
 
 // declares an abstract object (an object that either A: cannot be instantiated or B: is never actually serialized)
 #define REFLECT_DECLARE_ABSTRACT_NO_REGISTRAR( OBJECT, BASE ) \

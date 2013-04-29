@@ -18,57 +18,43 @@ Helium::Reflect::SimpleData<T>::SimpleData()
 template< class T >
 void Helium::Reflect::SimpleData<T>::Construct( DataPointer pointer )
 {
-	new ( pointer.m_Address ) T;
+	Data::DefaultConstruct< T >( pointer );
 }
 
 template< class T >
 void Helium::Reflect::SimpleData<T>::Destruct( DataPointer pointer )
 {
-	static_cast< T* >( pointer.m_Address )->~T();
+	DefaultDestruct< T >( pointer );
 }
 
 template< class T >
 bool Helium::Reflect::SimpleData<T>::Copy( DataPointer src, DataPointer dest, uint32_t flags )
 {
-	HELIUM_ASSERT( src.m_Field == dest.m_Field );
-	T& right = src.As<T>();
-	T& left = dest.As<T>();
-	left = right;
-	return true;
+	return DefaultCopy< T >( src, dest, flags );
 }
 
 template< class T >
 bool Helium::Reflect::SimpleData<T>::Equals( DataPointer a, DataPointer b )
 {
-	HELIUM_ASSERT( a.m_Field == b.m_Field );
-	T& right = a.As<T>();
-	T& left = b.As<T>();
-	return left == right;
+	return DefaultEquals< T >( a, b );
 }
 
 template< class T >
 void Helium::Reflect::SimpleData<T>::Accept( DataPointer pointer, Visitor& visitor )
 {
-	visitor.VisitField( this, pointer.m_Address, pointer.m_Field, pointer.m_Object );
+	DefaultAccept< T >( pointer, visitor );
 }
 
 template< class T >
 void Helium::Reflect::SimpleData<T>::Print( DataPointer pointer, String& string, ObjectIdentifier& identifier )
 {
-	HELIUM_COMPILE_ASSERT( std::is_fundamental< T >::value );
-
-	std::stringstream str;
-	str << pointer.As<T>();
-	string = str.str().c_str();
+	DefaultPrint< T >( pointer, string, identifier );
 }
 
 template< class T >
 void Helium::Reflect::SimpleData<T>::Parse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged )
 {
-	HELIUM_COMPILE_ASSERT( std::is_fundamental< T >::value );
-
-	std::stringstream str ( string.GetData() );
-	str >> pointer.As<T>();
+	DefaultParse< T >( string, pointer, resolver, raiseChanged );
 }
 
 //
