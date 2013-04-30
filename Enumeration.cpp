@@ -9,6 +9,7 @@ using namespace Helium::Reflect;
 
 #pragma TODO("Ditch STL in favor of Foundation containers")
 #pragma TODO("Switch to uint64_t for wider bitfield support")
+#pragma TODO("Make AddElement return an EnumerationElement for easier meta-data addition")
 
 EnumerationElement::EnumerationElement()
 	: m_Value( 0x0 )
@@ -60,7 +61,7 @@ void Enumeration::AddElement( uint32_t value, const tstring& name, const tstring
 	m_Elements.Add( element );
 
 	// our enumeration is treated as a bitfield if every value is a exactly a power-of-two
-	if ( m_IsBitfield && ( ( value & ( value - 1 ) ) == 0 ) )
+	if ( m_IsBitfield && ( ( value & ( value - 1 ) ) != 0 ) )
 	{
 		m_IsBitfield = false;
 	}
