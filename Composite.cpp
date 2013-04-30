@@ -12,6 +12,9 @@
 using namespace Helium;
 using namespace Helium::Reflect;
 
+#pragma TODO("Remove 'Composite' nomenclature in favor of 'Structure' and 'StructureBase', like Enumeration")
+#pragma TODO("Remove separate base/derived structure macros in favor of registering StructureBase (like Object)")
+
 Field::Field()
 : m_Composite( NULL )
 , m_Name( NULL )

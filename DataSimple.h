@@ -21,7 +21,6 @@ namespace Helium
 		{
 		public:
 			inline SimpleData();
-
 			virtual void Construct( DataPointer pointer ) HELIUM_OVERRIDE;
 			virtual void Destruct( DataPointer pointer ) HELIUM_OVERRIDE;
 			virtual bool Copy( DataPointer src, DataPointer dest, uint32_t flags ) HELIUM_OVERRIDE;

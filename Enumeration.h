@@ -47,20 +47,17 @@ namespace Helium
 			void AddElement(uint32_t value, const tstring& name, const tstring& helpText = TXT( "FIXME: SET THE HELP TEXT FOR THIS ENUMERATION ELEMENT" ) );
 			bool IsValid(uint32_t value) const;
 
-			bool GetElementValue(const tstring& name, uint32_t& value) const;
-			bool GetElementName(const uint32_t value, tstring& name) const;
+			bool GetValue(const tstring& str, uint32_t& value) const;
+			bool GetString(const uint32_t value, tstring& str) const;
 
-			bool GetBitfieldValue(const tstring& str, uint32_t& value) const;
 			bool GetBitfieldValue(const std::vector< tstring >& strs, uint32_t& value) const;
-
-			bool GetBitfieldString(const uint32_t value, tstring& str) const;
 			bool GetBitfieldStrings(const uint32_t value, std::vector< tstring >& strs) const;
 
 			inline static bool IsFlagSet(uint32_t value, uint32_t flag);
 			inline static void SetFlags(uint32_t& value, uint32_t flags);
 
-		public:
-			DynamicArray< EnumerationElement >  m_Elements;
+			DynamicArray< EnumerationElement > m_Elements;
+			bool                               m_IsBitfield;
 		};
 
 		template< class EnumT >

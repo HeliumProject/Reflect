@@ -7,6 +7,27 @@ using namespace Reflect;
 
 #if !HELIUM_RELEASE
 
+class TestEnumeration
+{
+public:
+	enum Enum
+	{
+		ValueOne,
+		ValueTwo,
+	};
+
+	REFLECT_DECLARE_ENUMERATION( TestEnumeration );
+	static void EnumerateEnum( Helium::Reflect::Enumeration& info );
+};
+
+REFLECT_DEFINE_ENUMERATION( TestEnumeration );
+
+void TestEnumeration::EnumerateEnum( Helium::Reflect::Enumeration& info )
+{
+	info.AddElement( ValueOne, TXT( "Value One" ) );
+	info.AddElement( ValueTwo, TXT( "Value Two" ) );
+}
+
 struct TestStruct : Structure
 {
 	REFLECT_DECLARE_BASE_STRUCTURE( TestStruct );
@@ -53,6 +74,9 @@ public:
 private:
 	TestStruct m_Struct;
 	TestStruct m_StructArray[ 8 ];
+
+	TestEnumeration m_Enumeration;
+	TestEnumeration m_EnumerationArray[ 8 ];
 };
 
 REFLECT_DEFINE_OBJECT( TestObject );
@@ -61,6 +85,9 @@ void TestObject::PopulateComposite( Reflect::Composite& comp )
 {
 	comp.AddField( &TestObject::m_Struct, "Structure" );
 	comp.AddField( &TestObject::m_StructArray, "Structure Array" );
+
+	comp.AddField( &TestObject::m_Enumeration, "Enumeration" );
+	comp.AddField( &TestObject::m_EnumerationArray, "Enumeration Array" );
 }
 
 void Func()

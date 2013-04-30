@@ -7,51 +7,29 @@ namespace Helium
 {
 	namespace Reflect
 	{
-#ifdef REFLECT_REFACTOR
-		class EnumerationData : public Data
+		template< class T >
+		class EnumerationData : public ScalarData
 		{
 		public:
-			REFLECTION_TYPE( ReflectionTypes::EnumerationData, EnumerationData, Data );
+			REFLECTION_TYPE( ReflectionTypes::EnumerationData, EnumerationData, ScalarData );
 
 			EnumerationData();
-			virtual void Construct( DataPointer pointer );
-			virtual void Destruct( DataPointer pointer );
-			virtual bool Copy( DataPointer src, DataPointer dest, uint32_t flags = 0);
-			virtual bool Equals( DataPointer a, DataPointer b );
-			virtual void Accept( DataPointer p, Visitor& visitor );
-
-			const Enumeration* m_Enumeration;
+			virtual void Construct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual void Destruct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual bool Copy( DataPointer src, DataPointer dest, uint32_t flags ) HELIUM_OVERRIDE;
+			virtual bool Equals( DataPointer a, DataPointer b ) HELIUM_OVERRIDE;
+			virtual void Accept( DataPointer pointer, Visitor& visitor ) HELIUM_OVERRIDE;
+			virtual void Print( DataPointer pointer, String& string, ObjectIdentifier& identifier) HELIUM_OVERRIDE;
+			virtual void Parse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged ) HELIUM_OVERRIDE;
 		};
-#endif
 
 		template< class T >
 		Data* AllocateData( const EnumerationBase&, T )
 		{
-#ifdef REFLECT_REFACTOR
-			EnumerationData* data = new EnumerationData;
-			data->m_Enumeration = T::s_Enumeration;
-			HELIUM_ASSERT( data->m_Enumeration );
-			return data;
-#else
-			HELIUM_ASSERT( false );
-			return NULL;
-#endif
+			return new EnumerationData< T >;
 		}
 
 #ifdef REFLECT_REFACTOR
-		class HELIUM_REFLECT_API BitfieldData : public EnumerationData
-		{
-		public:
-			virtual void Serialize(ArchiveBinary& archive) HELIUM_OVERRIDE;
-			virtual void Deserialize(ArchiveBinary& archive) HELIUM_OVERRIDE;
-
-			virtual void Serialize(ArchiveXML& archive) HELIUM_OVERRIDE;
-			virtual void Deserialize(ArchiveXML& archive) HELIUM_OVERRIDE;
-
-			virtual tostream& operator>>(tostream& stream) const;
-			virtual tistream& operator<<(tistream& stream);
-		};
-
 		class HELIUM_REFLECT_API PointerData : public Data
 		{
 		public:
@@ -157,3 +135,5 @@ namespace Helium
 #endif
 	}
 }
+
+#include "Reflect/DataReflection.h"

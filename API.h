@@ -41,7 +41,6 @@ namespace Helium
 		class Visitor;
 		class Data;
 
-		struct Structure;
 		class Object;
 		typedef Helium::StrongPtr<Object> ObjectPtr;
 		typedef Helium::StrongPtr<const Object> ConstObjectPtr;
