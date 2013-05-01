@@ -113,11 +113,11 @@ namespace Helium
 
 			inline Data( size_t size );
 
-			template< class T > void DefaultConstruct( DataPointer pointer );
-			template< class T > void DefaultDestruct( DataPointer pointer );
-			template< class T > bool DefaultCopy( DataPointer src, DataPointer dest, uint32_t flags );
-			template< class T > bool DefaultEquals( DataPointer a, DataPointer b );
-			template< class T > void DefaultAccept( DataPointer p, Visitor& visitor );
+			template< class T > HELIUM_FORCEINLINE void DefaultConstruct( DataPointer pointer );
+			template< class T > HELIUM_FORCEINLINE void DefaultDestruct( DataPointer pointer );
+			template< class T > HELIUM_FORCEINLINE bool DefaultCopy( DataPointer src, DataPointer dest, uint32_t flags );
+			template< class T > HELIUM_FORCEINLINE bool DefaultEquals( DataPointer a, DataPointer b );
+			template< class T > HELIUM_FORCEINLINE void DefaultAccept( DataPointer p, Visitor& visitor );
 
 			// call the constructor (in-place)
 			virtual void Construct( DataPointer pointer ) = 0;
