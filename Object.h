@@ -86,8 +86,6 @@ namespace Helium
         // Object is the abstract base class of a serializable class
         //
 
-        class PointerData;
-
         class HELIUM_REFLECT_API Object HELIUM_ABSTRACT : NonCopyable
         {
         protected:
@@ -118,9 +116,6 @@ namespace Helium
             // Reflection data
             static const Class* s_Class;
             static ObjectRegistrar< Object, void > s_Registrar;
-
-            // Pointer serialization
-            typedef PointerData PointerDataClass;
 
             // Retrieves the reflection data for this instance
             virtual const Reflect::Class* GetClass() const;

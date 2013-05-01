@@ -29,51 +29,26 @@ namespace Helium
 			return new EnumerationData< T >;
 		}
 
-#ifdef REFLECT_REFACTOR
-		class HELIUM_REFLECT_API PointerData : public Data
+		template< class T >
+		class PointerData : public ScalarData
 		{
 		public:
-			typedef ObjectPtr DataType;
-			DataPointer<DataType> m_Data;
+			REFLECTION_TYPE( ReflectionTypes::PointerData, PointerData, ScalarData );
 
-			PointerData ();
-			~PointerData();
-
-			virtual void ConnectData(void* data) HELIUM_OVERRIDE;
-
-			virtual bool Set(Data* data, uint32_t flags = 0) HELIUM_OVERRIDE;
-			virtual bool Equals(Object* object) HELIUM_OVERRIDE;
-			virtual void Accept(Visitor& visitor) HELIUM_OVERRIDE;
-
-			virtual void Serialize(ArchiveBinary& archive) HELIUM_OVERRIDE;
-			virtual void Deserialize(ArchiveBinary& archive) HELIUM_OVERRIDE;
-
-			virtual void Serialize(ArchiveXML& archive) HELIUM_OVERRIDE;
-			virtual void Deserialize(ArchiveXML& archive) HELIUM_OVERRIDE;
-
-			uint32_t GetLinkIndex() { return m_Data->GetLinkIndex(); }
-			void ClearLinkIndex() { m_Data->ClearLinkIndex(); }
-
-		private:
-			template< class ArchiveT >
-			void Serialize(ArchiveT& archive);
-			template< class ArchiveT >
-			void Deserialize(ArchiveT& archive);
+			PointerData();
+			virtual void Construct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual void Destruct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual bool Copy( DataPointer src, DataPointer dest, uint32_t flags ) HELIUM_OVERRIDE;
+			virtual bool Equals( DataPointer a, DataPointer b ) HELIUM_OVERRIDE;
+			virtual void Accept( DataPointer pointer, Visitor& visitor ) HELIUM_OVERRIDE;
+			virtual void Print( DataPointer pointer, String& string, ObjectIdentifier& identifier) HELIUM_OVERRIDE;
+			virtual void Parse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged ) HELIUM_OVERRIDE;
 		};
-#endif
 
 		template< class T >
 		Data* AllocateData( const StrongPtr< T >&, const StrongPtr< T >& )
 		{
-#ifdef REFLECT_REFACTOR
-			PointerData* data = new PointerData;
-			data->m_Class = T::s_Class;
-			HELIUM_ASSERT( data->m_Class );
-			return data;
-#else
-			HELIUM_ASSERT( false );
-			return NULL;
-#endif
+			return new PointerData< T >;
 		}
 
 #ifdef REFLECT_REFACTOR
@@ -136,4 +111,4 @@ namespace Helium
 	}
 }
 
-#include "Reflect/DataReflection.h"
+#include "Reflect/DataReflection.inl"
