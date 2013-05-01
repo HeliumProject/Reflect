@@ -35,7 +35,7 @@ namespace Helium
 	namespace Reflect
 	{
 		class Type;
-		class Composite;
+		class Structure;
 		class Class;
 		class Enumeration;
 		class Visitor;

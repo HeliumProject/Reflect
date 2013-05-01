@@ -1,5 +1,5 @@
 #include "ReflectPch.h"
-#include "Reflect/Composite.h"
+#include "Reflect/Structure.h"
 
 #include "Foundation/Log.h"
 
@@ -12,7 +12,6 @@
 using namespace Helium;
 using namespace Helium::Reflect;
 
-#pragma TODO("Remove 'Composite' nomenclature in favor of 'Structure' and 'StructureBase', like Enumeration")
 #pragma TODO("Remove separate base/derived structure macros in favor of registering StructureBase (like Object)")
 
 Field::Field()
@@ -52,7 +51,7 @@ bool Field::ShouldSerialize( void* address, Object* object, uint32_t index ) con
 	return !IsDefaultValue( address, object, index );
 }
 
-Composite::Composite()
+Structure::Structure()
 	: m_Base( NULL )
 	, m_FirstDerived( NULL )
 	, m_NextSibling( NULL )
@@ -62,17 +61,17 @@ Composite::Composite()
 
 }
 
-Composite::~Composite()
+Structure::~Structure()
 {
 	delete m_Default;
 }
 
-Composite* Composite::Create()
+Structure* Structure::Create()
 {
-	return new Composite();
+	return new Structure();
 }
 
-void Composite::Register() const
+void Structure::Register() const
 {
 	Type::Register();
 
@@ -91,14 +90,14 @@ void Composite::Register() const
 	}
 }
 
-void Composite::Unregister() const
+void Structure::Unregister() const
 {
 	Type::Unregister();
 }
 
-bool Composite::IsType(const Composite* type) const
+bool Structure::IsType(const Structure* type) const
 {
-	for ( const Composite* base = this; base; base = base->m_Base )
+	for ( const Structure* base = this; base; base = base->m_Base )
 	{
 		if ( base == type )
 		{
@@ -109,7 +108,7 @@ bool Composite::IsType(const Composite* type) const
 	return false;
 }
 
-void Composite::AddDerived( const Composite* derived ) const
+void Structure::AddDerived( const Structure* derived ) const
 {
 	HELIUM_ASSERT( derived );
 
@@ -117,7 +116,7 @@ void Composite::AddDerived( const Composite* derived ) const
 	m_FirstDerived = derived;
 }
 
-void Composite::RemoveDerived( const Composite* derived ) const
+void Structure::RemoveDerived( const Structure* derived ) const
 {
 	HELIUM_ASSERT( derived );
 
@@ -127,7 +126,7 @@ void Composite::RemoveDerived( const Composite* derived ) const
 	}
 	else
 	{
-		for ( const Composite* sibling = m_FirstDerived; sibling; sibling = sibling->m_NextSibling )
+		for ( const Structure* sibling = m_FirstDerived; sibling; sibling = sibling->m_NextSibling )
 		{
 			if ( sibling->m_NextSibling == derived )
 			{
@@ -140,7 +139,7 @@ void Composite::RemoveDerived( const Composite* derived ) const
 	derived->m_NextSibling = NULL;
 }
 
-bool Composite::Equals(void* compositeA, Object* objectA, void* compositeB, Object* objectB) const
+bool Structure::Equals(void* compositeA, Object* objectA, void* compositeB, Object* objectB) const
 {
 	if (compositeA == compositeB)
 	{
@@ -152,7 +151,7 @@ bool Composite::Equals(void* compositeA, Object* objectA, void* compositeB, Obje
 		return false;
 	}
 
-	for ( const Composite* current = this; current != NULL; current = current->m_Base )
+	for ( const Structure* current = this; current != NULL; current = current->m_Base )
 	{
 		DynamicArray< Field >::ConstIterator itr = current->m_Fields.Begin();
 		DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
@@ -172,14 +171,14 @@ bool Composite::Equals(void* compositeA, Object* objectA, void* compositeB, Obje
 	return true;
 }
 
-void Composite::Visit(void* composite, Object* object, Visitor& visitor) const
+void Structure::Visit(void* composite, Object* object, Visitor& visitor) const
 {
 	if (!composite)
 	{
 		return;
 	}
 
-	for ( const Composite* current = this; current != NULL; current = current->m_Base )
+	for ( const Structure* current = this; current != NULL; current = current->m_Base )
 	{
 		DynamicArray< Field >::ConstIterator itr = current->m_Fields.Begin();
 		DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
@@ -192,11 +191,11 @@ void Composite::Visit(void* composite, Object* object, Visitor& visitor) const
 	}
 }
 
-void Composite::Copy( void* compositeSource, Object* objectSource, void* compositeDestination, Object* objectDestination ) const
+void Structure::Copy( void* compositeSource, Object* objectSource, void* compositeDestination, Object* objectDestination ) const
 {
 	if ( compositeSource != compositeDestination )
 	{
-		for ( const Composite* current = this; current != NULL; current = current->m_Base )
+		for ( const Structure* current = this; current != NULL; current = current->m_Base )
 		{
 			DynamicArray< Field >::ConstIterator itr = current->m_Fields.Begin();
 			DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
@@ -216,9 +215,9 @@ void Composite::Copy( void* compositeSource, Object* objectSource, void* composi
 	}
 }
 
-const Field* Composite::FindFieldByName(uint32_t crc) const
+const Field* Structure::FindFieldByName(uint32_t crc) const
 {
-	for ( const Composite* current = this; current != NULL; current = current->m_Base )
+	for ( const Structure* current = this; current != NULL; current = current->m_Base )
 	{
 		DynamicArray< Field >::ConstIterator itr = current->m_Fields.Begin();
 		DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
@@ -234,9 +233,9 @@ const Field* Composite::FindFieldByName(uint32_t crc) const
 	return NULL;
 }
 
-const Field* Composite::FindFieldByIndex(uint32_t index) const
+const Field* Structure::FindFieldByIndex(uint32_t index) const
 {
-	for ( const Composite* current = this; current != NULL; current = current->m_Base )
+	for ( const Structure* current = this; current != NULL; current = current->m_Base )
 	{
 		if ( current->m_Fields.GetSize() && index >= current->m_Fields.GetFirst().m_Index && index <= current->m_Fields.GetFirst().m_Index )
 		{
@@ -247,10 +246,10 @@ const Field* Composite::FindFieldByIndex(uint32_t index) const
 	return NULL;
 }
 
-const Field* Composite::FindFieldByOffset(uint32_t offset) const
+const Field* Structure::FindFieldByOffset(uint32_t offset) const
 {
 #pragma TODO("Implement binary search")
-	for ( const Composite* current = this; current != NULL; current = current->m_Base )
+	for ( const Structure* current = this; current != NULL; current = current->m_Base )
 	{
 		if ( current->m_Fields.GetSize() && offset >= current->m_Fields.GetFirst().m_Offset && offset <= current->m_Fields.GetFirst().m_Offset )
 		{
@@ -269,11 +268,11 @@ const Field* Composite::FindFieldByOffset(uint32_t offset) const
 	return NULL;
 }
 
-uint32_t Composite::GetBaseFieldCount() const
+uint32_t Structure::GetBaseFieldCount() const
 {
 	uint32_t count = 0;
 
-	for ( const Composite* base = m_Base; base; base = base->m_Base )
+	for ( const Structure* base = m_Base; base; base = base->m_Base )
 	{
 		if ( m_Base->m_Fields.GetSize() )
 		{
@@ -285,7 +284,7 @@ uint32_t Composite::GetBaseFieldCount() const
 	return count;
 }
 
-Reflect::Field* Composite::AddField( const tchar_t* name, uint32_t size, uint32_t count, uint32_t offset, uint32_t flags, Data* data )
+Reflect::Field* Structure::AddField( const tchar_t* name, uint32_t size, uint32_t count, uint32_t offset, uint32_t flags, Data* data )
 {
 	// deduction of the data class has failed, you must provide one yourself!
 	HELIUM_ASSERT( data );

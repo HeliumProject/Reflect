@@ -43,7 +43,7 @@ namespace Helium
 				// type meta-data class hierarchy
 				Type,
 					Enumeration,
-					Composite,
+					Structure,
 						Class,
 				
 				// data abstraction class hierarchy

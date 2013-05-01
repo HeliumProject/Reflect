@@ -28,10 +28,10 @@ void TestEnumeration::EnumerateEnum( Helium::Reflect::Enumeration& info )
 	info.AddElement( ValueTwo, TXT( "Value Two" ) );
 }
 
-struct TestStruct : Structure
+struct TestStruct : StructureBase
 {
 	REFLECT_DECLARE_BASE_STRUCTURE( TestStruct );
-	static void PopulateComposite( Reflect::Composite& comp );
+	static void PopulateComposite( Reflect::Structure& comp );
 
 	uint8_t  m_Uint8;
 	uint16_t m_Uint16;
@@ -49,7 +49,7 @@ struct TestStruct : Structure
 
 REFLECT_DEFINE_BASE_STRUCTURE( TestStruct );
 
-void TestStruct::PopulateComposite( Reflect::Composite& comp )
+void TestStruct::PopulateComposite( Reflect::Structure& comp )
 {
 	comp.AddField( &TestStruct::m_Uint8,  "Unsigned 8-bit Integer" );
 	comp.AddField( &TestStruct::m_Uint16, "Unsigned 16-bit Integer" );
@@ -69,7 +69,7 @@ class TestObject : public Reflect::Object
 {
 public:
 	REFLECT_DECLARE_OBJECT( TestObject, Reflect::Object );
-	static void PopulateComposite( Reflect::Composite& comp );
+	static void PopulateComposite( Reflect::Structure& comp );
 
 private:
 	TestStruct m_Struct;
@@ -81,7 +81,7 @@ private:
 
 REFLECT_DEFINE_OBJECT( TestObject );
 
-void TestObject::PopulateComposite( Reflect::Composite& comp )
+void TestObject::PopulateComposite( Reflect::Structure& comp )
 {
 	comp.AddField( &TestObject::m_Struct, "Structure" );
 	comp.AddField( &TestObject::m_StructArray, "Structure Array" );

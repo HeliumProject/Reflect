@@ -1,7 +1,7 @@
 #include "ReflectPch.h"
 #include "Reflect/Data.h"
 
-#include "Reflect/Composite.h"
+#include "Reflect/Structure.h"
 
 using namespace Helium;
 using namespace Helium::Reflect;

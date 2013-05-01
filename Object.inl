@@ -8,7 +8,7 @@ void Helium::Reflect::Object::FieldChanged( FieldT* fieldAddress ) const
     const Reflect::Field* field = GetClass()->FindFieldByOffset( fieldOffset );
 
     // your field address probably doesn't point to the field in this instance,
-    //  or your field is not exposed to Reflect, add it in your Composite function
+    //  or your field is not exposed to Reflect, add it in your Structure function
     HELIUM_ASSERT( field );
 
     // notify listeners that this field changed
@@ -24,7 +24,7 @@ void Helium::Reflect::Object::ChangeField( FieldT ObjectT::* field, const FieldT
     // find the field in our reflection information
     const Reflect::Field* field = GetClass()->FindField( field );
 
-    // your field is not exposed to Reflect, add it in your Composite function
+    // your field is not exposed to Reflect, add it in your Structure function
     HELIUM_ASSERT( field );
 
     // notify listeners that this field changed

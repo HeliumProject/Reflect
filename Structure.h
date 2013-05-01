@@ -13,8 +13,8 @@ namespace Helium
 {
 	namespace Reflect
 	{
-		class Composite;
-		typedef void (*PopulateCompositeFunc)( Composite& );
+		class Structure;
+		typedef void (*PopulateCompositeFunc)( Structure& );
 
 		namespace FieldFlags
 		{
@@ -43,7 +43,7 @@ namespace Helium
 			// determine if this field should be serialized
 			bool ShouldSerialize( void* address, Object* object, uint32_t index = 0 ) const;
 
-			const Composite* m_Composite; // the type we are a field of
+			const Structure* m_Composite; // the type we are a field of
 			const tchar_t*   m_Name;      // name of this field
 			uint32_t         m_Size;      // the size of this field
 			uint32_t         m_Count;     // the static array size
@@ -60,43 +60,43 @@ namespace Helium
 		//  'Empty Base Optimization'
 		//
 
-		struct HELIUM_REFLECT_API Structure
+		struct HELIUM_REFLECT_API StructureBase
 		{
 		};
 
 		//
-		// Composite (C++ `struct` or `class`)
+		// Structure (C++ `struct` or `class`)
 		//
 
-		class HELIUM_REFLECT_API Composite : public Type
+		class HELIUM_REFLECT_API Structure : public Type
 		{
 		public:
-			REFLECTION_TYPE( ReflectionTypes::Composite, Composite, Type );
+			REFLECTION_TYPE( ReflectionTypes::Structure, Structure, Type );
 
 		protected:
-			Composite();
-			~Composite();
+			Structure();
+			~Structure();
 
 		public:
 			// protect external allocation to keep inlined code in this dll
-			static Composite* Create();
+			static Structure* Create();
 
 			// creator for structure types
 			template< class StructureT >
-			static void Create( Composite const*& pointer, const tchar_t* name, const tchar_t* baseName );
+			static void Create( Structure const*& pointer, const tchar_t* name, const tchar_t* baseName );
 
 			// shared logic with class types
 			template< class CompositeT >
-			static void Create( const tchar_t* name, const tchar_t* baseName, PopulateCompositeFunc populate, Composite* info );
+			static void Create( const tchar_t* name, const tchar_t* baseName, PopulateCompositeFunc populate, Structure* info );
 
 			// overloaded functions from Type
 			virtual void Register() const HELIUM_OVERRIDE;
 			virtual void Unregister() const HELIUM_OVERRIDE;
 
 			// inheritance hierarchy
-			bool IsType(const Composite* type) const;
-			void AddDerived( const Composite* derived ) const;
-			void RemoveDerived( const Composite* derived ) const;
+			bool IsType(const Structure* type) const;
+			void AddDerived( const Structure* derived ) const;
+			void RemoveDerived( const Structure* derived ) const;
 
 			// Compare two composite instances of *this* type
 			bool Equals( void* compositeA, Object* objectA, void* compositeB, Object* objectB ) const;
@@ -151,9 +151,9 @@ namespace Helium
 			inline Reflect::Field* AddField( FieldT CompositeT::* field, const tchar_t* name, uint32_t flags = 0, Data* data = NULL );
 
 		public:
-			const Composite*         m_Base;         // the base type name
-			mutable const Composite* m_FirstDerived; // head of the derived linked list, mutable since its populated by other objects
-			mutable const Composite* m_NextSibling;  // next in the derived linked list, mutable since its populated by other objects
+			const Structure*         m_Base;         // the base type name
+			mutable const Structure* m_FirstDerived; // head of the derived linked list, mutable since its populated by other objects
+			mutable const Structure* m_NextSibling;  // next in the derived linked list, mutable since its populated by other objects
 			DynamicArray< Field >    m_Fields;       // fields in this composite
 			PopulateCompositeFunc    m_Populate;     // function to populate this structure
 			void*                    m_Default;      // default instance
@@ -187,27 +187,27 @@ namespace Helium
 #define _REFLECT_DECLARE_BASE_STRUCTURE( STRUCTURE ) \
 public: \
 typedef STRUCTURE This; \
-static const Helium::Reflect::Composite* CreateComposite(); \
-static const Helium::Reflect::Composite* s_Composite; \
+static const Helium::Reflect::Structure* CreateComposite(); \
+static const Helium::Reflect::Structure* s_Composite; \
 static Helium::Reflect::StructureRegistrar< STRUCTURE, void > s_Registrar;
 
 #define _REFLECT_DECLARE_DERIVED_STRUCTURE( STRUCTURE, BASE ) \
 public: \
 typedef BASE Base; \
 typedef STRUCTURE This; \
-static const Helium::Reflect::Composite* CreateComposite(); \
-static const Helium::Reflect::Composite* s_Composite; \
+static const Helium::Reflect::Structure* CreateComposite(); \
+static const Helium::Reflect::Structure* s_Composite; \
 static Helium::Reflect::StructureRegistrar< STRUCTURE, BASE > s_Registrar;
 
 // defines the static type info vars
 #define _REFLECT_DEFINE_BASE_STRUCTURE( STRUCTURE ) \
-const Helium::Reflect::Composite* STRUCTURE::CreateComposite() \
+const Helium::Reflect::Structure* STRUCTURE::CreateComposite() \
 { \
 	HELIUM_ASSERT( s_Composite == NULL ); \
-	Helium::Reflect::Composite::Create<STRUCTURE>( s_Composite, TXT( #STRUCTURE ), NULL ); \
+	Helium::Reflect::Structure::Create<STRUCTURE>( s_Composite, TXT( #STRUCTURE ), NULL ); \
 	return s_Composite; \
 } \
-const Helium::Reflect::Composite* STRUCTURE::s_Composite = NULL; \
+const Helium::Reflect::Structure* STRUCTURE::s_Composite = NULL; \
 Helium::Reflect::StructureRegistrar< STRUCTURE, void > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
 
 #define _REFLECT_DEFINE_DERIVED_STRUCTURE( STRUCTURE ) \
@@ -218,7 +218,7 @@ const Helium::Reflect::Structure* STRUCTURE::CreateComposite() \
 	Helium::Reflect::Structure::Create<STRUCTURE>( s_Composite, TXT( #STRUCTURE ), STRUCTURE::Base::s_Composite->m_Name ); \
 	return s_Composite; \
 } \
-const Helium::Reflect::Composite* STRUCTURE::s_Composite = NULL; \
+const Helium::Reflect::Structure* STRUCTURE::s_Composite = NULL; \
 Helium::Reflect::StructureRegistrar< STRUCTURE, STRUCTURE::Base > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
 
 // declares a concrete object with creator
@@ -235,4 +235,4 @@ Helium::Reflect::StructureRegistrar< STRUCTURE, STRUCTURE::Base > STRUCTURE::s_R
 #define REFLECT_DEFINE_DERIVED_STRUCTURE( STRUCTURE ) \
 	_REFLECT_DEFINE_DERIVED_STRUCTURE( STRUCTURE  )
 
-#include "Reflect/Composite.inl"
+#include "Reflect/Structure.inl"

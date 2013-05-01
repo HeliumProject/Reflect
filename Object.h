@@ -20,7 +20,7 @@ namespace Helium
     {
         class Type;
         class Field;
-        class Composite;
+        class Structure;
         class Class;
         template< class ClassT, class BaseT > class ObjectRegistrar;
         class Object;
@@ -132,7 +132,7 @@ namespace Helium
             static const Reflect::Class* CreateClass();
 
             // Enumerates member data (stub)
-            static void PopulateComposite( Reflect::Composite& comp );
+            static void PopulateComposite( Reflect::Structure& comp );
 
             //
             // Persistence

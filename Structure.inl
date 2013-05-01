@@ -1,21 +1,21 @@
 //
-// Composite
+// Structure
 //
 
 template< class StructureT >
-void Helium::Reflect::Composite::Create( Composite const*& pointer, const tchar_t* name, const tchar_t* baseName )
+void Helium::Reflect::Structure::Create( Structure const*& pointer, const tchar_t* name, const tchar_t* baseName )
 {
-	Composite* type = Composite::Create();
+	Structure* type = Structure::Create();
 	pointer = type;
 
 	// populate reflection information
-	Composite::Create< StructureT >( name, baseName, &StructureT::PopulateComposite, type );
+	Structure::Create< StructureT >( name, baseName, &StructureT::PopulateComposite, type );
 
 	type->m_Default = new StructureT;
 }
 
 template< class CompositeT >
-void Helium::Reflect::Composite::Create( const tchar_t* name, const tchar_t* baseName, PopulateCompositeFunc populate, Composite* info )
+void Helium::Reflect::Structure::Create( const tchar_t* name, const tchar_t* baseName, PopulateCompositeFunc populate, Structure* info )
 {
 	// the size
 	info->m_Size = sizeof( CompositeT );
@@ -39,7 +39,7 @@ void Helium::Reflect::Composite::Create( const tchar_t* name, const tchar_t* bas
 	//  so check each base class to see if this is really a base class enumerate function
 	bool baseAccept = false;
 	{
-		const Reflect::Composite* base = info->m_Base;
+		const Reflect::Structure* base = info->m_Base;
 		while ( !baseAccept && base )
 		{
 			if (base)
@@ -70,50 +70,50 @@ void Helium::Reflect::Composite::Create( const tchar_t* name, const tchar_t* bas
 }
 
 template< class CompositeT, typename FieldT >
-const Helium::Reflect::Field* Helium::Reflect::Composite::FindField( FieldT CompositeT::* pointerToMember ) const
+const Helium::Reflect::Field* Helium::Reflect::Structure::FindField( FieldT CompositeT::* pointerToMember ) const
 {
-	return FindFieldByOffset( Reflect::Composite::GetOffset<CompositeT, FieldT>( pointerToMember ) );
+	return FindFieldByOffset( Reflect::Structure::GetOffset<CompositeT, FieldT>( pointerToMember ) );
 }
 
 template < class CompositeT, class FieldT >
-uint32_t Helium::Reflect::Composite::GetOffset( FieldT CompositeT::* field )
+uint32_t Helium::Reflect::Structure::GetOffset( FieldT CompositeT::* field )
 {
 	return (uint32_t) (uintptr_t) &( ((CompositeT*)NULL)->*field); 
 }
 
 template < class T, size_t N >
-uint32_t Helium::Reflect::Composite::GetArrayCount( T (&/* array */)[N] )
+uint32_t Helium::Reflect::Structure::GetArrayCount( T (&/* array */)[N] )
 {
 	return N;
 }
 
 template < class T >
-uint32_t Helium::Reflect::Composite::GetCount( std::false_type /* is_array */ )
+uint32_t Helium::Reflect::Structure::GetCount( std::false_type /* is_array */ )
 {
 	return 1;
 }
 
 template < class T >
-uint32_t Helium::Reflect::Composite::GetCount( std::true_type /* is_array */ )
+uint32_t Helium::Reflect::Structure::GetCount( std::true_type /* is_array */ )
 {
 	T temp;
 	return GetArrayCount( temp );
 }
 
 template < class T >
-Helium::Reflect::Data* Helium::Reflect::Composite::AllocateData( std::false_type /* is_array */ )
+Helium::Reflect::Data* Helium::Reflect::Structure::AllocateData( std::false_type /* is_array */ )
 {
 	return Reflect::AllocateData< T >();
 }
 
 template < class T >
-Helium::Reflect::Data* Helium::Reflect::Composite::AllocateData( std::true_type /* is_array */ )
+Helium::Reflect::Data* Helium::Reflect::Structure::AllocateData( std::true_type /* is_array */ )
 {
 	return Reflect::AllocateData< std::remove_extent< T >::type >();
 }
 
 template < class CompositeT, class FieldT >
-Helium::Reflect::Field* Helium::Reflect::Composite::AddField( FieldT CompositeT::* field, const tchar_t* name, uint32_t flags, Data* data )
+Helium::Reflect::Field* Helium::Reflect::Structure::AddField( FieldT CompositeT::* field, const tchar_t* name, uint32_t flags, Data* data )
 {
 	if ( data == NULL )
 	{

@@ -2,7 +2,7 @@
 
 #include "Platform/Encoding.h"
 
-#include "Reflect/Composite.h"
+#include "Reflect/Structure.h"
 #include "Reflect/Enumeration.h"
 #include "Reflect/Registry.h"
 
@@ -17,10 +17,10 @@ namespace Helium
 		// Class (C++ `struct` or `class`)
 		//
 
-		class HELIUM_REFLECT_API Class : public Composite
+		class HELIUM_REFLECT_API Class : public Structure
 		{
 		public:
-			REFLECTION_TYPE( ReflectionTypes::Class, Class, Composite );
+			REFLECTION_TYPE( ReflectionTypes::Class, Class, Structure );
 
 		protected:
 			Class();

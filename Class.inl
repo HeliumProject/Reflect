@@ -5,13 +5,13 @@ void Helium::Reflect::Class::Create( Class const*& pointer, const tchar_t* name,
 	pointer = type;
 
 	// populate reflection information
-	Composite::Create< ClassT >( name, baseName, &ClassT::PopulateComposite, type );
+	Structure::Create< ClassT >( name, baseName, &ClassT::PopulateComposite, type );
 
 	// setup factory function
 	type->m_Creator = creator;
 
 	// fetch a potential default instance from the composite
-	ClassT* instance = static_cast< ClassT* >( type->Composite::m_Default );
+	ClassT* instance = static_cast< ClassT* >( type->Structure::m_Default );
 	if ( instance )
 	{
 		type->m_Default = instance;
@@ -21,7 +21,7 @@ void Helium::Reflect::Class::Create( Class const*& pointer, const tchar_t* name,
 		// create the default instance
 		if ( pointer->m_Creator )
 		{
-			type->Composite::m_Default = type->m_Default = type->m_Creator();
+			type->Structure::m_Default = type->m_Default = type->m_Creator();
 		}
 	}
 }

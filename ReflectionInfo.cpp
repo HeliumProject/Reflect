@@ -8,7 +8,7 @@ const tchar_t* ReflectionTypes::Strings[ ReflectionTypes::Count ] =
 {
 	TXT("Type"),
 	TXT("Enumeration"),
-	TXT("Composite"),
+	TXT("Structure"),
 	TXT("Class"),
 	TXT("Data"),
 	TXT("ContainerData"),
