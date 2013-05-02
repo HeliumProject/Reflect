@@ -65,7 +65,7 @@ namespace Helium
 		public:
 			REFLECTION_TYPE( ReflectionTypes::PointerData, PointerData, ScalarData );
 
-			PointerData();
+			inline PointerData();
 			virtual void Construct( DataPointer pointer ) HELIUM_OVERRIDE;
 			virtual void Destruct( DataPointer pointer ) HELIUM_OVERRIDE;
 			virtual void Copy( DataPointer src, DataPointer dest, uint32_t flags ) HELIUM_OVERRIDE;
@@ -87,7 +87,7 @@ namespace Helium
 		public:
 			REFLECTION_TYPE( ReflectionTypes::EnumerationData, EnumerationData, ScalarData );
 
-			EnumerationData();
+			inline EnumerationData();
 			virtual void Construct( DataPointer pointer ) HELIUM_OVERRIDE;
 			virtual void Destruct( DataPointer pointer ) HELIUM_OVERRIDE;
 			virtual void Copy( DataPointer src, DataPointer dest, uint32_t flags ) HELIUM_OVERRIDE;
@@ -101,6 +101,26 @@ namespace Helium
 		Data* AllocateData( const EnumerationBase&, T )
 		{
 			return new EnumerationData< T >;
+		}
+
+		class TypeData : public ScalarData
+		{
+		public:
+			REFLECTION_TYPE( ReflectionTypes::TypeData, TypeData, ScalarData );
+
+			TypeData();
+			virtual void Construct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual void Destruct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual void Copy( DataPointer src, DataPointer dest, uint32_t flags ) HELIUM_OVERRIDE;
+			virtual bool Equals( DataPointer a, DataPointer b ) HELIUM_OVERRIDE;
+			virtual void Accept( DataPointer pointer, Visitor& visitor ) HELIUM_OVERRIDE;
+			virtual void Print( DataPointer pointer, String& string, ObjectIdentifier& identifier) HELIUM_OVERRIDE;
+			virtual void Parse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged ) HELIUM_OVERRIDE;
+		};
+
+		inline Data* AllocateData( const Type*, const Type* )
+		{
+			return new TypeData;
 		}
 	}
 }
