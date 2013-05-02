@@ -128,6 +128,11 @@ void Helium::Reflect::SimpleStructureData<T>::Copy( DataPointer src, DataPointer
 {
 	const Structure* structure = GetStructure< T >();
 	structure->Copy( src.m_Address, src.m_Object, dest.m_Address, dest.m_Object );
+
+	if ( flags & CopyFlags::Notify && dest.m_Object )
+	{
+		dest.m_Object->RaiseChanged( dest.m_Field ); 
+	}
 }
 
 template< class T >
@@ -170,19 +175,41 @@ void Helium::Reflect::PointerData<T>::Destruct( DataPointer pointer )
 template< class T >
 void Helium::Reflect::PointerData<T>::Copy( DataPointer src, DataPointer dest, uint32_t flags )
 {
-	DefaultCopy< StrongPtr< T > >( src, dest, flags );
+	if ( flags & CopyFlags::Shallow )
+	{
+		DefaultCopy< StrongPtr< T > >( src, dest, flags );
+	}
+	else
+	{
+		src.As< StrongPtr< T > >()->CopyTo( dest.As< StrongPtr< T > >() );
+	}
+
+	if ( flags & CopyFlags::Notify && dest.m_Object )
+	{
+		dest.m_Object->RaiseChanged( dest.m_Field ); 
+	}
 }
 
 template< class T >
 bool Helium::Reflect::PointerData<T>::Equals( DataPointer a, DataPointer b )
 {
-	return DefaultEquals< StrongPtr< T > >( a, b );
+	if ( DefaultEquals< StrongPtr< T > >( a, b ) )
+	{
+		return true;
+	}
+	
+	return a.As< StrongPtr< T > >()->Equals( b.As< StrongPtr< T > >() );
 }
 
 template< class T >
 void Helium::Reflect::PointerData<T>::Accept( DataPointer pointer, Visitor& visitor )
 {
-	DefaultAccept< StrongPtr< T > >( pointer, visitor );
+	if ( !visitor.VisitPointer( pointer.As< ObjectPtr >() ) )
+	{
+		return;
+	}
+
+	pointer.As< StrongPtr< T > >()->Accept( visitor );
 }
 
 template< class T >

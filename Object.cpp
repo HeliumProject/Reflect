@@ -270,58 +270,58 @@ void Object::Accept( Visitor& visitor )
 
 	const Class* type = GetClass();
 
-    type->Visit( this, this, visitor );
+	type->Visit( this, this, visitor );
 }
 
 bool Object::Equals( Object* object )
 {
 	const Class* type = GetClass();
 
-    return type->Equals( this, this, object, object );
+	return type->Equals( this, this, object, object );
 }
 
 void Object::CopyTo( Object* object )
 {
-    if ( this != object )
-    {
-        // 
-        // Find common base class
-        //
+	if ( this != object )
+	{
+		// 
+		// Find common base class
+		//
 
-        // This is the common base class type
-        const Class* type = NULL; 
-        const Class* thisType = this->GetClass();
-        const Class* objectType = object->GetClass();
+		// This is the common base class type
+		const Class* type = NULL; 
+		const Class* thisType = this->GetClass();
+		const Class* objectType = object->GetClass();
 
-        // Simplest case: the types are the same
-        if ( thisType == objectType )
-        {
-            type = thisType;
-        }
-        else
-        {
-            // Types are not the same, we have to search...
-            // Iterate up inheritance of this, and look check to see if object HasType for each one
-            Reflect::Registry* registry = Reflect::Registry::GetInstance();
-            for ( const Class* base = thisType; base && !type; base = static_cast< const Class* >( base->m_Base ) )
-            {
-                if ( object->IsClass( base ) )
-                {
-                    // We found the match (which breaks out of this loop)
-                    type = ReflectionCast<const Class>( base );
-                }
-            }
+		// Simplest case: the types are the same
+		if ( thisType == objectType )
+		{
+			type = thisType;
+		}
+		else
+		{
+			// Types are not the same, we have to search...
+			// Iterate up inheritance of this, and look check to see if object HasType for each one
+			Reflect::Registry* registry = Reflect::Registry::GetInstance();
+			for ( const Class* base = thisType; base && !type; base = static_cast< const Class* >( base->m_Base ) )
+			{
+				if ( object->IsClass( base ) )
+				{
+					// We found the match (which breaks out of this loop)
+					type = ReflectionCast<const Class>( base );
+				}
+			}
 
-            if ( !type )
-            {
-                // This should be impossible... at the very least, Object is a common base class for both pointers.
-                // This exeception means there's a bug in this function.
-                throw Reflect::TypeInformationException( TXT( "Internal error (could not find common base class for %s and %s)" ), thisType->m_Name, objectType->m_Name );
-            }
-        }
+			if ( !type )
+			{
+				// This should be impossible... at the very least, Object is a common base class for both pointers.
+				// This exeception means there's a bug in this function.
+				throw Reflect::TypeInformationException( TXT( "Internal error (could not find common base class for %s and %s)" ), thisType->m_Name, objectType->m_Name );
+			}
+		}
 
-        type->Copy( this, this, object, object );
-    }
+		type->Copy( this, this, object, object );
+	}
 }
 
 ObjectPtr Object::Clone()
@@ -331,8 +331,8 @@ ObjectPtr Object::Clone()
 	PreSerialize( NULL );
 	clone->PreDeserialize( NULL );
 
-    const Class* type = GetClass();
-    type->Copy( this, this, clone, clone );
+	const Class* type = GetClass();
+	type->Copy( this, this, clone, clone );
 
 	clone->PostDeserialize( NULL );
 	PostSerialize( NULL );

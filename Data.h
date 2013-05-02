@@ -98,11 +98,12 @@ namespace Helium
 		// Data abstraction object, worker for an entire class of data
 		//
 
-		namespace DataFlags
+		namespace CopyFlags
 		{
 			enum Type
 			{
-				Shallow   = 1 << 0,
+				Notify    = 1 << 0, // emit changed events when copying data
+				Shallow   = 1 << 1, // copy references only
 			};
 		}
 
