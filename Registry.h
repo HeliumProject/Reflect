@@ -105,10 +105,10 @@ namespace Helium
         }
 
         template<class T>
-        inline const Structure* GetComposite()
+        inline const Structure* GetStructure()
         {
             T::s_Registrar.Register();
-            return T::s_Composite;
+            return T::s_Structure;
         }
 
         template<class T>

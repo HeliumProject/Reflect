@@ -208,8 +208,7 @@ void Structure::Copy( void* compositeSource, Object* objectSource, void* composi
 				// for normal data types, run overloaded assignement operator via data's vtable
 				// for reference container types, this deep copies containers (which is bad for 
 				//  non-cloneable (FieldFlags::Share) reference containers)
-				bool result = field->m_Data->Copy(pointerSource, pointerDestination, field->m_Flags & FieldFlags::Share ? DataFlags::Shallow : 0);
-				HELIUM_ASSERT(result);
+				field->m_Data->Copy(pointerSource, pointerDestination, field->m_Flags & FieldFlags::Share ? DataFlags::Shallow : 0);
 			}
 		}
 	}

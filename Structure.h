@@ -187,38 +187,38 @@ namespace Helium
 #define _REFLECT_DECLARE_BASE_STRUCTURE( STRUCTURE ) \
 public: \
 typedef STRUCTURE This; \
-static const Helium::Reflect::Structure* CreateComposite(); \
-static const Helium::Reflect::Structure* s_Composite; \
+static const Helium::Reflect::Structure* CreateStructure(); \
+static const Helium::Reflect::Structure* s_Structure; \
 static Helium::Reflect::StructureRegistrar< STRUCTURE, void > s_Registrar;
 
 #define _REFLECT_DECLARE_DERIVED_STRUCTURE( STRUCTURE, BASE ) \
 public: \
 typedef BASE Base; \
 typedef STRUCTURE This; \
-static const Helium::Reflect::Structure* CreateComposite(); \
-static const Helium::Reflect::Structure* s_Composite; \
+static const Helium::Reflect::Structure* CreateStructure(); \
+static const Helium::Reflect::Structure* s_Structure; \
 static Helium::Reflect::StructureRegistrar< STRUCTURE, BASE > s_Registrar;
 
 // defines the static type info vars
 #define _REFLECT_DEFINE_BASE_STRUCTURE( STRUCTURE ) \
-const Helium::Reflect::Structure* STRUCTURE::CreateComposite() \
+const Helium::Reflect::Structure* STRUCTURE::CreateStructure() \
 { \
-	HELIUM_ASSERT( s_Composite == NULL ); \
-	Helium::Reflect::Structure::Create<STRUCTURE>( s_Composite, TXT( #STRUCTURE ), NULL ); \
-	return s_Composite; \
+	HELIUM_ASSERT( s_Structure == NULL ); \
+	Helium::Reflect::Structure::Create<STRUCTURE>( s_Structure, TXT( #STRUCTURE ), NULL ); \
+	return s_Structure; \
 } \
-const Helium::Reflect::Structure* STRUCTURE::s_Composite = NULL; \
+const Helium::Reflect::Structure* STRUCTURE::s_Structure = NULL; \
 Helium::Reflect::StructureRegistrar< STRUCTURE, void > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
 
 #define _REFLECT_DEFINE_DERIVED_STRUCTURE( STRUCTURE ) \
-const Helium::Reflect::Structure* STRUCTURE::CreateComposite() \
+const Helium::Reflect::Structure* STRUCTURE::CreateStructure() \
 { \
-	HELIUM_ASSERT( s_Composite == NULL ); \
-	HELIUM_ASSERT( STRUCTURE::Base::s_Composite != NULL ); \
-	Helium::Reflect::Structure::Create<STRUCTURE>( s_Composite, TXT( #STRUCTURE ), STRUCTURE::Base::s_Composite->m_Name ); \
-	return s_Composite; \
+	HELIUM_ASSERT( s_Structure == NULL ); \
+	HELIUM_ASSERT( STRUCTURE::Base::s_Structure != NULL ); \
+	Helium::Reflect::Structure::Create<STRUCTURE>( s_Structure, TXT( #STRUCTURE ), STRUCTURE::Base::s_Structure->m_Name ); \
+	return s_Structure; \
 } \
-const Helium::Reflect::Structure* STRUCTURE::s_Composite = NULL; \
+const Helium::Reflect::Structure* STRUCTURE::s_Structure = NULL; \
 Helium::Reflect::StructureRegistrar< STRUCTURE, STRUCTURE::Base > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
 
 // declares a concrete object with creator

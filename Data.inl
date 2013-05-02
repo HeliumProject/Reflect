@@ -77,13 +77,12 @@ void Helium::Reflect::Data::DefaultDestruct( DataPointer pointer )
 }
 
 template< class T >
-bool Helium::Reflect::Data::DefaultCopy( DataPointer src, DataPointer dest, uint32_t flags )
+void Helium::Reflect::Data::DefaultCopy( DataPointer src, DataPointer dest, uint32_t flags )
 {
 	HELIUM_ASSERT( src.m_Field == dest.m_Field );
 	T& right = src.As<T>();
 	T& left = dest.As<T>();
 	left = right;
-	return true;
 }
 
 template< class T >
@@ -130,4 +129,9 @@ void Helium::Reflect::ScalarData::DefaultParse( const String& string, DataPointe
 	{
 		pointer.m_Object->RaiseChanged( pointer.m_Field ); 
 	}
+}
+
+Helium::Reflect::StructureData::StructureData( size_t size )
+	: Data( size )
+{
 }

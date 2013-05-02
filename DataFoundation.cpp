@@ -19,13 +19,12 @@ void Helium::Reflect::StringData::Destruct( DataPointer pointer )
 	static_cast< String* >( pointer.m_Address )->~String();
 }
 
-bool StringData::Copy( DataPointer src, DataPointer dest, uint32_t flags )
+void StringData::Copy( DataPointer src, DataPointer dest, uint32_t flags )
 {
 	HELIUM_ASSERT( src.m_Field == dest.m_Field );
 	String& right = src.As<String>();
 	String& left = dest.As<String>();
 	left = right;
-	return true;
 }
 
 bool StringData::Equals( DataPointer a, DataPointer b )

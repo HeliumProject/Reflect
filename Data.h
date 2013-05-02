@@ -115,7 +115,7 @@ namespace Helium
 
 			template< class T > HELIUM_FORCEINLINE void DefaultConstruct( DataPointer pointer );
 			template< class T > HELIUM_FORCEINLINE void DefaultDestruct( DataPointer pointer );
-			template< class T > HELIUM_FORCEINLINE bool DefaultCopy( DataPointer src, DataPointer dest, uint32_t flags );
+			template< class T > HELIUM_FORCEINLINE void DefaultCopy( DataPointer src, DataPointer dest, uint32_t flags );
 			template< class T > HELIUM_FORCEINLINE bool DefaultEquals( DataPointer a, DataPointer b );
 			template< class T > HELIUM_FORCEINLINE void DefaultAccept( DataPointer p, Visitor& visitor );
 
@@ -126,7 +126,7 @@ namespace Helium
 			virtual void Destruct( DataPointer pointer ) = 0;
 
 			// copies value from one instance to another
-			virtual bool Copy( DataPointer src, DataPointer dest, uint32_t flags = 0 ) = 0;
+			virtual void Copy( DataPointer src, DataPointer dest, uint32_t flags = 0 ) = 0;
 
 			// tests for equivalence across instances
 			virtual bool Equals( DataPointer a, DataPointer b ) = 0;
@@ -179,6 +179,18 @@ namespace Helium
 			virtual void Parse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged ) = 0;
 
 			const ScalarType m_Type;
+		};
+
+		//
+		// Structures
+		//
+
+		class HELIUM_REFLECT_API StructureData : public Data
+		{
+		public:
+			REFLECTION_TYPE( ReflectionTypes::StructureData, StructureData, Data );
+
+			inline StructureData( size_t size );
 		};
 
 		//

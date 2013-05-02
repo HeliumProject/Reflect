@@ -15,7 +15,7 @@ namespace Helium
 			StringData();
 			virtual void Construct( DataPointer pointer ) HELIUM_OVERRIDE;
 			virtual void Destruct( DataPointer pointer ) HELIUM_OVERRIDE;
-			virtual bool Copy( DataPointer src, DataPointer dest, uint32_t flags ) HELIUM_OVERRIDE;
+			virtual void Copy( DataPointer src, DataPointer dest, uint32_t flags ) HELIUM_OVERRIDE;
 			virtual bool Equals( DataPointer a, DataPointer b ) HELIUM_OVERRIDE;
 			virtual void Accept( DataPointer pointer, Visitor& visitor ) HELIUM_OVERRIDE;
 			virtual void Print( DataPointer pointer, String& string, ObjectIdentifier& identifier ) HELIUM_OVERRIDE;
