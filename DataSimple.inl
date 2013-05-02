@@ -126,7 +126,7 @@ void Helium::Reflect::SimpleStructureData<T>::Destruct( DataPointer pointer )
 template< class T >
 void Helium::Reflect::SimpleStructureData<T>::Copy( DataPointer src, DataPointer dest, uint32_t flags )
 {
-	const Structure* structure = GetStructure< T >();
+	const Structure* structure = Reflect::GetStructure< T >();
 	structure->Copy( src.m_Address, src.m_Object, dest.m_Address, dest.m_Object );
 
 	if ( flags & CopyFlags::Notify && dest.m_Object )
@@ -138,7 +138,7 @@ void Helium::Reflect::SimpleStructureData<T>::Copy( DataPointer src, DataPointer
 template< class T >
 bool Helium::Reflect::SimpleStructureData<T>::Equals( DataPointer a, DataPointer b )
 {
-	const Structure* structure = GetStructure< T >();
+	const Structure* structure = Reflect::GetStructure< T >();
 	return structure->Equals( a.m_Address, a.m_Object, b.m_Address, b.m_Object );
 
 }
@@ -146,8 +146,14 @@ bool Helium::Reflect::SimpleStructureData<T>::Equals( DataPointer a, DataPointer
 template< class T >
 void Helium::Reflect::SimpleStructureData<T>::Accept( DataPointer pointer, Visitor& visitor )
 {
-	const Structure* structure = GetStructure< T >();
+	const Structure* structure = Reflect::GetStructure< T >();
 	structure->Visit( pointer.m_Address, pointer.m_Object, visitor );
+}
+
+template< class T >
+const Helium::Reflect::Structure* Helium::Reflect::SimpleStructureData<T>::GetStructure() const
+{
+	return Reflect::GetStructure< T >();
 }
 
 //

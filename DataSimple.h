@@ -51,6 +51,7 @@ namespace Helium
 			virtual void Copy( DataPointer src, DataPointer dest, uint32_t flags ) HELIUM_OVERRIDE;
 			virtual bool Equals( DataPointer a, DataPointer b ) HELIUM_OVERRIDE;
 			virtual void Accept( DataPointer pointer, Visitor& visitor ) HELIUM_OVERRIDE;
+			virtual const Structure* GetStructure() const HELIUM_OVERRIDE;
 		};
 
 		template< class T >

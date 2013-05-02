@@ -192,6 +192,8 @@ namespace Helium
 			REFLECTION_TYPE( ReflectionTypes::StructureData, StructureData, Data );
 
 			inline StructureData( size_t size );
+
+			virtual const Structure* GetStructure() const = 0;
 		};
 
 		//
