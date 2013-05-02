@@ -3,7 +3,7 @@ Helium::Reflect::SimpleStlVectorData<T>::SimpleStlVectorData()
 	: SequenceData(sizeof(std::vector<T>))
 	, m_InternalData(AllocateData<T>())
 {
-				
+
 }
 
 template <class T>
@@ -11,13 +11,13 @@ Helium::Reflect::SimpleStlVectorData<T>::~SimpleStlVectorData()
 {
 	delete m_InternalData;
 }
-		
+
 template <class T>
 void Helium::Reflect::SimpleStlVectorData<T>::Construct( DataPointer pointer )
 {
 	DefaultConstruct< std::vector<T> >(pointer);
 }
-		
+
 template <class T>
 void Helium::Reflect::SimpleStlVectorData<T>::Destruct( DataPointer pointer )
 {
@@ -59,7 +59,7 @@ bool Helium::Reflect::SimpleStlVectorData<T>::Equals( DataPointer a, DataPointer
 	{
 		return false;
 	}
-			
+
 	std::vector<T>::iterator iter_a = v_a.begin();
 	std::vector<T>::iterator iter_b = v_b.begin();
 	for (; iter_a != v_a.end(); ++iter_a, ++iter_b)
@@ -75,19 +75,19 @@ bool Helium::Reflect::SimpleStlVectorData<T>::Equals( DataPointer a, DataPointer
 
 	return true;
 }
-		
+
 template <class T>
 void Helium::Reflect::SimpleStlVectorData<T>::Accept( DataPointer p, Visitor& visitor )
 {
 	std::vector<T> &v = p.As< std::vector<T> >();
-			
+
 	for (std::vector<T>::iterator iter = v.begin();
 		iter != v.end(); ++iter)
 	{  
 		m_InternalData->Accept(DataPointer(&*iter, p.m_Field, p.m_Object), visitor);
 	}
 }
-		
+
 template <class T>
 size_t Helium::Reflect::SimpleStlVectorData<T>::GetLength( DataPointer container ) const
 {
@@ -112,9 +112,9 @@ template <class T>
 void Helium::Reflect::SimpleStlVectorData<T>::GetItems( DataPointer sequence, DynamicArray< DataPointer >& items ) const
 {
 	std::vector<T> &v = sequence.As< std::vector<T> >();
-			
+
 	items.Resize(v.size());
-			
+
 	int i = 0;
 	std::vector<T>::iterator iter = v.begin();
 	for (; iter != v.end(); ++iter)
@@ -129,14 +129,14 @@ void Helium::Reflect::SimpleStlVectorData<T>::SetLength( DataPointer sequence, s
 	std::vector<T> &v = sequence.As< std::vector<T> >();
 	v.resize(length);
 }
-		
+
 template <class T>
 Helium::Reflect::DataPointer Helium::Reflect::SimpleStlVectorData<T>::GetItem( DataPointer sequence, size_t at )
 {
 	std::vector<T> &v = sequence.As< std::vector<T> >();
 	return DataPointer(&v[at], sequence.m_Field, sequence.m_Object);
 }
-		
+
 template <class T>
 void Helium::Reflect::SimpleStlVectorData<T>::SetItem( DataPointer sequence, size_t at, DataPointer value )
 {
@@ -179,7 +179,7 @@ template <class T>
 void Helium::Reflect::SimpleStlVectorData<T>::MoveDown( DataPointer sequence, Set< size_t >& items )
 {
 	std::vector<T> &v = sequence.As< std::vector<T> >();
-			
+
 	for (Set<size_t>::Iterator iter = items.End() - 1; 
 		iter >= items.Begin(); --iter)
 	{
@@ -193,7 +193,7 @@ void Helium::Reflect::SimpleStlVectorData<T>::MoveDown( DataPointer sequence, Se
 		SwapInternalValues(sequence, index, index + 1);
 	}
 }
-		
+
 template <class T>
 void Helium::Reflect::SimpleStlVectorData<T>::SwapInternalValues( DataPointer sequence, size_t a, size_t b )
 {
@@ -208,7 +208,7 @@ void Helium::Reflect::SimpleStlVectorData<T>::SwapInternalValues( DataPointer se
 	HELIUM_ASSERT(a != b);
 
 	T temp;
-			
+
 	std::vector<T>::iterator iter_a = v.begin() + a;
 	std::vector<T>::iterator iter_b = v.begin() + b;
 
@@ -222,12 +222,12 @@ void Helium::Reflect::SimpleStlVectorData<T>::SwapInternalValues( DataPointer se
 }
 
 //////////////////////////////////////////////////////////////////////////
-		
-		
+
+
 template <class T>
 Helium::Reflect::SimpleStlSetData<T>::SimpleStlSetData()
-	: SetData(sizeof(std::set<T>)),
-		m_InternalData(AllocateData<T>())
+	: SetData(sizeof(std::set<T>))
+	, m_InternalData(AllocateData<T>())
 {
 
 }
@@ -310,7 +310,7 @@ template <class T>
 void Helium::Reflect::SimpleStlSetData<T>::Accept( DataPointer p, Visitor& visitor )
 {
 	std::set<T> &s = p.As< std::set<T> >();
-			
+
 	for (std::set<T>::iterator iter = s.begin();
 		iter != s.end(); ++iter)
 	{
@@ -345,7 +345,7 @@ void Helium::Reflect::SimpleStlSetData<T>::GetItems( DataPointer set, DynamicArr
 {
 	std::set<T> &v = set.As< std::set<T> >();
 	items.Resize(v.size());
-			
+
 	std::set<T>::iterator iter = v.begin();
 	int i = 0;
 	for (; iter != v.end(); ++iter)
