@@ -7,40 +7,86 @@ namespace Helium
 {
 	namespace Reflect
 	{
-#ifdef REFLECT_REFACTOR
-		template <class T>
-		class HELIUM_REFLECT_API SimpleStlVectorData : public SequenceData
+        // NOTE: Pretty much all of these members could be const provided necessary functions on m_InternalData are const
+        template <class T>
+        class SimpleStlVectorData : public SequenceData
 		{
 		public:
-			typedef std::vector<T> DataType;
-			DataPointer<DataType> m_Data;
+			SimpleStlVectorData();
+            virtual ~SimpleStlVectorData();
 
-			virtual void ConnectData(void* data) HELIUM_OVERRIDE;
+            // Data
+			virtual void        Construct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual void        Destruct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual void        Copy( DataPointer src, DataPointer dest, uint32_t flags = 0 ) HELIUM_OVERRIDE;
+			virtual bool        Equals( DataPointer a, DataPointer b ) HELIUM_OVERRIDE;
+			virtual void        Accept( DataPointer p, Visitor& visitor ) HELIUM_OVERRIDE;
 
-			virtual size_t GetSize() const HELIUM_OVERRIDE;
-			virtual void SetSize(size_t size) HELIUM_OVERRIDE;
-			virtual void Clear() HELIUM_OVERRIDE;
+            // ContainerData
+			virtual size_t      GetLength( DataPointer container ) const HELIUM_OVERRIDE;
+			virtual void        Clear( DataPointer container ) HELIUM_OVERRIDE;
 
-			virtual const Class* GetItemClass() const HELIUM_OVERRIDE;
-			virtual DataPtr GetItem(size_t at) HELIUM_OVERRIDE;
-			virtual void SetItem(size_t at, Data* value) HELIUM_OVERRIDE;
-			virtual void Insert( size_t at, Data* value ) HELIUM_OVERRIDE;
-			virtual void Remove( size_t at ) HELIUM_OVERRIDE;
-			virtual void MoveUp( std::set< size_t >& selectedIndices ) HELIUM_OVERRIDE;
-			virtual void MoveDown( std::set< size_t >& selectedIndices ) HELIUM_OVERRIDE;
+            // SequenceData
+			virtual Data*       GetItemData() const HELIUM_OVERRIDE;
+			virtual void        GetItems( DataPointer sequence, DynamicArray< DataPointer >& items ) const HELIUM_OVERRIDE;
+			virtual void        SetLength( DataPointer sequence, size_t length ) HELIUM_OVERRIDE;
+			virtual DataPointer GetItem( DataPointer sequence, size_t at ) HELIUM_OVERRIDE;
+			virtual void        SetItem( DataPointer sequence, size_t at, DataPointer value ) HELIUM_OVERRIDE;
+			virtual void        Insert( DataPointer sequence, size_t at, DataPointer value ) HELIUM_OVERRIDE;
+			virtual void        Remove( DataPointer sequence, size_t at ) HELIUM_OVERRIDE;
+			virtual void        MoveUp( DataPointer sequence, Set< size_t >& items ) HELIUM_OVERRIDE;
+			virtual void        MoveDown( DataPointer sequence, Set< size_t >& items ) HELIUM_OVERRIDE;
 
-			virtual bool Set(Data* src, uint32_t flags = 0) HELIUM_OVERRIDE;
-			virtual bool Equals(Object* object) HELIUM_OVERRIDE;
+        private:
+            void                SwapInternalValues(DataPointer sequence, size_t a, size_t b);
 
-			virtual void Serialize( ArchiveBinary& archive ) HELIUM_OVERRIDE;
-			virtual void Deserialize( ArchiveBinary& archive ) HELIUM_OVERRIDE;
-
-			virtual void Serialize( ArchiveXML& archive ) HELIUM_OVERRIDE;
-			virtual void Deserialize( ArchiveXML& archive ) HELIUM_OVERRIDE;
-
-			virtual tostream& operator>>(tostream& stream) const HELIUM_OVERRIDE;
-			virtual tistream& operator<<(tistream& stream) HELIUM_OVERRIDE;
+            Data*               m_InternalData;
 		};
+        
+        template <class T>
+        inline Data* AllocateData( const std::vector<T>&, const std::vector<T>& )
+		{
+			return new SimpleStlVectorData<T>();
+		}
+
+        //////////////////////////////////////////////////////////////////////////
+
+        template <class T>
+        class SimpleStlSetData : public SetData
+		{
+		public:
+			SimpleStlSetData();
+            virtual ~SimpleStlSetData();
+
+            // Data
+			virtual void        Construct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual void        Destruct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual void        Copy( DataPointer src, DataPointer dest, uint32_t flags = 0 ) HELIUM_OVERRIDE;
+			virtual bool        Equals( DataPointer a, DataPointer b ) HELIUM_OVERRIDE;
+			virtual void        Accept( DataPointer p, Visitor& visitor ) HELIUM_OVERRIDE;
+
+            // ContainerData
+			virtual size_t      GetLength( DataPointer container ) const HELIUM_OVERRIDE;
+			virtual void        Clear( DataPointer container ) HELIUM_OVERRIDE;
+
+            // SetData
+			virtual Data*       GetItemData() const HELIUM_OVERRIDE;
+			virtual void        GetItems( DataPointer set, DynamicArray< DataPointer >& items ) const HELIUM_OVERRIDE;
+			virtual void        InsertItem( DataPointer set, DataPointer item ) HELIUM_OVERRIDE;
+			virtual void        RemoveItem( DataPointer set, DataPointer item ) HELIUM_OVERRIDE;
+			virtual bool        ContainsItem( DataPointer set, DataPointer item ) const HELIUM_OVERRIDE;
+
+        private:
+            Data*               m_InternalData;
+		};
+        
+        template <class T>
+        inline Data* AllocateData( const std::set<T>&, const std::set<T>& )
+		{
+			return new SimpleStlSetData<T>();
+		}
+
+#ifdef REFLECT_REFACTOR
 
 		template <class DataT, class DataClassT>
 		class HELIUM_REFLECT_API SimpleStlSetData : public SetData

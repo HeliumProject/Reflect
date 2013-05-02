@@ -24,8 +24,10 @@ namespace Helium
 		{
 		public:
 			// compute address from base and field combination
+            inline DataPointer();
 			inline DataPointer( const Field* field, Object* object, uint32_t index = 0 );
 			inline DataPointer( const Field* field, void* composite, Object* object, uint32_t index = 0 );
+			inline DataPointer( void *rawPtr, const Field* field, Object* object );
 			inline DataPointer( const DataPointer& rhs );
 
 			// resolve the actual memory address of the data
@@ -203,6 +205,8 @@ namespace Helium
 		public:
 			REFLECTION_TYPE( ReflectionTypes::ContainerData, ContainerData, Data );
 
+            inline ContainerData( size_t size );
+
 			virtual size_t GetLength( DataPointer container ) const = 0;
 			virtual void   Clear( DataPointer container ) = 0;
 		};
@@ -215,6 +219,8 @@ namespace Helium
 		{
 		public:
 			REFLECTION_TYPE( ReflectionTypes::SetData, SetData, ContainerData );
+            
+            inline SetData( size_t size );
 
 			virtual Data* GetItemData() const = 0;
 
@@ -233,6 +239,8 @@ namespace Helium
 		{
 		public:
 			REFLECTION_TYPE( ReflectionTypes::SequenceData, SequenceData, ContainerData );
+            
+            inline SequenceData( size_t size );
 
 			virtual Data*       GetItemData() const = 0;
 
@@ -255,6 +263,8 @@ namespace Helium
 		{
 		public:
 			REFLECTION_TYPE( ReflectionTypes::AssociationData, AssociationData, ContainerData );
+            
+            inline AssociationData( size_t size );
 
 			virtual Data*       GetKeyData() const = 0;
 			virtual Data*       GetValueData() const = 0;

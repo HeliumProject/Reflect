@@ -1,3 +1,11 @@
+Helium::Reflect::DataPointer::DataPointer()
+	: m_Address( 0x0 )
+	, m_Field( 0 )
+	, m_Object( 0 )
+{
+
+}
+
 Helium::Reflect::DataPointer::DataPointer( const Field* field, Object* object, uint32_t index )
 	: m_Address( 0x0 )
 	, m_Field( field )
@@ -12,6 +20,14 @@ Helium::Reflect::DataPointer::DataPointer( const Field* field, void* composite, 
 	, m_Object( object )
 {
 	m_Address = reinterpret_cast< char* >( composite ) + ( m_Field->m_Offset + ( ( m_Field->m_Size / m_Field->m_Count ) * index ) );
+}
+
+Helium::Reflect::DataPointer::DataPointer( void *rawPtr, const Field* field, Object* object )
+	: m_Address( rawPtr )
+	, m_Field( field )
+	, m_Object( object )
+{
+
 }
 
 Helium::Reflect::DataPointer::DataPointer( const DataPointer& rhs )
@@ -37,7 +53,7 @@ void Helium::Reflect::DataPointer::RaiseChanged( bool doIt )
 }
 
 Helium::Reflect::DataVariable::DataVariable( Data* data )
-	: DataPointer( NULL, NULL, static_cast< Object* >( NULL ) )
+	: DataPointer( static_cast< Field* >( NULL ), NULL, static_cast< Object* >( NULL ) )
 	, m_Data( data )
 {
 	m_Address = new unsigned char[ m_Data->m_Size ];
@@ -134,4 +150,29 @@ void Helium::Reflect::ScalarData::DefaultParse( const String& string, DataPointe
 Helium::Reflect::StructureData::StructureData( size_t size )
 	: Data( size )
 {
+
+}
+
+Helium::Reflect::ContainerData::ContainerData( size_t size )
+    : Data(size)
+{
+
+}
+
+Helium::Reflect::SetData::SetData( size_t size )
+    : ContainerData(size)
+{
+
+}
+
+Helium::Reflect::SequenceData::SequenceData( size_t size )
+    : ContainerData(size)
+{
+
+}
+
+Helium::Reflect::AssociationData::AssociationData( size_t size )
+    : ContainerData(size)
+{
+
 }

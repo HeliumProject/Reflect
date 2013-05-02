@@ -45,6 +45,9 @@ struct TestStruct : StructureBase
 
 	float32_t m_Float32;
 	float64_t m_Float64;
+
+    std::vector<uint32_t> m_VectorUint32;
+    std::set<uint32_t> m_SetUint32;
 };
 
 REFLECT_DEFINE_BASE_STRUCTURE( TestStruct );
@@ -61,8 +64,11 @@ void TestStruct::PopulateComposite( Reflect::Structure& comp )
 	comp.AddField( &TestStruct::m_Int32, "Signed 32-bit Integer" );
 	comp.AddField( &TestStruct::m_Int64, "Signed 64-bit Integer" );
 
-	comp.AddField( &TestStruct::m_Int32, "32-bit Floating Point" );
-	comp.AddField( &TestStruct::m_Int64, "64-bit Floating Point" );
+	comp.AddField( &TestStruct::m_Float32, "32-bit Floating Point" );
+	comp.AddField( &TestStruct::m_Float64, "64-bit Floating Point" );
+    
+	comp.AddField( &TestStruct::m_VectorUint32, "std::vector of Signed 32-bit Integers" );
+	comp.AddField( &TestStruct::m_SetUint32, "std::vector of Unsigned 32-bit Integers" );
 }
 
 class TestObject : public Reflect::Object

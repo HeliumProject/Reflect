@@ -1,423 +1,399 @@
-#ifdef REFLECT_REFACTOR
-
-template < class T >
-void SimpleStlVectorData<T>::ConnectData(void* data)
+template <class T>
+Helium::Reflect::SimpleStlVectorData<T>::SimpleStlVectorData()
+    : SequenceData(sizeof(std::vector<T>)),
+        m_InternalData(AllocateData<T>())
 {
-    m_Data.Connect( data );
+                
 }
 
-template < class T >
-size_t SimpleStlVectorData<T>::GetSize() const
-{ 
-    return m_Data->size(); 
+template <class T>
+Helium::Reflect::SimpleStlVectorData<T>::~SimpleStlVectorData()
+{
+    delete m_InternalData;
+}
+        
+template <class T>
+void SimpleStlVectorData<T>::Construct( DataPointer pointer )
+{
+    DefaultConstruct< std::vector<T> >(pointer);
+}
+        
+template <class T>
+void SimpleStlVectorData<T>::Destruct( DataPointer pointer )
+{
+    DefaultDestruct< std::vector<T> >(pointer);
 }
 
-template < class T >
-void SimpleStlVectorData<T>::SetSize(size_t size)
+template <class T>
+void Helium::Reflect::SimpleStlVectorData<T>::Copy( DataPointer src, DataPointer dest, uint32_t flags /*= 0 */ )
 {
-    return m_Data->resize(size);
+    if (flags & CopyFlags::Shallow)
+    {
+        DefaultCopy< std::vector<T> >(src, dest, flags);
+        return;
+    }
+
+    std::vector<T> &v_src = src.As< std::vector<T> >();
+    std::vector<T> &v_dest = dest.As< std::vector<T> >();
+
+    v_dest.resize(v_src.size());
+
+    std::vector<T>::iterator iter_src = v_src.begin();
+    std::vector<T>::iterator iter_dest = v_dest.begin();
+
+    for (; iter_src != v_src.end(); ++iter_src, ++iter_dest)
+    {
+        DataPointer dp_src(&*iter_src, src.m_Field, src.m_Object);
+        DataPointer dp_dest(&*iter_dest, dest.m_Field, dest.m_Object);
+        m_InternalData->Copy(dp_src, dp_dest, flags);
+    }
 }
 
-template < class T >
-void SimpleStlVectorData<T>::Clear()
+template <class T>
+bool Helium::Reflect::SimpleStlVectorData<T>::Equals( DataPointer a, DataPointer b )
 {
-    return m_Data->clear();
+    std::vector<T> &v_a = a.As< std::vector<T> >();
+    std::vector<T> &v_b = b.As< std::vector<T> >();
+
+    if (v_a.size() != v_b.size())
+    {
+        return false;
+    }
+            
+    std::vector<T>::iterator iter_a = v_a.begin();
+    std::vector<T>::iterator iter_b = v_b.begin();
+    for (; iter_a != v_a.end(); ++iter_a, ++iter_b)
+    {
+        DataPointer dp_a(&*iter_a, a.m_Field, b.m_Object);
+        DataPointer dp_b(&*iter_b, b.m_Field, b.m_Object);
+
+        if (!m_InternalData->Equals(dp_a, dp_b))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+        
+template <class T>
+void Helium::Reflect::SimpleStlVectorData<T>::Accept( DataPointer p, Visitor& visitor )
+{
+    std::vector<T> &v = p.As< std::vector<T> >();
+            
+    for (std::vector<T>::iterator iter = v.begin();
+        iter != v.end(); ++iter)
+    {  
+        m_InternalData->Accept(DataPointer(&*iter, p.m_Field, p.m_Object), visitor);
+    }
+}
+        
+template <class T>
+size_t Helium::Reflect::SimpleStlVectorData<T>::GetLength( DataPointer container ) const
+{
+    std::vector<T> &v = container.As< std::vector<T> >();
+    return v.size();
 }
 
-template < class T >
-const Class* SimpleStlVectorData<T>::GetItemClass() const
+template <class T>
+void Helium::Reflect::SimpleStlVectorData<T>::Clear( DataPointer container )
 {
-    return Reflect::GetDataClass<T>();
+    std::vector<T> &v = container.As< std::vector<T> >();
+    v.clear();
 }
 
-template < class T >
-DataPtr SimpleStlVectorData<T>::GetItem(size_t at)
+template <class T>
+Data* Helium::Reflect::SimpleStlVectorData<T>::GetItemData() const
 {
-    return Data::Bind(m_Data->at(at), m_Instance, m_Field);
+    return m_InternalData;
 }
 
-template < class T >
-void SimpleStlVectorData<T>::SetItem(size_t at, Data* value)
+template <class T>
+void Helium::Reflect::SimpleStlVectorData<T>::GetItems( DataPointer sequence, DynamicArray< DataPointer >& items ) const
 {
-    Data::GetValue(value, m_Data->at(at));
+    std::vector<T> &v = sequence.As< std::vector<T> >();
+            
+    items.Resize(v.size());
+            
+    int i = 0;
+    std::vector<T>::iterator iter = v.begin();
+    for (; iter != v.end(); ++iter)
+    {
+        items[i++] = DataPointer(&*iter, sequence.m_Field, sequence.m_Object);
+    }
 }
 
-template < class T >
-void SimpleStlVectorData<T>::Insert( size_t at, Data* value )
+template <class T>
+void Helium::Reflect::SimpleStlVectorData<T>::SetLength( DataPointer sequence, size_t length )
 {
+    std::vector<T> &v = sequence.As< std::vector<T> >();
+    v.resize(length);
+}
+        
+template <class T>
+DataPointer Helium::Reflect::SimpleStlVectorData<T>::GetItem( DataPointer sequence, size_t at )
+{
+    std::vector<T> &v = sequence.As< std::vector<T> >();
+    return DataPointer(&v[at], sequence.m_Field, sequence.m_Object);
+}
+        
+template <class T>
+void Helium::Reflect::SimpleStlVectorData<T>::SetItem( DataPointer sequence, size_t at, DataPointer value )
+{
+    std::vector<T> &v = sequence.As< std::vector<T> >();
+    m_InternalData->Copy(value, DataPointer(&v[at], sequence.m_Field, sequence.m_Object));
+}
+
+template <class T>
+void Helium::Reflect::SimpleStlVectorData<T>::Insert( DataPointer sequence, size_t at, DataPointer value )
+{
+    std::vector<T> &v = sequence.As< std::vector<T> >();
+    v.insert(v.begin() + at, value.As<T>());
+}
+
+template <class T>
+void Helium::Reflect::SimpleStlVectorData<T>::Remove( DataPointer sequence, size_t at )
+{
+    std::vector<T> &v = sequence.As< std::vector<T> >();
+    v.erase(v.begin() + at);
+}
+
+template <class T>
+void Helium::Reflect::SimpleStlVectorData<T>::MoveUp( DataPointer sequence, Set< size_t >& items )
+{
+    for (Set<size_t>::Iterator iter = items.Begin(); 
+        iter != items.End(); ++iter)
+    {
+        size_t index = *iter;
+
+        if (index <= 0)
+        {
+            continue;
+        }
+
+        SwapInternalValues(sequence, index, index - 1);
+    }
+}
+
+template <class T>
+void Helium::Reflect::SimpleStlVectorData<T>::MoveDown( DataPointer sequence, Set< size_t >& items )
+{
+    std::vector<T> &v = sequence.As< std::vector<T> >();
+            
+    for (Set<size_t>::Iterator iter = items.End() - 1; 
+        iter >= items.Begin(); --iter)
+    {
+        size_t index = *iter;
+
+        if (index >= v.size() - 1)
+        {
+            continue;
+        }
+
+        SwapInternalValues(sequence, index, index + 1);
+    }
+}
+        
+template <class T>
+void Helium::Reflect::SimpleStlVectorData<T>::SwapInternalValues( DataPointer sequence, size_t a, size_t b )
+{
+    std::vector<T> &v = sequence.As< std::vector<T> >();
+
+    HELIUM_ASSERT(a >= 0);
+    HELIUM_ASSERT(b >= 0);
+
+    HELIUM_ASSERT(a < v.size());
+    HELIUM_ASSERT(b < v.size());
+
+    HELIUM_ASSERT(a != b);
+
     T temp;
-    Data::GetValue( value, temp );
-    m_Data->insert( m_Data->begin() + at, temp );
+            
+    std::vector<T>::iterator iter_a = v.begin() + a;
+    std::vector<T>::iterator iter_b = v.begin() + b;
+
+    DataPointer dp_a(&*iter_a, sequence.m_Field, sequence.m_Object);
+    DataPointer dp_b(&*iter_b, sequence.m_Field, sequence.m_Object);
+    DataPointer dp_temp(&temp, sequence.m_Field, sequence.m_Object);
+
+    m_InternalData->Copy(dp_a, dp_temp);
+    m_InternalData->Copy(dp_b, dp_a);
+    m_InternalData->Copy(dp_temp, dp_b, CopyFlags::Notify);
 }
 
-template < class T >
-void SimpleStlVectorData<T>::Remove( size_t at )
-{
-    m_Data->erase( m_Data->begin() + at );
-}
-
-template < class T >
-void SimpleStlVectorData<T>::MoveUp( std::set< size_t >& selectedIndices )
-{
-    std::set< size_t > newSelectedIndices;
-
-    std::set< size_t >::const_iterator itr = selectedIndices.begin();
-    std::set< size_t >::const_iterator end = selectedIndices.end();
-
-    for( ; itr != end; ++itr )
-    {
-        if ( (*itr) == 0 || ( newSelectedIndices.find( (*itr) - 1 ) != newSelectedIndices.end() ) )
-        {
-            newSelectedIndices.insert( *itr );
-            continue;
-        }
+//////////////////////////////////////////////////////////////////////////
         
-        T temp = m_Data->at( (*itr) - 1 );
-        m_Data->at( (*itr) - 1 ) = m_Data->at( (*itr) );
-        m_Data->at( (*itr) ) = temp;
+        
+template <class T>
+Helium::Reflect::SimpleStlSetData<T>::SimpleStlSetData()
+    : SetData(sizeof(std::set<T>)),
+        m_InternalData(AllocateData<T>())
+{
 
-        newSelectedIndices.insert( *itr - 1 );
+}
+
+template <class T>
+Helium::Reflect::SimpleStlSetData<T>::~SimpleStlSetData()
+{
+    delete m_InternalData;
+}
+
+template <class T>
+void Helium::Reflect::SimpleStlSetData<T>::Construct( DataPointer pointer )
+{
+    DefaultConstruct< std::set<T> >(pointer);
+}
+
+template <class T>
+void Helium::Reflect::SimpleStlSetData<T>::Destruct( DataPointer pointer )
+{
+    DefaultDestruct< std::set<T> >(pointer);
+}
+
+template <class T>
+void Helium::Reflect::SimpleStlSetData<T>::Copy( DataPointer src, DataPointer dest, uint32_t flags /*= 0 */ )
+{
+    if (flags & CopyFlags::Shallow)
+    {
+        DefaultCopy< std::set< T > >(src, dest, flags);
+        return;
     }
 
-    selectedIndices = newSelectedIndices;
-}
+    std::set<T> &s_src = src.As< std::set<T> >();
+    std::set<T> &s_dest = dest.As< std::set<T> >();
 
-template < class T >
-void SimpleStlVectorData<T>::MoveDown( std::set< size_t >& selectedIndices )
-{
-    std::set< size_t > newSelectedIndices;
+    s_dest.clear();
 
-    std::set< size_t >::const_reverse_iterator itr = selectedIndices.rbegin();
-    std::set< size_t >::const_reverse_iterator end = selectedIndices.rend();
-
-    for( ; itr != end; ++itr )
+    for (std::set<T>::iterator iter_src = s_src.begin();
+        iter_src != s_src.end(); ++iter_src)
     {
-        if ( ( (*itr) == m_Data->size() - 1 ) || ( newSelectedIndices.find( (*itr) + 1 ) != newSelectedIndices.end() ) )
-        {
-            newSelectedIndices.insert( *itr );
-            continue;
-        }
-        
-        T temp = m_Data->at( (*itr) + 1 );
-        m_Data->at( (*itr) + 1 ) = m_Data->at( (*itr) );
-        m_Data->at( (*itr) ) = temp;
-
-        newSelectedIndices.insert( *itr + 1 );
+        // Should be safe since we copy FROM this. Should not break const-ness (might increase a ref count or something like that though)
+        DataPointer dp_src(const_cast<T *>(&*iter_src), src.m_Field, src.m_Object);
+        T temp;
+        DataPointer dp_dest(&temp, dest.m_Field, dest.m_Object);
+        m_InternalData->Copy(dp_src, dp_dest, flags);
+        s_dest.insert(temp);
     }
-
-    selectedIndices = newSelectedIndices;
 }
 
-template < class T >
-bool SimpleStlVectorData<T>::Set(Data* src, uint32_t flags)
+template <class T>
+bool Helium::Reflect::SimpleStlSetData<T>::Equals( DataPointer a, DataPointer b )
 {
-    const SimpleStlVectorData<T>* rhs = SafeCast<SimpleStlVectorData<T>>(src);
-    if (!rhs)
+    std::set<T> &s_a = a.As< std::set<T> >();
+    std::set<T> &s_b = b.As< std::set<T> >();
+
+    if (s_a.size() != s_b.size())
     {
         return false;
     }
 
-    *m_Data = *rhs->m_Data;
+    std::set<T>::iterator iter_a = s_a.begin();
+    std::set<T>::iterator iter_b = s_b.begin();
+
+    for (; iter_a != s_a.end(); 
+        ++iter_a, iter_b)
+    {
+        // Should be safe as long as equality comparison doesn't break const-ness (shouldn't!)
+        DataPointer dp_a(const_cast<T *>(&*iter_a), a.m_Field, b.m_Object);
+        DataPointer dp_b(const_cast<T *>(&*iter_b), b.m_Field, b.m_Object);
+
+        if (!m_InternalData->Equals(dp_a, dp_b))
+        {
+            return false;
+        }
+    }
 
     return true;
 }
 
-template < class T >
-bool SimpleStlVectorData<T>::Equals(Object* object)
+template <class T>
+void Helium::Reflect::SimpleStlSetData<T>::Accept( DataPointer p, Visitor& visitor )
 {
-    const SimpleStlVectorData<T>* rhs = SafeCast< SimpleStlVectorData<T> >(object);
-    if (!rhs)
+    std::set<T> &s = p.As< std::set<T> >();
+            
+    for (std::set<T>::iterator iter = s.begin();
+        iter != s.end(); ++iter)
     {
-        return false;
-    }
-
-    return *m_Data == *rhs->m_Data;
-}
-
-//
-// Stl specializes std::vector<bool> using bitfields...
-//  in general this isn't very efficient, but isn't used often
-//
-
-template < class T >
-void WriteVector( const std::vector< T >& v, Reflect::CharStream& stream )
-{
-    int32_t count = (int32_t)v.size();
-    stream.Write(&count); 
-
-    if (count > 0)
-    {
-        stream.WriteBuffer( (const void*)&(v.front()), sizeof(T) * count); 
-    }
-
-}
-
-template <>
-void WriteVector( const std::vector< bool >& v, Reflect::CharStream& stream )
-{
-    int32_t count = (int32_t)v.size();
-    stream.Write(&count); 
-
-    for ( std::vector< bool >::const_iterator itr = v.begin(), end = v.end(); itr != end; ++itr )
-    {
-        bool value = *itr;
-        stream.Write( &value ); 
-    }
-
-}
-
-template < class T >
-void ReadVector( std::vector< T >& v, Reflect::CharStream& stream )
-{
-    int32_t count = 0;
-    stream.Read(&count); 
-    v.resize(count);
-
-    if(count > 0)
-    {
-        stream.ReadBuffer( (void*)&(v.front()), sizeof(T) * count );
+        // This const cast is downright dangerous.. visitors can definitely change values
+        DataPointer dp(const_cast<T *>(&*iter), p.m_Field, p.m_Object);
+        m_InternalData->Accept(dp, visitor);
     }
 }
 
-template <>
-void ReadVector( std::vector< bool >& v, Reflect::CharStream& stream )
+template <class T>
+size_t Helium::Reflect::SimpleStlSetData<T>::GetLength( DataPointer container ) const
 {
-    int32_t count = 0;
-    stream.Read(&count); 
-    v.reserve(count);
+    std::set<T> &s = container.As< std::set<T> >();
+    return s.size();
+}
 
-    while( --count > 0 )
+template <class T>
+void Helium::Reflect::SimpleStlSetData<T>::Clear( DataPointer container )
+{
+    std::set<T> &s = container.As< std::set<T> >();
+    s.clear();
+}
+
+template <class T>
+Data* Helium::Reflect::SimpleStlSetData<T>::GetItemData() const
+{
+    return m_InternalData;
+}
+
+template <class T>
+void Helium::Reflect::SimpleStlSetData<T>::GetItems( DataPointer set, DynamicArray< DataPointer >& items ) const
+{
+    std::set<T> &v = set.As< std::set<T> >();
+    items.Resize(v.size());
+            
+    std::set<T>::iterator iter = v.begin();
+    int i = 0;
+    for (; iter != v.end(); ++iter)
     {
-        bool value;
-        stream.Read( &value );
-        v.push_back( value );
+        // This is dangerous.. callers could modify values passed out
+        DataPointer dp(const_cast<T *>(&*iter), set.m_Field, set.m_Object);
+        items[i++] = dp;
     }
 }
 
-template < class T >
-void SimpleStlVectorData<T>::Serialize(ArchiveBinary& archive)
+template <class T>
+void Helium::Reflect::SimpleStlSetData<T>::InsertItem( DataPointer set, DataPointer item )
 {
-    WriteVector( *m_Data, archive.GetStream() );
+    // Not crazy about this insert going through the copy ctor instead of our copy implementation for the data type
+    std::set<T> &v = set.As< std::set<T> >();
+    v.insert(std::set<T>::value_type(item.As<T>()));
 }
 
-template < class T >
-void SimpleStlVectorData<T>::Deserialize(ArchiveBinary& archive)
+template <class T>
+void Helium::Reflect::SimpleStlSetData<T>::RemoveItem( DataPointer set, DataPointer item )
 {
-    // if we are referring to a real field, clear its contents
-    m_Data->clear();
-    ReadVector( *m_Data, archive.GetStream() );
+    // Not crazy about this insert going through the c++ equal operator instead of the data type
+    std::set<T> &v = set.As< std::set<T> >();
+    v.erase(std::set<T>::value_type(item.As<T>()));
 }
 
-template < class T >
-void SimpleStlVectorData<T>::Serialize(ArchiveXML& archive)
+template <class T>
+bool Helium::Reflect::SimpleStlSetData<T>::ContainsItem( DataPointer set, DataPointer item ) const
 {
-    archive.GetIndent().Push();
+    std::set<T> &s = set.As< std::set<T> >();
 
-    // foreach datum
-    for (size_t i=0; i<m_Data->size(); i++)
+    // This is an awful linear search instead of a log(n) search so that we can defer to the internal data class
+    for (std::set<T>::iterator iter = s.begin(); iter != s.end(); ++iter)
     {
-        // indent
-        archive.GetIndent().Get(archive.GetStream());
+        // Should be safe since we are checking equality
+        DataPointer a(const_cast<T *>(&*iter), set.m_Field, set.m_Object);
 
-        // write
-        archive.GetStream() << m_Data->at( i );
-
-        // newline
-        archive.GetStream() << "\n";
-    }
-
-    archive.GetIndent().Pop();
-}
-
-template < class T >
-void SimpleStlVectorData<T>::Deserialize(ArchiveXML& archive)
-{
-    // if we are referring to a real field, clear its contents
-    m_Data->clear();
-
-    T value;
-    archive.GetStream().SkipWhitespace(); 
-
-    while (!archive.GetStream().Done())
-    {
-        // read data
-        archive.GetStream() >> value;
-
-        // copy onto vector
-        m_Data->push_back(value);
-
-        // read to next non-whitespace char
-        archive.GetStream().SkipWhitespace(); 
-    }
-}
-
-template < class T >
-tostream& SimpleStlVectorData<T>::operator>>(tostream& stream) const
-{
-    DataType::const_iterator itr = m_Data->begin();
-    DataType::const_iterator end = m_Data->end();
-    for ( ; itr != end; ++itr )
-    {
-        if ( itr != m_Data->begin() )
+        if (!m_InternalData->Equals(a, item))
         {
-            stream << s_ContainerItemDelimiter;
+            return false;
         }
-
-        stream << *itr;
     }
 
-    return stream;
+    return true;
 }
 
-template < class T >
-tistream& SimpleStlVectorData<T>::operator<<(tistream& stream)
-{
-    m_Data->clear();
 
-    tstring str;
-    std::streamsize size = stream.rdbuf()->in_avail();
-    str.resize( (size_t) size );
-    stream.read( const_cast< tchar_t* >( str.c_str() ), size );
-
-    Tokenize<T, T>( str, *m_Data, s_ContainerItemDelimiter );
-
-    return stream;
-}
-
-//
-// Specializations
-//
-
-template <>
-void StlStringStlVectorData::Serialize(ArchiveBinary& archive)
-{
-    uint32_t count = (uint32_t)m_Data->size();
-    archive.GetStream().Write( &count ); 
-
-    for (size_t i=0; i<m_Data->size(); i++)
-    {
-        archive.GetStream().WriteString( m_Data->at( i ) ); 
-    }
-}
-
-template <>
-void StlStringStlVectorData::Deserialize(ArchiveBinary& archive)
-{
-    m_Data->clear();
-
-    uint32_t count = (uint32_t)m_Data->size();
-    archive.GetStream().Read( &count ); 
-
-    m_Data->resize(count);
-    for ( uint32_t i=0; i<count; i++ )
-    {
-        archive.GetStream().ReadString( m_Data->at( i ) ); 
-    }
-}
-
-template <>
-void StlStringStlVectorData::Serialize(ArchiveXML& archive)
-{
-    archive.GetIndent().Push();
-    archive.GetIndent().Get(archive.GetStream());
-
-    // start our CDATA section, this prevents XML from parsing its escapes in this cdata section
-    archive.GetStream() << TXT("<![CDATA[\n");
-
-    for (size_t i=0; i<m_Data->size(); i++)
-    {
-        archive.GetIndent().Get(archive.GetStream());
-
-        // output the escape-code free character sequence between double qutoes
-        archive.GetStream() << TXT('\"') << m_Data->at( i ) << TXT('\"') << s_ContainerItemDelimiter;
-    }
-
-    // end our CDATA escape section
-    archive.GetIndent().Get(archive.GetStream());
-    archive.GetStream() << TXT("]]>\n");
-
-    archive.GetIndent().Pop();
-}
-
-template <>
-void StlStringStlVectorData::Deserialize(ArchiveXML& archive)
-{
-    m_Data->clear();
-
-    archive.GetStream().SkipWhitespace(); 
-    tstring value;
-
-    while (!archive.GetStream().Done())
-    {
-        std::getline( archive.GetStream().GetInternal(), value ); 
-
-        size_t start = value.find_first_of('\"');
-        size_t end = value.find_last_of('\"');
-
-        // if we found a pair of quotes
-        if (start != std::string::npos && end != std::string::npos && start != end)
-        {
-            // if all we have are open/close quotes, push a blank string
-            if (start == end-1)
-            {
-                m_Data->push_back(tstring ());
-            }
-            // else we have some non-null string data
-            else
-            {
-                m_Data->push_back(value.substr(start + 1, end - start - 1));
-            }
-        }
-        else
-        {
-            start = value.find_first_not_of( TXT( " \t\n" ) );
-
-            if (start != std::string::npos)
-                m_Data->push_back(value.substr(start));
-        }
-
-        archive.GetStream().SkipWhitespace(); 
-    }
-}
-
-#ifdef HELIUM_WCHAR_T
-
-//
-// When --wchar_t is active the XML streams are made of wchar_t, and C++ stdlib won't do the conversion for uint8_t/int8_t
-//  So we explicitly specialize some functions to to the conversion via a uint16_t/int16_t
-//
-
-template <>
-tistream& SimpleStlVectorData<uint8_t>::operator<<(tistream& stream)
-{
-    m_Data->clear();
-
-    tstring str;
-    std::streamsize size = stream.rdbuf()->in_avail();
-    str.resize( (size_t) size );
-    stream.read(const_cast< tchar_t* >( str.c_str() ), size );
-
-    Tokenize<uint8_t, uint16_t>( str, *m_Data, s_ContainerItemDelimiter );
-
-    return stream;
-}
-
-template <>
-tistream& SimpleStlVectorData<int8_t>::operator<<(tistream& stream)
-{
-    m_Data->clear();
-
-    tstring str;
-    std::streamsize size = stream.rdbuf()->in_avail();
-    str.resize( (size_t) size );
-    stream.read(const_cast< tchar_t* >( str.c_str() ), size );
-
-    Tokenize<int8_t, int16_t>( str, *m_Data, s_ContainerItemDelimiter );
-
-    return stream;
-}
-
-#endif // HELIUM_WCHAR_T
+#ifdef REFLECT_REFACTOR
 
 template < class DataT, class DataClassT >
 void SimpleStlSetData<DataT, DataClassT>::ConnectData(void* data)
