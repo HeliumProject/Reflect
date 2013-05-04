@@ -1,7 +1,7 @@
 template <class T>
 Helium::Reflect::SimpleStlVectorData<T>::SimpleStlVectorData()
-	: SequenceData(sizeof(std::vector<T>))
-	, m_InternalData(AllocateData<T>())
+    : SequenceData(sizeof(std::vector<T>))
+    , m_InternalData(AllocateData<T>())
 {
 
 }
@@ -52,6 +52,7 @@ void Helium::Reflect::SimpleStlVectorData<T>::Copy( DataPointer src, DataPointer
 template <class T>
 bool Helium::Reflect::SimpleStlVectorData<T>::Equals( DataPointer a, DataPointer b )
 {
+#if 0
 	std::vector<T> &v_a = a.As< std::vector<T> >();
 	std::vector<T> &v_b = b.As< std::vector<T> >();
 
@@ -74,6 +75,9 @@ bool Helium::Reflect::SimpleStlVectorData<T>::Equals( DataPointer a, DataPointer
 	}
 
 	return true;
+#endif
+
+    return DefaultEquals< std::vector<T> >(a, b);
 }
 
 template <class T>
@@ -113,13 +117,11 @@ void Helium::Reflect::SimpleStlVectorData<T>::GetItems( DataPointer sequence, Dy
 {
 	std::vector<T> &v = sequence.As< std::vector<T> >();
 
-	items.Resize(v.size());
+	items.Reserve(v.size());
 
-	int i = 0;
-	std::vector<T>::iterator iter = v.begin();
-	for (; iter != v.end(); ++iter)
+	for (std::vector<T>::iterator iter = v.begin(); iter != v.end(); ++iter)
 	{
-		items[i++] = DataPointer(&*iter, sequence.m_Field, sequence.m_Object);
+		items.Add(DataPointer(&*iter, sequence.m_Field, sequence.m_Object));
 	}
 }
 
@@ -226,8 +228,8 @@ void Helium::Reflect::SimpleStlVectorData<T>::SwapInternalValues( DataPointer se
 
 template <class T>
 Helium::Reflect::SimpleStlSetData<T>::SimpleStlSetData()
-	: SetData(sizeof(std::set<T>))
-	, m_InternalData(AllocateData<T>())
+    : SetData(sizeof(std::set<T>))
+    , m_InternalData(AllocateData<T>())
 {
 
 }
@@ -279,6 +281,7 @@ void Helium::Reflect::SimpleStlSetData<T>::Copy( DataPointer src, DataPointer de
 template <class T>
 bool Helium::Reflect::SimpleStlSetData<T>::Equals( DataPointer a, DataPointer b )
 {
+#if 0
 	std::set<T> &s_a = a.As< std::set<T> >();
 	std::set<T> &s_b = b.As< std::set<T> >();
 
@@ -304,6 +307,9 @@ bool Helium::Reflect::SimpleStlSetData<T>::Equals( DataPointer a, DataPointer b 
 	}
 
 	return true;
+#endif
+
+    return DefaultEquals< std::set<T> >(a, b);
 }
 
 template <class T>
@@ -344,15 +350,13 @@ template <class T>
 void Helium::Reflect::SimpleStlSetData<T>::GetItems( DataPointer set, DynamicArray< DataPointer >& items ) const
 {
 	std::set<T> &v = set.As< std::set<T> >();
-	items.Resize(v.size());
+	items.Reserve(v.size());
 
-	std::set<T>::iterator iter = v.begin();
-	int i = 0;
-	for (; iter != v.end(); ++iter)
+	for (std::set<T>::iterator iter = v.begin(); iter != v.end(); ++iter)
 	{
 		// This is dangerous.. callers could modify values passed out
 		DataPointer dp(const_cast<T *>(&*iter), set.m_Field, set.m_Object);
-		items[i++] = dp;
+		items.Add(dp);
 	}
 }
 
@@ -377,460 +381,177 @@ bool Helium::Reflect::SimpleStlSetData<T>::ContainsItem( DataPointer set, DataPo
 {
 	std::set<T> &s = set.As< std::set<T> >();
 
+#if 0
 	// This is an awful linear search instead of a log(n) search so that we can defer to the internal data class
 	for (std::set<T>::iterator iter = s.begin(); iter != s.end(); ++iter)
 	{
 		// Should be safe since we are checking equality
 		DataPointer a(const_cast<T *>(&*iter), set.m_Field, set.m_Object);
 
-		if (!m_InternalData->Equals(a, item))
+		if (m_InternalData->Equals(a, item))
 		{
-			return false;
+			return true;
 		}
 	}
-
-	return true;
-}
-
-
-#ifdef REFLECT_REFACTOR
-
-template < class DataT, class DataClassT >
-void SimpleStlSetData<DataT, DataClassT>::ConnectData(void* data)
-{
-	m_Data.Connect( data );
-}
-
-template < class DataT, class DataClassT >
-size_t SimpleStlSetData<DataT, DataClassT>::GetSize() const
-{
-	return m_Data->size();
-}
-
-template < class DataT, class DataClassT >
-void SimpleStlSetData<DataT, DataClassT>::Clear()
-{
-	return m_Data->clear();
-}
-
-template < class DataT, class DataClassT >
-const Class* SimpleStlSetData<DataT, DataClassT>::GetItemClass() const
-{
-	return Reflect::GetDataClass<DataT>();
-}
-
-template < class DataT, class DataClassT >
-void SimpleStlSetData<DataT, DataClassT>::GetItems(std::vector< DataPtr >& items) const
-{
-	items.resize( m_Data->size() );
-	DataType::const_iterator itr = m_Data->begin();
-	DataType::const_iterator end = m_Data->end();
-	for ( size_t index=0; itr != end; ++itr, ++index )
-	{
-		items[index] = Data::Bind( const_cast< DataT& >( *itr ), m_Instance, m_Field );
-	}
-}
-
-template < class DataT, class DataClassT >
-void SimpleStlSetData<DataT, DataClassT>::AddItem(Data* value)
-{
-	DataT dataValue;
-	Data::GetValue(value, dataValue);
-	m_Data->insert( dataValue );
-}
-
-template < class DataT, class DataClassT >
-void SimpleStlSetData<DataT, DataClassT>::RemoveItem(Data* value)
-{
-	DataT dataValue;
-	Data::GetValue(value, dataValue);
-	m_Data->erase( dataValue );
-}
-
-template < class DataT, class DataClassT >
-bool SimpleStlSetData<DataT, DataClassT>::ContainsItem(Data* value) const
-{
-	DataT dataValue;
-	Data::GetValue(value, dataValue);
-	return m_Data->find( dataValue ) != m_Data->end();
-}
-
-template < class DataT, class DataClassT >
-bool SimpleStlSetData<DataT, DataClassT>::Set(Data* src, uint32_t flags)
-{
-	const StlSetDataT* rhs = SafeCast<StlSetDataT>(src);
-	if (!rhs)
-	{
-		return false;
-	}
-
-	*m_Data = *rhs->m_Data;
-
-	return true;
-}
-
-template < class DataT, class DataClassT >
-bool SimpleStlSetData<DataT, DataClassT>::Equals(Object* object)
-{
-	const StlSetDataT* rhs = SafeCast<StlSetDataT>(object);
-	if (!rhs)
-	{
-		return false;
-	}
-
-	return *m_Data == *rhs->m_Data;
-}
-
-template < class DataT, class DataClassT >
-void SimpleStlSetData<DataT, DataClassT>::Serialize( ArchiveBinary& archive )
-{
-	Serialize<ArchiveBinary>( archive );
-}
-
-template < class DataT, class DataClassT >
-void SimpleStlSetData<DataT, DataClassT>::Deserialize( ArchiveBinary& archive )
-{
-	Deserialize<ArchiveBinary>( archive );
-}
-
-template < class DataT, class DataClassT >
-void SimpleStlSetData<DataT, DataClassT>::Serialize( ArchiveXML& archive )
-{
-	Serialize<ArchiveXML>( archive );
-}
-
-template < class DataT, class DataClassT >
-void SimpleStlSetData<DataT, DataClassT>::Deserialize( ArchiveXML& archive )
-{
-	Deserialize<ArchiveXML>( archive );
-}
-
-template < class DataT, class DataClassT >
-tostream& SimpleStlSetData<DataT, DataClassT>::operator>>(tostream& stream) const
-{
-	DataType::const_iterator itr = m_Data->begin();
-	DataType::const_iterator end = m_Data->end();
-	for ( ; itr != end; ++itr )
-	{
-		if ( itr != m_Data->begin() )
-		{
-			stream << s_ContainerItemDelimiter;
-		}
-
-		stream << *itr;
-	}
-
-	return stream;
-}
-
-template < class DataT, class DataClassT >
-tistream& SimpleStlSetData<DataT, DataClassT>::operator<<(tistream& stream)
-{
-	m_Data->clear();
-
-	tstring str;
-	std::streamsize size = stream.rdbuf()->in_avail();
-	str.resize( (size_t) size);
-	stream.read( const_cast< tchar_t* >( str.c_str() ), size );
-
-	Tokenize< DataT >( str, *m_Data, s_ContainerItemDelimiter );
-
-	return stream;
-}
-
-template < class DataT, class DataClassT > template< class ArchiveT >
-void SimpleStlSetData<DataT, DataClassT>::Serialize( ArchiveT& archive )
-{
-	int i = 0;
-	std::vector< ObjectPtr > components;
-	components.resize( m_Data->size() );
-
-	{
-		DataType::const_iterator itr = m_Data->begin();
-		DataType::const_iterator end = m_Data->end();
-		for ( ; itr != end; ++itr )
-		{
-			ObjectPtr dataElem = Registry::GetInstance()->CreateInstance( Reflect::GetClass<DataClassT>() );
-
-			// downcast to data type
-			DataClassT* dataSer = AssertCast<DataClassT>(dataElem);
-
-			// connect to our map data memory address
-			dataSer->ConnectData(const_cast<DataT*>(&(*itr)));
-
-			// serialize to the archive stream
-			components[i++] = dataSer;
-		}
-	}
-
-	archive.SerializeArray( components );
-
-	std::vector< ObjectPtr >::iterator itr = components.begin();
-	std::vector< ObjectPtr >::iterator end = components.end();
-	for ( ; itr != end; ++itr )
-	{
-		Data* ser = AssertCast<Data>(*itr);
-		ser->Disconnect();
-
-		// might be useful to cache the data object here
-	}
-}
-
-template < class DataT, class DataClassT > template < class ArchiveT >
-void SimpleStlSetData<DataT, DataClassT>::Deserialize( ArchiveT& archive )
-{
-	std::vector< ObjectPtr > components;
-	archive.DeserializeArray(components);
-
-	// if we are referring to a real field, clear its contents
-	m_Data->clear();
-
-	std::vector< ObjectPtr >::iterator itr = components.begin();
-	std::vector< ObjectPtr >::iterator end = components.end();
-	for ( ; itr != end; ++itr )
-	{
-		DataClassT* data = SafeCast<DataClassT>(*itr);
-		if (!data)
-		{
-			throw Reflect::Exception( TXT( "Set value type has changed, this is unpossible" ) );
-		}
-
-		m_Data->insert( *data->m_Data );
-	}
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-size_t SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::GetSize() const
-{
-	return m_Data->size();
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-void SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::Clear()
-{
-	return m_Data->clear();
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-void SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::ConnectData(void* data)
-{
-	m_Data.Connect( data );
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-const Class* SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::GetKeyClass() const
-{
-	return Reflect::GetDataClass<KeyT>();
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-const Class* SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::GetValueClass() const
-{
-	return Reflect::GetDataClass<ValueT>();
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-void SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::GetItems(V_ValueType& items)
-{
-	items.resize(m_Data->size());
-	DataType::const_iterator itr = m_Data->begin();
-	DataType::const_iterator end = m_Data->end();
-	for ( size_t index=0; itr != end; ++itr, ++index )
-	{
-		items[index].first = Data::Bind( const_cast< KeyT& >( itr->first ), m_Instance, m_Field );
-		items[index].second = Data::Bind( const_cast< ValueT& >( itr->second ), m_Instance, m_Field );
-	}
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-DataPtr SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::GetItem(Data* key)
-{
-	KeyT keyValue;
-	Data::GetValue(key, keyValue);
-
-	DataType::const_iterator found = m_Data->find( keyValue );
-	if ( found != m_Data->end() )
-	{
-		return Data::Bind( const_cast< ValueT& >( found->second ), m_Instance, m_Field );
-	}
-
-	return NULL;
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-void SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::SetItem(Data* key, Data* value)
-{
-	KeyT keyValue;
-	Data::GetValue(key, keyValue);
-
-	ValueT valueValue;
-	Data::GetValue(value, valueValue);
-
-	(*m_Data)[keyValue] = valueValue;
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-void SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::RemoveItem(Data* key)
-{
-	KeyT keyValue;
-	Data::GetValue(key, keyValue);
-
-	m_Data->erase(keyValue);
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-bool SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::Set(Data* src, uint32_t flags)
-{
-	const StlMapDataT* rhs = SafeCast<StlMapDataT>(src);
-	if (!rhs)
-	{
-		return false;
-	}
-
-	*m_Data = *rhs->m_Data;
-
-	return true;
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-bool SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::Equals(Object* object)
-{
-	const StlMapDataT* rhs = SafeCast<StlMapDataT>(object);
-	if (!rhs)
-	{
-		return false;
-	}
-
-	return *m_Data == *rhs->m_Data;
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-void SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::Serialize( ArchiveBinary& archive )
-{
-	Serialize<ArchiveBinary>( archive );
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-void SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::Deserialize( ArchiveBinary& archive )
-{
-	Deserialize<ArchiveBinary>( archive );
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-void SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::Serialize( ArchiveXML& archive )
-{
-	Serialize<ArchiveXML>( archive );
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-void SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::Deserialize( ArchiveXML& archive )
-{
-	Deserialize<ArchiveXML>( archive );
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-tostream& SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::operator>>(tostream& stream) const
-{
-	DataType::const_iterator itr = m_Data->begin();
-	DataType::const_iterator end = m_Data->end();
-	for ( ; itr != end; ++itr )
-	{
-		if ( itr != m_Data->begin() )
-		{
-			stream << s_ContainerItemDelimiter;
-		}
-
-		stream << itr->first << s_ContainerItemDelimiter << itr->second;
-	}
-
-	return stream;
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT >
-tistream& SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::operator<<(tistream& stream)
-{
-	m_Data->clear();
-
-	tstring str;
-	std::streamsize size = stream.rdbuf()->in_avail();
-	str.resize( (size_t) size);
-	stream.read( const_cast< tchar_t* >( str.c_str() ), size );
-
-	Tokenize< KeyT, ValueT >( str, *m_Data, s_ContainerItemDelimiter );
-
-	return stream;
-}  
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT > template< class ArchiveT >
-void SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::Serialize(ArchiveT& archive)
-{
-	int i = 0;
-	std::vector< ObjectPtr > components;
-	components.resize( m_Data->size() * 2 );
-
-	{
-		DataType::const_iterator itr = m_Data->begin();
-		DataType::const_iterator end = m_Data->end();
-		for ( ; itr != end; ++itr )
-		{
-			ObjectPtr keyElem = Registry::GetInstance()->CreateInstance( Reflect::GetClass<KeyClassT>() );
-			ObjectPtr dataElem = Registry::GetInstance()->CreateInstance( Reflect::GetClass<ValueClassT>() );
-
-			// downcast to data type
-			KeyClassT* keySer = AssertCast<KeyClassT>(keyElem);
-			ValueClassT* dataSer = AssertCast<ValueClassT>(dataElem);
-
-			// connect to our map key memory address
-			keySer->ConnectData(const_cast<KeyT*>(&(itr->first)));
-
-			// connect to our map data memory address
-			dataSer->ConnectData(const_cast<ValueT*>(&(itr->second)));
-
-			// serialize to the archive stream
-			components[i++] = keySer;
-			components[i++] = dataSer;
-		}
-	}
-
-	archive.SerializeArray( components );
-
-	std::vector< ObjectPtr >::iterator itr = components.begin();
-	std::vector< ObjectPtr >::iterator end = components.end();
-	for ( ; itr != end; ++itr )
-	{
-		Data* ser = AssertCast<Data>(*itr);
-		ser->Disconnect();
-
-		// might be useful to cache the data object here
-	}
-}
-
-template < class KeyT, class KeyClassT, class ValueT, class ValueClassT > template< class ArchiveT >
-void SimpleStlMapData<KeyT, KeyClassT, ValueT, ValueClassT>::Deserialize(ArchiveT& archive)
-{
-	std::vector< ObjectPtr > components;
-	archive.DeserializeArray(components, ArchiveFlags::Sparse);
-
-	if (components.size() % 2 != 0)
-	{
-		throw Reflect::Exception( TXT( "Unmatched map objects" ) );
-	}
-
-	// if we are referring to a real field, clear its contents
-	m_Data->clear();
-
-	std::vector< ObjectPtr >::iterator itr = components.begin();
-	std::vector< ObjectPtr >::iterator end = components.end();
-	for ( ; itr != end; ++itr )
-	{
-		KeyClassT* key = SafeCast<KeyClassT>( *itr );
-		ValueClassT* value = SafeCast<ValueClassT>( *(++itr) );
-
-		if (key && value)
-		{
-			(*m_Data)[ *key->m_Data ] = *value->m_Data;
-		}
-	}
-}
-
+    
+    return false;
 #endif
+
+    std::set<T>::iterator iter = s.find(item.As<T>());
+    return iter != s.end();
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+template <class KeyT, class ValueT>
+Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::SimpleStlMapData()
+    : AssociationData(sizeof(std::map<KeyT, ValueT>))
+    , m_InternalDataKey(AllocateData<KeyT>())
+    , m_InternalDataValue(AllocateData<ValueT>())
+{
+
+}
+
+template <class KeyT, class ValueT>
+Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::~SimpleStlMapData()
+{
+    delete m_InternalDataKey;
+    delete m_InternalDataValue;
+}
+
+template <class KeyT, class ValueT>
+void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Construct( DataPointer pointer ) 
+{
+    DefaultConstruct< std::map<KeyT, ValueT> >(pointer);
+}
+
+template <class KeyT, class ValueT>
+void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Destruct( DataPointer pointer ) 
+{
+    DefaultDestruct< std::map<KeyT, ValueT> >(pointer);
+}
+
+template <class KeyT, class ValueT>
+void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Copy( DataPointer src, DataPointer dest, uint32_t flags /*= 0 */ ) 
+{
+    if (flags & CopyFlags::Shallow)
+    {
+        DefaultCopy< std::map< KeyT, ValueT > >(src, dest, flags);
+        return;
+    }
+
+    std::map<KeyT, ValueT> &m_src = src.As< std::map<KeyT, ValueT> >();
+    std::map<KeyT, ValueT> &m_dest = dest.As< std::map<KeyT, ValueT> >();
+
+    m_dest.clear();
+
+    for (std::map<KeyT, ValueT>::iterator iter_src = m_src.begin();
+        iter_src != m_src.end(); ++iter_src)
+    {
+        // Should be safe since we copy FROM this. Should not break const-ness (might increase a ref count or something like that though)
+        DataPointer dp_src_key(const_cast<KeyT *>(&iter_src->first), src.m_Field, src.m_Object);
+        DataPointer dp_src_value(&iter_src->second, src.m_Field, src.m_Object);
+
+        std::map<KeyT, ValueT>::value_type temp;
+
+        DataPointer dp_dest_key(const_cast<ValueT *>(&temp.first), dest.m_Field, dest.m_Object);
+        DataPointer dp_dest_value(&temp.second, dest.m_Field, dest.m_Object);
+
+        m_InternalDataKey->Copy(dp_src_key, dp_dest_key, flags);
+        m_InternalDataValue->Copy(dp_src_value, dp_dest_value, flags);
+
+        m_dest.insert(temp);
+    }
+}
+
+template <class KeyT, class ValueT>
+bool Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Equals( DataPointer a, DataPointer b ) 
+{
+    return DefaultEquals< std::map< KeyT, ValueT > >(a, b);
+}
+
+template <class KeyT, class ValueT>
+void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Accept( DataPointer p, Visitor& visitor ) 
+{
+    std::map<KeyT, ValueT> &m = p.As< std::map<KeyT, ValueT> >();
+
+    for (std::map<KeyT, ValueT>::iterator iter = m.begin();
+        iter != m.end(); ++iter)
+    {
+        m_InternalDataKey->Accept(DataPointer(const_cast<KeyT *>(&iter->first), p.m_Field, p.m_Object), visitor);
+        m_InternalDataValue->Accept(DataPointer(&iter->second, p.m_Field, p.m_Object), visitor);
+    }
+}
+
+template <class KeyT, class ValueT>
+size_t Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetLength( DataPointer container ) const 
+{
+    std::map<KeyT, ValueT> &m = container.As< std::map<KeyT, ValueT> >();
+    return m.size();
+}
+
+template <class KeyT, class ValueT>
+void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Clear( DataPointer container ) 
+{
+    std::map<KeyT, ValueT> &m = container.As< std::map<KeyT, ValueT> >();
+    return m.clear();
+}
+
+template <class KeyT, class ValueT>
+Helium::Reflect::Data* Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetKeyData() const
+{
+    return m_InternalDataKey;
+}
+
+template <class KeyT, class ValueT>
+Helium::Reflect::Data* Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetValueData() const
+{
+    return m_InternalDataValue;
+}
+
+template <class KeyT, class ValueT>
+void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetItems( DataPointer association, DynamicArray<DataPointer>& keys, DynamicArray<DataPointer>& values )
+{
+    std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
+
+    for (std::map<KeyT, ValueT>::iterator iter = m.begin();
+        iter != m.end(); ++iter)
+    {
+        keys.Add(DataPointer(const_cast<KeyT *>(&iter->first), association.m_Field, association.m_Object));
+        values.Add(DataPointer(&iter->second, association.m_Field, association.m_Object));
+    }
+}
+
+template <class KeyT, class ValueT>
+Helium::Reflect::DataPointer Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetItem( DataPointer association, DataPointer key )
+{
+    std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
+    return DataPointer(&m[key.As<KeyT>()], association.m_Field, association.m_Object);
+}
+
+template <class KeyT, class ValueT>
+void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::SetItem( DataPointer association, DataPointer key, DataPointer value )
+{
+    std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
+    m[key.As<KeyT>()] = value.As<ValueT>();
+}
+
+template <class KeyT, class ValueT>
+void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::RemoveItem( DataPointer association, DataPointer key )
+{
+    std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
+    std::map<KeyT, ValueT>::iterator iter = m.find(key.As<KeyT>());
+
+    if (iter != m.end())
+    {
+#if 0
+        DataPointer dp_key(const_cast<KeyT *>(&iter->first), association.m_Field, association.m_Object);
+        DataPointer dp_value(&iter->second, association.m_Field, association.m_Object);
+
+        m_InternalDataKey->Destruct(dp_key);
+        m_InternalDataValue->Destruct(dp_vlaue);
+#endif
+
+        m.erase(iter);
+    }
+}
