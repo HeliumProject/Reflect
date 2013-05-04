@@ -1,10 +1,7 @@
-
-
-
 template <class T>
 Helium::Reflect::SimpleDynamicArrayData<T>::SimpleDynamicArrayData()
-    : SequenceData(sizeof(DynamicArray<T>))
-    , m_InternalData(AllocateData<T>())
+	: SequenceData(sizeof(DynamicArray<T>))
+	, m_InternalData(AllocateData<T>())
 {
 
 }
@@ -80,7 +77,7 @@ bool Helium::Reflect::SimpleDynamicArrayData<T>::Equals( DataPointer a, DataPoin
 	return true;
 #endif
 
-    return DefaultEquals< DynamicArray<T> >(a, b);
+	return DefaultEquals< DynamicArray<T> >(a, b);
 }
 
 template <class T>
@@ -228,12 +225,10 @@ void Helium::Reflect::SimpleDynamicArrayData<T>::SwapInternalValues( DataPointer
 
 //////////////////////////////////////////////////////////////////////////
 
-
-
 template <class T>
 Helium::Reflect::SimpleSetData<T>::SimpleSetData()
-    : SetData(sizeof(Set<T>))
-    , m_InternalData(AllocateData<T>())
+	: SetData(sizeof(Set<T>))
+	, m_InternalData(AllocateData<T>())
 {
 
 }
@@ -313,7 +308,7 @@ bool Helium::Reflect::SimpleSetData<T>::Equals( DataPointer a, DataPointer b )
 	return true;
 #endif
 
-    return DefaultEquals< Set<T> >(a, b);
+	return DefaultEquals< Set<T> >(a, b);
 }
 
 template <class T>
@@ -397,22 +392,21 @@ bool Helium::Reflect::SimpleSetData<T>::ContainsItem( DataPointer set, DataPoint
 			return true;
 		}
 	}
-    
-    return false;
+	
+	return false;
 #endif
 
-    Set<T>::Iterator iter = s.Find(item.As<T>());
-    return iter != s.End();
+	Set<T>::Iterator iter = s.Find(item.As<T>());
+	return iter != s.End();
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-
 template <class KeyT, class ValueT>
 Helium::Reflect::SimpleMapData<KeyT, ValueT>::SimpleMapData()
-    : AssociationData(sizeof(Map<KeyT, ValueT>))
-    , m_InternalDataKey(AllocateData<KeyT>())
-    , m_InternalDataValue(AllocateData<ValueT>())
+	: AssociationData(sizeof(Map<KeyT, ValueT>))
+	, m_InternalDataKey(AllocateData<KeyT>())
+	, m_InternalDataValue(AllocateData<ValueT>())
 {
 
 }
@@ -420,689 +414,143 @@ Helium::Reflect::SimpleMapData<KeyT, ValueT>::SimpleMapData()
 template <class KeyT, class ValueT>
 Helium::Reflect::SimpleMapData<KeyT, ValueT>::~SimpleMapData()
 {
-    delete m_InternalDataKey;
-    delete m_InternalDataValue;
+	delete m_InternalDataKey;
+	delete m_InternalDataValue;
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleMapData<KeyT, ValueT>::Construct( DataPointer pointer ) 
 {
-    DefaultConstruct< Map<KeyT, ValueT> >(pointer);
+	DefaultConstruct< Map<KeyT, ValueT> >(pointer);
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleMapData<KeyT, ValueT>::Destruct( DataPointer pointer ) 
 {
-    DefaultDestruct< Map<KeyT, ValueT> >(pointer);
+	DefaultDestruct< Map<KeyT, ValueT> >(pointer);
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleMapData<KeyT, ValueT>::Copy( DataPointer src, DataPointer dest, uint32_t flags /*= 0 */ ) 
 {
-    if (flags & CopyFlags::Shallow)
-    {
-        DefaultCopy< Map< KeyT, ValueT > >(src, dest, flags);
-        return;
-    }
+	if (flags & CopyFlags::Shallow)
+	{
+		DefaultCopy< Map< KeyT, ValueT > >(src, dest, flags);
+		return;
+	}
 
-    Map<KeyT, ValueT> &m_src = src.As< Map<KeyT, ValueT> >();
-    Map<KeyT, ValueT> &m_dest = dest.As< Map<KeyT, ValueT> >();
+	Map<KeyT, ValueT> &m_src = src.As< Map<KeyT, ValueT> >();
+	Map<KeyT, ValueT> &m_dest = dest.As< Map<KeyT, ValueT> >();
 
-    m_dest.Clear();
+	m_dest.Clear();
 
-    for (Map<KeyT, ValueT>::Iterator iter_src = m_src.Begin();
-        iter_src != m_src.End(); ++iter_src)
-    {
-        // Should be safe since we copy FROM this. Should not break const-ness (might increase a ref count or something like that though)
-        DataPointer dp_src_key(const_cast<KeyT *>(&iter_src->First()), src.m_Field, src.m_Object);
-        DataPointer dp_src_value(&iter_src->Second(), src.m_Field, src.m_Object);
+	for (Map<KeyT, ValueT>::Iterator iter_src = m_src.Begin();
+		iter_src != m_src.End(); ++iter_src)
+	{
+		// Should be safe since we copy FROM this. Should not break const-ness (might increase a ref count or something like that though)
+		DataPointer dp_src_key(const_cast<KeyT *>(&iter_src->First()), src.m_Field, src.m_Object);
+		DataPointer dp_src_value(&iter_src->Second(), src.m_Field, src.m_Object);
 
-        Map<KeyT, ValueT>::ValueType temp;
+		Map<KeyT, ValueT>::ValueType temp;
 
-        DataPointer dp_dest_key(const_cast<ValueT *>(&temp.First()), dest.m_Field, dest.m_Object);
-        DataPointer dp_dest_value(&temp.Second(), dest.m_Field, dest.m_Object);
+		DataPointer dp_dest_key(const_cast<ValueT *>(&temp.First()), dest.m_Field, dest.m_Object);
+		DataPointer dp_dest_value(&temp.Second(), dest.m_Field, dest.m_Object);
 
-        m_InternalDataKey->Copy(dp_src_key, dp_dest_key, flags);
-        m_InternalDataValue->Copy(dp_src_value, dp_dest_value, flags);
+		m_InternalDataKey->Copy(dp_src_key, dp_dest_key, flags);
+		m_InternalDataValue->Copy(dp_src_value, dp_dest_value, flags);
 
-        m_dest.Insert(temp);
-    }
+		m_dest.Insert(temp);
+	}
 }
 
 template <class KeyT, class ValueT>
 bool Helium::Reflect::SimpleMapData<KeyT, ValueT>::Equals( DataPointer a, DataPointer b ) 
 {
-    return DefaultEquals< Map< KeyT, ValueT > >(a, b);
+	return DefaultEquals< Map< KeyT, ValueT > >(a, b);
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleMapData<KeyT, ValueT>::Accept( DataPointer p, Visitor& visitor ) 
 {
-    Map<KeyT, ValueT> &m = p.As< Map<KeyT, ValueT> >();
+	Map<KeyT, ValueT> &m = p.As< Map<KeyT, ValueT> >();
 
-    for (Map<KeyT, ValueT>::Iterator iter = m.Begin();
-        iter != m.End(); ++iter)
-    {
-        m_InternalDataKey->Accept(DataPointer(const_cast<KeyT *>(&iter->First()), p.m_Field, p.m_Object), visitor);
-        m_InternalDataValue->Accept(DataPointer(&iter->Second(), p.m_Field, p.m_Object), visitor);
-    }
+	for (Map<KeyT, ValueT>::Iterator iter = m.Begin();
+		iter != m.End(); ++iter)
+	{
+		m_InternalDataKey->Accept(DataPointer(const_cast<KeyT *>(&iter->First()), p.m_Field, p.m_Object), visitor);
+		m_InternalDataValue->Accept(DataPointer(&iter->Second(), p.m_Field, p.m_Object), visitor);
+	}
 }
 
 template <class KeyT, class ValueT>
 size_t Helium::Reflect::SimpleMapData<KeyT, ValueT>::GetLength( DataPointer container ) const 
 {
-    Map<KeyT, ValueT> &m = container.As< Map<KeyT, ValueT> >();
-    return m.GetSize();
+	Map<KeyT, ValueT> &m = container.As< Map<KeyT, ValueT> >();
+	return m.GetSize();
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleMapData<KeyT, ValueT>::Clear( DataPointer container ) 
 {
-    Map<KeyT, ValueT> &m = container.As< Map<KeyT, ValueT> >();
-    return m.Clear();
+	Map<KeyT, ValueT> &m = container.As< Map<KeyT, ValueT> >();
+	return m.Clear();
 }
 
 template <class KeyT, class ValueT>
 Helium::Reflect::Data* Helium::Reflect::SimpleMapData<KeyT, ValueT>::GetKeyData() const
 {
-    return m_InternalDataKey;
+	return m_InternalDataKey;
 }
 
 template <class KeyT, class ValueT>
 Helium::Reflect::Data* Helium::Reflect::SimpleMapData<KeyT, ValueT>::GetValueData() const
 {
-    return m_InternalDataValue;
+	return m_InternalDataValue;
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleMapData<KeyT, ValueT>::GetItems( DataPointer association, DynamicArray<DataPointer>& keys, DynamicArray<DataPointer>& values )
 {
-    Map<KeyT, ValueT> &m = association.As< Map<KeyT, ValueT> >();
+	Map<KeyT, ValueT> &m = association.As< Map<KeyT, ValueT> >();
 
-    for (Map<KeyT, ValueT>::Iterator iter = m.Begin();
-        iter != m.End(); ++iter)
-    {
-        keys.Add(DataPointer(const_cast<KeyT *>(&iter->First()), association.m_Field, association.m_Object));
-        values.Add(DataPointer(&iter->Second(), association.m_Field, association.m_Object));
-    }
+	for (Map<KeyT, ValueT>::Iterator iter = m.Begin();
+		iter != m.End(); ++iter)
+	{
+		keys.Add(DataPointer(const_cast<KeyT *>(&iter->First()), association.m_Field, association.m_Object));
+		values.Add(DataPointer(&iter->Second(), association.m_Field, association.m_Object));
+	}
 }
 
 template <class KeyT, class ValueT>
 Helium::Reflect::DataPointer Helium::Reflect::SimpleMapData<KeyT, ValueT>::GetItem( DataPointer association, DataPointer key )
 {
-    Map<KeyT, ValueT> &m = association.As< Map<KeyT, ValueT> >();
-    return DataPointer(&m[key.As<KeyT>()], association.m_Field, association.m_Object);
+	Map<KeyT, ValueT> &m = association.As< Map<KeyT, ValueT> >();
+	return DataPointer(&m[key.As<KeyT>()], association.m_Field, association.m_Object);
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleMapData<KeyT, ValueT>::SetItem( DataPointer association, DataPointer key, DataPointer value )
 {
-    Map<KeyT, ValueT> &m = association.As< Map<KeyT, ValueT> >();
-    m[key.As<KeyT>()] = value.As<ValueT>();
+	Map<KeyT, ValueT> &m = association.As< Map<KeyT, ValueT> >();
+	m[key.As<KeyT>()] = value.As<ValueT>();
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleMapData<KeyT, ValueT>::RemoveItem( DataPointer association, DataPointer key )
 {
-    Map<KeyT, ValueT> &m = association.As< Map<KeyT, ValueT> >();
-    Map<KeyT, ValueT>::Iterator iter = m.Find(key.As<KeyT>());
+	Map<KeyT, ValueT> &m = association.As< Map<KeyT, ValueT> >();
+	Map<KeyT, ValueT>::Iterator iter = m.Find(key.As<KeyT>());
 
-    if (iter != m.End())
-    {
+	if (iter != m.End())
+	{
 #if 0
-        DataPointer dp_key(const_cast<KeyT *>(&iter->First()), association.m_Field, association.m_Object);
-        DataPointer dp_value(&iter->Second(), association.m_Field, association.m_Object);
+		DataPointer dp_key(const_cast<KeyT *>(&iter->First()), association.m_Field, association.m_Object);
+		DataPointer dp_value(&iter->Second(), association.m_Field, association.m_Object);
 
-        m_InternalDataKey->Destruct(dp_key);
-        m_InternalDataValue->Destruct(dp_vlaue);
+		m_InternalDataKey->Destruct(dp_key);
+		m_InternalDataValue->Destruct(dp_vlaue);
 #endif
 
-        m.Remove(iter);
-    }
-}
-
-
-
-
-#ifdef REFLECT_REFACTOR
-
-void PathData::ConnectData( void* data )
-{
-	m_Data.Connect( data );
-}
-
-bool PathData::Set( Data* src, uint32_t flags )
-{
-	if ( GetClass() != src->GetClass() )
-	{
-		return false;
-	}
-
-	const PathData* rhs = static_cast< const PathData* >( src );
-
-	*m_Data = *rhs->m_Data;
-
-	return true;
-}
-
-bool PathData::Equals( Object* object )
-{
-	const PathData* rhs = SafeCast< PathData >( object );
-
-	if ( !rhs )
-	{
-		return false;
-	}
-
-	return *rhs->m_Data == *m_Data;
-}
-
-void PathData::Serialize( ArchiveBinary& archive )
-{
-	const tstring& str = m_Data->Get();
-	archive.GetStream().WriteString( str ); 
-}
-
-void PathData::Deserialize( ArchiveBinary& archive )
-{
-	tstring str;
-	archive.GetStream().ReadString( str );
-	m_Data->Set( str );
-}
-
-void PathData::Serialize( ArchiveXML& archive )
-{
-	const tstring& str = m_Data->Get();
-	archive.GetStream() << str;
-}
-
-void PathData::Deserialize( ArchiveXML& archive )
-{
-	tstring buf;
-	std::streamsize size = archive.GetStream().ElementsAvailable(); 
-	buf.resize( (size_t)size );
-	archive.GetStream().ReadBuffer( const_cast<tchar_t*>( buf.c_str() ), size );
-	m_Data->Set( buf );
-}
-
-tostream& PathData::operator>>( tostream& stream ) const
-{
-	tstring path = m_Data->Get();
-	tstring temp;
-	bool converted = Helium::ConvertString( path, temp );
-	HELIUM_ASSERT( converted );
-
-	stream << temp;
-	return stream;
-}
-
-tistream& PathData::operator<<( tistream& stream )
-{
-	tstring str;
-	std::streamsize size = stream.rdbuf()->in_avail();
-	str.resize( (size_t) size );
-	stream.read( const_cast<tchar_t*>( str.c_str() ), size );
-
-	if ( !str.empty() )
-	{
-		m_Data->Set( str );
-
-		if ( m_Instance && m_Field && m_Field->m_Composite->GetReflectionType() == ReflectionTypes::Class )
-		{
-			Object* object = static_cast< Object* >( m_Instance );
-			object->RaiseChanged( m_Field );
-		}
-	}
-
-	return stream;
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::ConnectData( void* data )
-{
-	m_Data.Connect( data );
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-size_t SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::GetSize() const
-{
-	return m_Data->GetSize();
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::Clear()
-{
-	return m_Data->Clear();
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-const Class* SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::GetItemClass() const
-{
-	return Reflect::GetDataClass< KeyT >();
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::GetItems( DynamicArray< DataPtr >& items ) const
-{
-	items.Clear();
-	items.Reserve( m_Data->GetSize() );
-
-	DataType::ConstIterator itr = m_Data->Begin();
-	DataType::ConstIterator end = m_Data->End();
-	for ( ; itr != end; ++itr )
-	{
-		HELIUM_VERIFY( items.New( Data::Bind( const_cast< KeyT& >( *itr ), m_Instance, m_Field ) ) );
+		m.Remove(iter);
 	}
 }
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::AddItem( Data* value )
-{
-	KeyT dataValue;
-	Data::GetValue( value, dataValue );
-	m_Data->Insert( dataValue );
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::RemoveItem( Data* value )
-{
-	KeyT dataValue;
-	Data::GetValue( value, dataValue );
-	m_Data->Remove( dataValue );
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-bool SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::ContainsItem( Data* value ) const
-{
-	KeyT dataValue;
-	Data::GetValue( value, dataValue );
-	return m_Data->Find( dataValue ) != m_Data->End();
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-bool SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::Set( Data* src, uint32_t flags )
-{
-	const SortedSetDataT* rhs = SafeCast< SortedSetDataT >( src );
-	if ( !rhs )
-	{
-		return false;
-	}
-
-	*m_Data = *rhs->m_Data;
-
-	return true;
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-bool SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::Equals( Object* object )
-{
-	const SortedSetDataT* rhs = SafeCast< SortedSetDataT >( object );
-	if ( !rhs )
-	{
-		return false;
-	}
-
-	return *m_Data == *rhs->m_Data;
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::Serialize( ArchiveBinary& archive )
-{
-	Serialize<ArchiveBinary>( archive );
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::Deserialize( ArchiveBinary& archive )
-{
-	Deserialize<ArchiveBinary>( archive );
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::Serialize( ArchiveXML& archive )
-{
-	Serialize<ArchiveXML>( archive );
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::Deserialize( ArchiveXML& archive )
-{
-	Deserialize<ArchiveXML>( archive );
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-tostream& SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::operator>>( tostream& stream ) const
-{
-	DataType::ConstIterator itr = m_Data->Begin();
-	DataType::ConstIterator end = m_Data->End();
-	for ( ; itr != end; ++itr )
-	{
-		if ( itr != m_Data->Begin() )
-		{
-			stream << s_ContainerItemDelimiter;
-		}
-
-		stream << *itr;
-	}
-
-	return stream;
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT >
-tistream& SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::operator<<( tistream& stream )
-{
-	m_Data->Clear();
-
-	String str;
-	std::streamsize size = stream.rdbuf()->in_avail();
-	str.Reserve( static_cast< size_t >( size ) );
-	str.Resize( static_cast< size_t >( size ) );
-	stream.read( &str[ 0 ], size );
-
-	Tokenize< KeyT, CompareKeyT, AllocatorT >( str, *m_Data, s_ContainerItemDelimiter );
-
-	return stream;
-}  
-
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT > template< class ArchiveT >
-void SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::Serialize( ArchiveT& archive )
-{
-	DynamicArray< ObjectPtr > components;
-	components.Reserve( m_Data->GetSize() );
-
-	{
-		DataType::ConstIterator itr = m_Data->Begin();
-		DataType::ConstIterator end = m_Data->End();
-		for ( ; itr != end; ++itr )
-		{
-			ObjectPtr dataElem = Registry::GetInstance()->CreateInstance( Reflect::GetDataClass< KeyT >() );
-
-			// downcast to data type
-			Data* dataSer = AssertCast< Data >( dataElem );
-
-			// connect to our map data memory address
-			dataSer->ConnectData( const_cast< KeyT* >( &( *itr ) ) );
-
-			// serialize to the archive stream
-			HELIUM_VERIFY( components.New( dataSer ) );
-		}
-	}
-
-	archive.SerializeArray( components );
-
-	DynamicArray< ObjectPtr >::Iterator itr = components.Begin();
-	DynamicArray< ObjectPtr >::Iterator end = components.End();
-	for ( ; itr != end; ++itr )
-	{
-		Data* ser = AssertCast< Data >( *itr );
-		ser->Disconnect();
-
-		// might be useful to cache the data object here
-	}
-}
-
-template< typename KeyT, typename CompareKeyT, typename AllocatorT > template< class ArchiveT >
-void SimpleSortedSetData< KeyT, CompareKeyT, AllocatorT >::Deserialize( ArchiveT& archive )
-{
-	DynamicArray< ObjectPtr > components;
-	archive.DeserializeArray( components );
-
-	// if we are referring to a real field, clear its contents
-	m_Data->Clear();
-	m_Data->Reserve( components.GetSize() );
-
-	DynamicArray< ObjectPtr >::Iterator itr = components.Begin();
-	DynamicArray< ObjectPtr >::Iterator end = components.End();
-	for ( ; itr != end; ++itr )
-	{
-		Data* data = SafeCast< Data >( *itr );
-		if ( !data )
-		{
-			throw Reflect::Exception( TXT( "SortedSet value type has changed, this is unpossible" ) );
-		}
-
-		KeyT k;
-		Data::GetValue( data, k );
-		m_Data->Insert( k );
-	}
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-size_t SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::GetSize() const
-{
-	return m_Data->GetSize();
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::Clear()
-{
-	return m_Data->Clear();
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::ConnectData(void* data)
-{
-	m_Data.Connect( data );
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-const Class* SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::GetKeyClass() const
-{
-	return Reflect::GetDataClass< KeyT >();
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-const Class* SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::GetValueClass() const
-{
-	return Reflect::GetDataClass< ValueT >();
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::GetItems( A_ValueType& items )
-{
-	items.Clear();
-	items.Reserve( m_Data->GetSize() );
-
-	DataType::ConstIterator itr = m_Data->Begin();
-	DataType::ConstIterator end = m_Data->End();
-	for ( ; itr != end; ++itr )
-	{
-		HELIUM_VERIFY( items.New( Data::Bind( const_cast< KeyT& >( itr->First() ), m_Instance, m_Field ), Data::Bind( const_cast< ValueT& >( itr->Second() ), m_Instance, m_Field ) ) );
-	}
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-DataPtr SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::GetItem( Data* key )
-{
-	KeyT keyValue;
-	Data::GetValue( key, keyValue );
-
-	DataType::ConstIterator found = m_Data->Find( keyValue );
-	if ( found != m_Data->End() )
-	{
-		return Data::Bind( const_cast< ValueT& >( found->Second() ), m_Instance, m_Field );
-	}
-
-	return NULL;
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::SetItem( Data* key, Data* value )
-{
-	KeyT keyValue;
-	Data::GetValue( key, keyValue );
-
-	Data::GetValue( value, (*m_Data)[ keyValue ] );
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::RemoveItem( Data* key )
-{
-	KeyT keyValue;
-	Data::GetValue( key, keyValue );
-
-	m_Data->Remove( keyValue );
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-bool SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::Set( Data* src, uint32_t flags )
-{
-	const SortedMapDataT* rhs = SafeCast< SortedMapDataT >( src );
-	if ( !rhs )
-	{
-		return false;
-	}
-
-	*m_Data = *rhs->m_Data;
-
-	return true;
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-bool SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::Equals( Object* object )
-{
-	const SortedMapDataT* rhs = SafeCast< SortedMapDataT >( object );
-	if ( !rhs )
-	{
-		return false;
-	}
-
-	return *m_Data == *rhs->m_Data;
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::Serialize( ArchiveBinary& archive )
-{
-	Serialize<ArchiveBinary>( archive );
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::Deserialize( ArchiveBinary& archive )
-{
-	Deserialize<ArchiveBinary>( archive );
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::Serialize( ArchiveXML& archive )
-{
-	Serialize<ArchiveXML>( archive );
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-void SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::Deserialize( ArchiveXML& archive )
-{
-	Deserialize<ArchiveXML>( archive );
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-tostream& SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::operator>>( tostream& stream ) const
-{
-	DataType::ConstIterator itr = m_Data->Begin();
-	DataType::ConstIterator end = m_Data->End();
-	for ( ; itr != end; ++itr )
-	{
-		if ( itr != m_Data->Begin() )
-		{
-			stream << s_ContainerItemDelimiter;
-		}
-
-		stream << itr->First() << s_ContainerItemDelimiter << itr->Second();
-	}
-
-	return stream;
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT >
-tistream& SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::operator<<( tistream& stream )
-{
-	m_Data->Clear();
-
-	String str;
-	std::streamsize size = stream.rdbuf()->in_avail();
-	str.Reserve( static_cast< size_t >( size ) );
-	str.Resize( static_cast< size_t >( size ) );
-	stream.read( &str[ 0 ], size );
-
-	Tokenize< KeyT, ValueT, CompareKeyT, AllocatorT >( str, *m_Data, s_ContainerItemDelimiter );
-
-	return stream;
-}  
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT > template< class ArchiveT >
-void SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::Serialize( ArchiveT& archive )
-{
-	DynamicArray< ObjectPtr > components;
-	components.Reserve( m_Data->GetSize() * 2 );
-
-	{
-		DataType::ConstIterator itr = m_Data->Begin();
-		DataType::ConstIterator end = m_Data->End();
-		for ( ; itr != end; ++itr )
-		{
-			ObjectPtr keyElem = Registry::GetInstance()->CreateInstance( Reflect::GetDataClass< KeyT >() );
-			ObjectPtr dataElem = Registry::GetInstance()->CreateInstance( Reflect::GetDataClass< ValueT >() );
-
-			Data* keySer = AssertCast< Data >( keyElem );
-			Data* dataSer = AssertCast< Data >( dataElem );
-
-			// connect to our map key memory address
-			keySer->ConnectData( const_cast< KeyT* >( &itr->First() ) );
-
-			// connect to our map data memory address
-			dataSer->ConnectData( const_cast< ValueT* >( &itr->Second() ) );
-
-			// serialize to the archive stream
-			HELIUM_VERIFY( components.New( keySer ) );
-			HELIUM_VERIFY( components.New( dataSer ) );
-		}
-	}
-
-	archive.SerializeArray( components );
-
-	DynamicArray< ObjectPtr >::Iterator itr = components.Begin();
-	DynamicArray< ObjectPtr >::Iterator end = components.End();
-	for ( ; itr != end; ++itr )
-	{
-		Data* ser = AssertCast< Data >( *itr );
-		HELIUM_ASSERT( ser );
-		ser->Disconnect();
-
-		// might be useful to cache the data object here
-	}
-}
-
-template< typename KeyT, typename ValueT, typename CompareKeyT, typename AllocatorT > template< class ArchiveT >
-void SimpleSortedMapData< KeyT, ValueT, CompareKeyT, AllocatorT >::Deserialize( ArchiveT& archive )
-{
-	DynamicArray< ObjectPtr > components;
-	archive.DeserializeArray( components, ArchiveFlags::Sparse );
-
-	size_t componentCount = components.GetSize();
-	if ( componentCount % 2 != 0 )
-	{
-		throw Reflect::Exception( TXT( "Unmatched map objects" ) );
-	}
-
-	// if we are referring to a real field, clear its contents
-	m_Data->Clear();
-	m_Data->Reserve( componentCount / 2 );
-
-	DynamicArray< ObjectPtr >::Iterator itr = components.Begin();
-	DynamicArray< ObjectPtr >::Iterator end = components.End();
-	while( itr != end )
-	{
-		Data* key = SafeCast< Data >( *itr );
-		++itr;
-		Data* value = SafeCast< Data >( *itr );
-		++itr;
-
-		if ( key && value )
-		{
-			KeyT k;
-			Data::GetValue( key, k );
-			Data::GetValue( value, (*m_Data)[ k ] );
-		}
-	}
-}
-
-#endif

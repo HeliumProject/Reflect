@@ -7,7 +7,6 @@ namespace Helium
 {
 	namespace Reflect
 	{
-		// NOTE: Pretty much all of these members could be const provided necessary functions on m_InternalData are const
 		template <class T>
 		class SimpleStlVectorData : public SequenceData
 		{
@@ -86,27 +85,27 @@ namespace Helium
 			return new SimpleStlSetData<T>();
 		}
 
-        //////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////
 
-        template <class KeyT, class ValueT>
-        class SimpleStlMapData : public AssociationData
+		template <class KeyT, class ValueT>
+		class SimpleStlMapData : public AssociationData
 		{
 		public:
 			SimpleStlMapData();
-            virtual ~SimpleStlMapData();
+			virtual ~SimpleStlMapData();
 
-            // Data
+			// Data
 			virtual void        Construct( DataPointer pointer ) HELIUM_OVERRIDE;
 			virtual void        Destruct( DataPointer pointer ) HELIUM_OVERRIDE;
 			virtual void        Copy( DataPointer src, DataPointer dest, uint32_t flags = 0 ) HELIUM_OVERRIDE;
 			virtual bool        Equals( DataPointer a, DataPointer b ) HELIUM_OVERRIDE;
 			virtual void        Accept( DataPointer p, Visitor& visitor ) HELIUM_OVERRIDE;
 
-            // ContainerData
+			// ContainerData
 			virtual size_t      GetLength( DataPointer container ) const HELIUM_OVERRIDE;
 			virtual void        Clear( DataPointer container ) HELIUM_OVERRIDE;
 
-            // SetData
+			// SetData
 			virtual Data*       GetKeyData() const HELIUM_OVERRIDE;
 			virtual Data*       GetValueData() const HELIUM_OVERRIDE;
 			virtual void        GetItems( DataPointer association, DynamicArray<DataPointer>& keys, DynamicArray<DataPointer>& values ) HELIUM_OVERRIDE;
@@ -114,16 +113,16 @@ namespace Helium
 			virtual void        SetItem( DataPointer association, DataPointer key, DataPointer value ) HELIUM_OVERRIDE;
 			virtual void        RemoveItem( DataPointer association, DataPointer key ) HELIUM_OVERRIDE;
 
-        private:
-            Data*               m_InternalDataKey;
-            Data*               m_InternalDataValue;
+		private:
+			Data*               m_InternalDataKey;
+			Data*               m_InternalDataValue;
 		};
-        
-        template <class KeyT, class ValueT>
-        inline Data* AllocateData( const std::map<KeyT, ValueT>&, const std::map<KeyT, ValueT>& )
-        {
-	        return new SimpleStlMapData<KeyT, ValueT>();
-        }
+		
+		template <class KeyT, class ValueT>
+		inline Data* AllocateData( const std::map<KeyT, ValueT>&, const std::map<KeyT, ValueT>& )
+		{
+			return new SimpleStlMapData<KeyT, ValueT>();
+		}
 	}
 }
 

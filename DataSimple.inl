@@ -1,7 +1,3 @@
-//
-// Scalar
-//
-
 template<> Helium::Reflect::SimpleScalarData< uint8_t >::SimpleScalarData()   : ScalarData( 1, ScalarTypes::Unsigned8 ) {}
 template<> Helium::Reflect::SimpleScalarData< uint16_t >::SimpleScalarData()  : ScalarData( 2, ScalarTypes::Unsigned16 ) {}
 template<> Helium::Reflect::SimpleScalarData< uint32_t >::SimpleScalarData()  : ScalarData( 4, ScalarTypes::Unsigned32 ) {}
@@ -101,9 +97,7 @@ inline void Helium::Reflect::SimpleScalarData<int8_t>::Parse( const String& stri
 	pointer.As<int8_t>() = static_cast<int8_t>( v );
 }
 
-//
-// Structure
-//
+//////////////////////////////////////////////////////////////////////////
 
 template< class T >
 Helium::Reflect::SimpleStructureData<T>::SimpleStructureData()
@@ -156,9 +150,7 @@ const Helium::Reflect::Structure* Helium::Reflect::SimpleStructureData<T>::GetSt
 	return Reflect::GetStructure< T >();
 }
 
-//
-// Pointer
-//
+//////////////////////////////////////////////////////////////////////////
 
 template< class T >
 Helium::Reflect::PointerData<T>::PointerData()
@@ -237,9 +229,7 @@ void Helium::Reflect::PointerData<T>::Parse( const String& string, DataPointer p
 	}
 }
 
-//
-// Enumeration
-//
+//////////////////////////////////////////////////////////////////////////
 
 template< class T >
 Helium::Reflect::EnumerationData<T>::EnumerationData()

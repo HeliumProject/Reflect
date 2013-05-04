@@ -12,10 +12,6 @@ namespace Helium
 {
 	namespace Reflect
 	{
-		//
-		// SimpleScalarData abstracts POD and language-interoperable binary-serializable types
-		//
-
 		template <class T>
 		class SimpleScalarData : public ScalarData
 		{
@@ -41,6 +37,8 @@ namespace Helium
 		inline Data* AllocateData( float32_t, float32_t ) { return new SimpleScalarData< float32_t >; }
 		inline Data* AllocateData( float64_t, float64_t ) { return new SimpleScalarData< float64_t >; }
 
+		//////////////////////////////////////////////////////////////////////////
+
 		template< class T >
 		class SimpleStructureData : public StructureData
 		{
@@ -59,6 +57,8 @@ namespace Helium
 		{
 			return new SimpleStructureData< T >;
 		}
+
+		//////////////////////////////////////////////////////////////////////////
 
 		template< class T >
 		class PointerData : public ScalarData
@@ -82,6 +82,8 @@ namespace Helium
 			return new PointerData< T >;
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+
 		template< class T >
 		class EnumerationData : public ScalarData
 		{
@@ -103,6 +105,8 @@ namespace Helium
 		{
 			return new EnumerationData< T >;
 		}
+
+		//////////////////////////////////////////////////////////////////////////
 
 		class TypeData : public ScalarData
 		{

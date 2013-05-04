@@ -1,7 +1,7 @@
 template <class T>
 Helium::Reflect::SimpleStlVectorData<T>::SimpleStlVectorData()
-    : SequenceData(sizeof(std::vector<T>))
-    , m_InternalData(AllocateData<T>())
+	: SequenceData(sizeof(std::vector<T>))
+	, m_InternalData(AllocateData<T>())
 {
 
 }
@@ -77,7 +77,7 @@ bool Helium::Reflect::SimpleStlVectorData<T>::Equals( DataPointer a, DataPointer
 	return true;
 #endif
 
-    return DefaultEquals< std::vector<T> >(a, b);
+	return DefaultEquals< std::vector<T> >(a, b);
 }
 
 template <class T>
@@ -225,11 +225,10 @@ void Helium::Reflect::SimpleStlVectorData<T>::SwapInternalValues( DataPointer se
 
 //////////////////////////////////////////////////////////////////////////
 
-
 template <class T>
 Helium::Reflect::SimpleStlSetData<T>::SimpleStlSetData()
-    : SetData(sizeof(std::set<T>))
-    , m_InternalData(AllocateData<T>())
+	: SetData(sizeof(std::set<T>))
+	, m_InternalData(AllocateData<T>())
 {
 
 }
@@ -309,7 +308,7 @@ bool Helium::Reflect::SimpleStlSetData<T>::Equals( DataPointer a, DataPointer b 
 	return true;
 #endif
 
-    return DefaultEquals< std::set<T> >(a, b);
+	return DefaultEquals< std::set<T> >(a, b);
 }
 
 template <class T>
@@ -393,21 +392,21 @@ bool Helium::Reflect::SimpleStlSetData<T>::ContainsItem( DataPointer set, DataPo
 			return true;
 		}
 	}
-    
-    return false;
+	
+	return false;
 #endif
 
-    std::set<T>::iterator iter = s.find(item.As<T>());
-    return iter != s.end();
+	std::set<T>::iterator iter = s.find(item.As<T>());
+	return iter != s.end();
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 template <class KeyT, class ValueT>
 Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::SimpleStlMapData()
-    : AssociationData(sizeof(std::map<KeyT, ValueT>))
-    , m_InternalDataKey(AllocateData<KeyT>())
-    , m_InternalDataValue(AllocateData<ValueT>())
+	: AssociationData(sizeof(std::map<KeyT, ValueT>))
+	, m_InternalDataKey(AllocateData<KeyT>())
+	, m_InternalDataValue(AllocateData<ValueT>())
 {
 
 }
@@ -415,143 +414,143 @@ Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::SimpleStlMapData()
 template <class KeyT, class ValueT>
 Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::~SimpleStlMapData()
 {
-    delete m_InternalDataKey;
-    delete m_InternalDataValue;
+	delete m_InternalDataKey;
+	delete m_InternalDataValue;
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Construct( DataPointer pointer ) 
 {
-    DefaultConstruct< std::map<KeyT, ValueT> >(pointer);
+	DefaultConstruct< std::map<KeyT, ValueT> >(pointer);
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Destruct( DataPointer pointer ) 
 {
-    DefaultDestruct< std::map<KeyT, ValueT> >(pointer);
+	DefaultDestruct< std::map<KeyT, ValueT> >(pointer);
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Copy( DataPointer src, DataPointer dest, uint32_t flags /*= 0 */ ) 
 {
-    if (flags & CopyFlags::Shallow)
-    {
-        DefaultCopy< std::map< KeyT, ValueT > >(src, dest, flags);
-        return;
-    }
+	if (flags & CopyFlags::Shallow)
+	{
+		DefaultCopy< std::map< KeyT, ValueT > >(src, dest, flags);
+		return;
+	}
 
-    std::map<KeyT, ValueT> &m_src = src.As< std::map<KeyT, ValueT> >();
-    std::map<KeyT, ValueT> &m_dest = dest.As< std::map<KeyT, ValueT> >();
+	std::map<KeyT, ValueT> &m_src = src.As< std::map<KeyT, ValueT> >();
+	std::map<KeyT, ValueT> &m_dest = dest.As< std::map<KeyT, ValueT> >();
 
-    m_dest.clear();
+	m_dest.clear();
 
-    for (std::map<KeyT, ValueT>::iterator iter_src = m_src.begin();
-        iter_src != m_src.end(); ++iter_src)
-    {
-        // Should be safe since we copy FROM this. Should not break const-ness (might increase a ref count or something like that though)
-        DataPointer dp_src_key(const_cast<KeyT *>(&iter_src->first), src.m_Field, src.m_Object);
-        DataPointer dp_src_value(&iter_src->second, src.m_Field, src.m_Object);
+	for (std::map<KeyT, ValueT>::iterator iter_src = m_src.begin();
+		iter_src != m_src.end(); ++iter_src)
+	{
+		// Should be safe since we copy FROM this. Should not break const-ness (might increase a ref count or something like that though)
+		DataPointer dp_src_key(const_cast<KeyT *>(&iter_src->first), src.m_Field, src.m_Object);
+		DataPointer dp_src_value(&iter_src->second, src.m_Field, src.m_Object);
 
-        std::map<KeyT, ValueT>::value_type temp;
+		std::map<KeyT, ValueT>::value_type temp;
 
-        DataPointer dp_dest_key(const_cast<ValueT *>(&temp.first), dest.m_Field, dest.m_Object);
-        DataPointer dp_dest_value(&temp.second, dest.m_Field, dest.m_Object);
+		DataPointer dp_dest_key(const_cast<ValueT *>(&temp.first), dest.m_Field, dest.m_Object);
+		DataPointer dp_dest_value(&temp.second, dest.m_Field, dest.m_Object);
 
-        m_InternalDataKey->Copy(dp_src_key, dp_dest_key, flags);
-        m_InternalDataValue->Copy(dp_src_value, dp_dest_value, flags);
+		m_InternalDataKey->Copy(dp_src_key, dp_dest_key, flags);
+		m_InternalDataValue->Copy(dp_src_value, dp_dest_value, flags);
 
-        m_dest.insert(temp);
-    }
+		m_dest.insert(temp);
+	}
 }
 
 template <class KeyT, class ValueT>
 bool Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Equals( DataPointer a, DataPointer b ) 
 {
-    return DefaultEquals< std::map< KeyT, ValueT > >(a, b);
+	return DefaultEquals< std::map< KeyT, ValueT > >(a, b);
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Accept( DataPointer p, Visitor& visitor ) 
 {
-    std::map<KeyT, ValueT> &m = p.As< std::map<KeyT, ValueT> >();
+	std::map<KeyT, ValueT> &m = p.As< std::map<KeyT, ValueT> >();
 
-    for (std::map<KeyT, ValueT>::iterator iter = m.begin();
-        iter != m.end(); ++iter)
-    {
-        m_InternalDataKey->Accept(DataPointer(const_cast<KeyT *>(&iter->first), p.m_Field, p.m_Object), visitor);
-        m_InternalDataValue->Accept(DataPointer(&iter->second, p.m_Field, p.m_Object), visitor);
-    }
+	for (std::map<KeyT, ValueT>::iterator iter = m.begin();
+		iter != m.end(); ++iter)
+	{
+		m_InternalDataKey->Accept(DataPointer(const_cast<KeyT *>(&iter->first), p.m_Field, p.m_Object), visitor);
+		m_InternalDataValue->Accept(DataPointer(&iter->second, p.m_Field, p.m_Object), visitor);
+	}
 }
 
 template <class KeyT, class ValueT>
 size_t Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetLength( DataPointer container ) const 
 {
-    std::map<KeyT, ValueT> &m = container.As< std::map<KeyT, ValueT> >();
-    return m.size();
+	std::map<KeyT, ValueT> &m = container.As< std::map<KeyT, ValueT> >();
+	return m.size();
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Clear( DataPointer container ) 
 {
-    std::map<KeyT, ValueT> &m = container.As< std::map<KeyT, ValueT> >();
-    return m.clear();
+	std::map<KeyT, ValueT> &m = container.As< std::map<KeyT, ValueT> >();
+	return m.clear();
 }
 
 template <class KeyT, class ValueT>
 Helium::Reflect::Data* Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetKeyData() const
 {
-    return m_InternalDataKey;
+	return m_InternalDataKey;
 }
 
 template <class KeyT, class ValueT>
 Helium::Reflect::Data* Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetValueData() const
 {
-    return m_InternalDataValue;
+	return m_InternalDataValue;
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetItems( DataPointer association, DynamicArray<DataPointer>& keys, DynamicArray<DataPointer>& values )
 {
-    std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
+	std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
 
-    for (std::map<KeyT, ValueT>::iterator iter = m.begin();
-        iter != m.end(); ++iter)
-    {
-        keys.Add(DataPointer(const_cast<KeyT *>(&iter->first), association.m_Field, association.m_Object));
-        values.Add(DataPointer(&iter->second, association.m_Field, association.m_Object));
-    }
+	for (std::map<KeyT, ValueT>::iterator iter = m.begin();
+		iter != m.end(); ++iter)
+	{
+		keys.Add(DataPointer(const_cast<KeyT *>(&iter->first), association.m_Field, association.m_Object));
+		values.Add(DataPointer(&iter->second, association.m_Field, association.m_Object));
+	}
 }
 
 template <class KeyT, class ValueT>
 Helium::Reflect::DataPointer Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetItem( DataPointer association, DataPointer key )
 {
-    std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
-    return DataPointer(&m[key.As<KeyT>()], association.m_Field, association.m_Object);
+	std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
+	return DataPointer(&m[key.As<KeyT>()], association.m_Field, association.m_Object);
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::SetItem( DataPointer association, DataPointer key, DataPointer value )
 {
-    std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
-    m[key.As<KeyT>()] = value.As<ValueT>();
+	std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
+	m[key.As<KeyT>()] = value.As<ValueT>();
 }
 
 template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::RemoveItem( DataPointer association, DataPointer key )
 {
-    std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
-    std::map<KeyT, ValueT>::iterator iter = m.find(key.As<KeyT>());
+	std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
+	std::map<KeyT, ValueT>::iterator iter = m.find(key.As<KeyT>());
 
-    if (iter != m.end())
-    {
+	if (iter != m.end())
+	{
 #if 0
-        DataPointer dp_key(const_cast<KeyT *>(&iter->first), association.m_Field, association.m_Object);
-        DataPointer dp_value(&iter->second, association.m_Field, association.m_Object);
+		DataPointer dp_key(const_cast<KeyT *>(&iter->first), association.m_Field, association.m_Object);
+		DataPointer dp_value(&iter->second, association.m_Field, association.m_Object);
 
-        m_InternalDataKey->Destruct(dp_key);
-        m_InternalDataValue->Destruct(dp_vlaue);
+		m_InternalDataKey->Destruct(dp_key);
+		m_InternalDataValue->Destruct(dp_vlaue);
 #endif
 
-        m.erase(iter);
-    }
+		m.erase(iter);
+	}
 }
