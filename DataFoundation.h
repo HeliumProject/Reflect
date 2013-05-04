@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Foundation/String.h"
+#include "Foundation/Map.h"
 
 #include "Reflect/Registry.h"
 #include "Reflect/DataSimple.h"
