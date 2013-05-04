@@ -9,7 +9,7 @@ void Helium::Reflect::Structure::Create( Structure const*& pointer, const tchar_
 	pointer = type;
 
 	// populate reflection information
-	Structure::Create< StructureT >( name, baseName, &StructureT::PopulateComposite, type );
+	Structure::Create< StructureT >( name, baseName, &StructureT::PopulateStructure, type );
 
 	type->m_Default = new StructureT;
 }

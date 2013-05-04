@@ -127,7 +127,7 @@ namespace Helium
             static const Reflect::Class* CreateClass();
 
             // Enumerates member data (stub)
-            static void PopulateComposite( Reflect::Structure& comp );
+            static void PopulateStructure( Reflect::Structure& comp );
 
             //
             // Persistence

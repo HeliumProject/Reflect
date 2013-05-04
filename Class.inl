@@ -5,7 +5,7 @@ void Helium::Reflect::Class::Create( Class const*& pointer, const tchar_t* name,
 	pointer = type;
 
 	// populate reflection information
-	Structure::Create< ClassT >( name, baseName, &ClassT::PopulateComposite, type );
+	Structure::Create< ClassT >( name, baseName, &ClassT::PopulateStructure, type );
 
 	// setup factory function
 	type->m_Creator = creator;

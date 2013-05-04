@@ -235,7 +235,7 @@ const Reflect::Class* Object::CreateClass()
 	return s_Class;
 }
 
-void Object::PopulateComposite( Reflect::Structure& comp )
+void Object::PopulateStructure( Reflect::Structure& comp )
 {
 
 }
