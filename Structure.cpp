@@ -3,11 +3,11 @@
 
 #include "Foundation/Log.h"
 
-#include "Reflect/Data.h"
+#include "Reflect/Translator.h"
 #include "Reflect/Object.h"
 #include "Reflect/Registry.h"
 #include "Reflect/Enumeration.h"
-#include "Reflect/DataDeduction.h"
+#include "Reflect/TranslatorDeduction.h"
 
 using namespace Helium;
 using namespace Helium::Reflect;
@@ -22,16 +22,16 @@ Field::Field()
 , m_Offset( 0 )
 , m_Flags( 0 )
 , m_Index( ~0 )
-, m_Data( NULL )
+, m_Translator( NULL )
 {
 
 }
 
 bool Field::IsDefaultValue( void* address, Object* object, uint32_t index ) const
 {
-	DataPointer value ( this, address, object, index );
-	DataPointer default ( this, m_Composite->m_Default, object, index );
-	return m_Data->Equals( value, default );
+	Pointer value ( this, address, object, index );
+	Pointer default ( this, m_Composite->m_Default, object, index );
+	return m_Translator->Equals( value, default );
 }
 
 bool Field::ShouldSerialize( void* address, Object* object, uint32_t index ) const
@@ -158,9 +158,9 @@ bool Structure::Equals(void* compositeA, Object* objectA, void* compositeB, Obje
 		for ( ; itr != end; ++itr )
 		{
 			const Field* field = &*itr;
-			DataPointer a ( field, compositeA, objectA );
-			DataPointer b ( field, compositeB, objectB );
-			bool equality = field->m_Data->Equals( a, b );
+			Pointer a ( field, compositeA, objectA );
+			Pointer b ( field, compositeB, objectB );
+			bool equality = field->m_Translator->Equals( a, b );
 			if ( !equality )
 			{
 				return false;
@@ -186,7 +186,7 @@ void Structure::Visit(void* composite, Object* object, Visitor& visitor) const
 		{
 			const Field* field = &*itr;
 
-			field->m_Data->Accept( DataPointer ( field, composite, object ), visitor );
+			field->m_Translator->Accept( Pointer ( field, composite, object ), visitor );
 		}
 	}
 }
@@ -202,13 +202,13 @@ void Structure::Copy( void* compositeSource, Object* objectSource, void* composi
 			for ( ; itr != end; ++itr )
 			{
 				const Field* field = &*itr;
-				DataPointer pointerSource ( field, compositeSource, objectSource );
-				DataPointer pointerDestination ( field, compositeDestination, objectDestination );
+				Pointer pointerSource ( field, compositeSource, objectSource );
+				Pointer pointerDestination ( field, compositeDestination, objectDestination );
 
 				// for normal data types, run overloaded assignement operator via data's vtable
 				// for reference container types, this deep copies containers (which is bad for 
 				//  non-cloneable (FieldFlags::Share) reference containers)
-				field->m_Data->Copy(pointerSource, pointerDestination, field->m_Flags & FieldFlags::Share ? CopyFlags::Shallow : 0);
+				field->m_Translator->Copy(pointerSource, pointerDestination, field->m_Flags & FieldFlags::Share ? CopyFlags::Shallow : 0);
 			}
 		}
 	}
@@ -283,10 +283,10 @@ uint32_t Structure::GetBaseFieldCount() const
 	return count;
 }
 
-Reflect::Field* Structure::AddField( const tchar_t* name, uint32_t size, uint32_t count, uint32_t offset, uint32_t flags, Data* data )
+Reflect::Field* Structure::AddField( const tchar_t* name, uint32_t size, uint32_t count, uint32_t offset, uint32_t flags, Translator* translator )
 {
 	// deduction of the data class has failed, you must provide one yourself!
-	HELIUM_ASSERT( data );
+	HELIUM_ASSERT( translator );
 
 	Field field;
 	field.m_Composite = this;
@@ -295,7 +295,7 @@ Reflect::Field* Structure::AddField( const tchar_t* name, uint32_t size, uint32_
 	field.m_Offset = offset;
 	field.m_Flags = flags;
 	field.m_Index = GetBaseFieldCount() + (uint32_t)m_Fields.GetSize();
-	field.m_Data = data;
+	field.m_Translator = translator;
 	m_Fields.Add( field );
 
 	return &m_Fields.GetLast();

@@ -1,6 +1,6 @@
 #include "ReflectPch.h"
 #include "Reflect/Visitor.h"
-#include "Reflect/DataDeduction.h"
+#include "Reflect/TranslatorDeduction.h"
 
 using namespace Helium;
 using namespace Helium::Reflect;

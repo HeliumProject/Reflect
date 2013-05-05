@@ -101,26 +101,26 @@ uint32_t Helium::Reflect::Structure::GetCount( std::true_type /* is_array */ )
 }
 
 template < class T >
-Helium::Reflect::Data* Helium::Reflect::Structure::AllocateData( std::false_type /* is_array */ )
+Helium::Reflect::Translator* Helium::Reflect::Structure::AllocateTranslator( std::false_type /* is_array */ )
 {
-	return Reflect::AllocateData< T >();
+	return Reflect::AllocateTranslator< T >();
 }
 
 template < class T >
-Helium::Reflect::Data* Helium::Reflect::Structure::AllocateData( std::true_type /* is_array */ )
+Helium::Reflect::Translator* Helium::Reflect::Structure::AllocateTranslator( std::true_type /* is_array */ )
 {
-	return Reflect::AllocateData< std::remove_extent< T >::type >();
+	return Reflect::AllocateTranslator< std::remove_extent< T >::type >();
 }
 
 template < class StructureT, class FieldT >
-Helium::Reflect::Field* Helium::Reflect::Structure::AddField( FieldT StructureT::* field, const tchar_t* name, uint32_t flags, Data* data )
+Helium::Reflect::Field* Helium::Reflect::Structure::AddField( FieldT StructureT::* field, const tchar_t* name, uint32_t flags, Translator* translator )
 {
-	if ( data == NULL )
+	if ( translator == NULL )
 	{
-		data = AllocateData<FieldT>( std::is_array< FieldT >() );
+		translator = AllocateTranslator<FieldT>( std::is_array< FieldT >() );
 	}
 
-	return AddField( name, sizeof(FieldT), GetCount< FieldT >( std::is_array< FieldT >() ), GetOffset(field), flags, data );
+	return AddField( name, sizeof(FieldT), GetCount< FieldT >( std::is_array< FieldT >() ), GetOffset(field), flags, translator );
 }
 
 //

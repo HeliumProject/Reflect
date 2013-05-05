@@ -43,14 +43,14 @@ namespace Helium
 			// determine if this field should be serialized
 			bool ShouldSerialize( void* address, Object* object, uint32_t index = 0 ) const;
 
-			const Structure* m_Composite; // the type we are a field of
-			const tchar_t*   m_Name;      // name of this field
-			uint32_t         m_Size;      // the size of this field
-			uint32_t         m_Count;     // the static array size
-			uintptr_t        m_Offset;    // the offset to the field
-			uint32_t         m_Flags;     // flags for special behavior
-			uint32_t         m_Index;     // the unique id of this field
-			Data*            m_Data;      // type id of the data to use
+			const Structure* m_Composite;  // the type we are a field of
+			const tchar_t*   m_Name;       // name of this field
+			uint32_t         m_Size;       // the size of this field
+			uint32_t         m_Count;      // the static array size
+			uintptr_t        m_Offset;     // the offset to the field
+			uint32_t         m_Flags;      // flags for special behavior
+			uint32_t         m_Index;      // the unique id of this field
+			Translator*      m_Translator; // interface to the data
 		};
 
 		//
@@ -120,7 +120,7 @@ namespace Helium
 			uint32_t GetBaseFieldCount() const;
 
 			// concrete field population functions, called from template functions below with deducted data
-			Reflect::Field* AddField( const tchar_t* name, uint32_t size, uint32_t count, uint32_t offset, uint32_t flags, Data* data );
+			Reflect::Field* AddField( const tchar_t* name, uint32_t size, uint32_t count, uint32_t offset, uint32_t flags, Translator* translator );
 
 			// compute the offset from the 'this' pointer for the specified pointer-to-member
 			template < class StructureT, class FieldT >
@@ -138,17 +138,17 @@ namespace Helium
 			template < class T >
 			static inline uint32_t GetCount( std::true_type  /*is_array*/  );
 
-			// create data object
+			// create translator object
 			template < class T >
-			static inline Data* AllocateData( std::false_type /*is_array*/ );
+			static inline Translator* AllocateTranslator( std::false_type /*is_array*/ );
 
-			// create data object
+			// create translator object
 			template < class T >
-			static inline Data* AllocateData( std::true_type  /*is_array*/  );
+			static inline Translator* AllocateTranslator( std::true_type  /*is_array*/  );
 
-			// deduce and allocate the appropriate data object and append field data to the composite
+			// deduce and allocate the appropriate translator object and append field data to the composite
 			template < class StructureT, class FieldT >
-			inline Reflect::Field* AddField( FieldT StructureT::* field, const tchar_t* name, uint32_t flags = 0, Data* data = NULL );
+			inline Reflect::Field* AddField( FieldT StructureT::* field, const tchar_t* name, uint32_t flags = 0, Translator* translator = NULL );
 
 		public:
 			const Structure*         m_Base;         // the base type name

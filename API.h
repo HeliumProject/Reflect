@@ -39,7 +39,7 @@ namespace Helium
 		class Class;
 		class Enumeration;
 		class Visitor;
-		class Data;
+		class Translator;
 
 		class Object;
 		typedef Helium::StrongPtr<Object> ObjectPtr;

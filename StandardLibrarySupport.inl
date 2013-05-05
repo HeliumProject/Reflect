@@ -1,31 +1,31 @@
 template <class T>
-Helium::Reflect::SimpleStlVectorData<T>::SimpleStlVectorData()
-	: SequenceData(sizeof(std::vector<T>))
-	, m_InternalData(AllocateData<T>())
+Helium::Reflect::SimpleStlVectorTranslator<T>::SimpleStlVectorTranslator()
+	: SequenceTranslator(sizeof(std::vector<T>))
+	, m_InternalTranslator(AllocateTranslator<T>())
 {
 
 }
 
 template <class T>
-Helium::Reflect::SimpleStlVectorData<T>::~SimpleStlVectorData()
+Helium::Reflect::SimpleStlVectorTranslator<T>::~SimpleStlVectorTranslator()
 {
-	delete m_InternalData;
+	delete m_InternalTranslator;
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlVectorData<T>::Construct( DataPointer pointer )
+void Helium::Reflect::SimpleStlVectorTranslator<T>::Construct( Pointer pointer )
 {
 	DefaultConstruct< std::vector<T> >(pointer);
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlVectorData<T>::Destruct( DataPointer pointer )
+void Helium::Reflect::SimpleStlVectorTranslator<T>::Destruct( Pointer pointer )
 {
 	DefaultDestruct< std::vector<T> >(pointer);
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlVectorData<T>::Copy( DataPointer src, DataPointer dest, uint32_t flags /*= 0 */ )
+void Helium::Reflect::SimpleStlVectorTranslator<T>::Copy( Pointer src, Pointer dest, uint32_t flags /*= 0 */ )
 {
 	if (flags & CopyFlags::Shallow)
 	{
@@ -43,14 +43,14 @@ void Helium::Reflect::SimpleStlVectorData<T>::Copy( DataPointer src, DataPointer
 
 	for (; iter_src != v_src.end(); ++iter_src, ++iter_dest)
 	{
-		DataPointer dp_src(&*iter_src, src.m_Field, src.m_Object);
-		DataPointer dp_dest(&*iter_dest, dest.m_Field, dest.m_Object);
-		m_InternalData->Copy(dp_src, dp_dest, flags);
+		Pointer dp_src(&*iter_src, src.m_Field, src.m_Object);
+		Pointer dp_dest(&*iter_dest, dest.m_Field, dest.m_Object);
+		m_InternalTranslator->Copy(dp_src, dp_dest, flags);
 	}
 }
 
 template <class T>
-bool Helium::Reflect::SimpleStlVectorData<T>::Equals( DataPointer a, DataPointer b )
+bool Helium::Reflect::SimpleStlVectorTranslator<T>::Equals( Pointer a, Pointer b )
 {
 #if 0
 	std::vector<T> &v_a = a.As< std::vector<T> >();
@@ -65,10 +65,10 @@ bool Helium::Reflect::SimpleStlVectorData<T>::Equals( DataPointer a, DataPointer
 	std::vector<T>::iterator iter_b = v_b.begin();
 	for (; iter_a != v_a.end(); ++iter_a, ++iter_b)
 	{
-		DataPointer dp_a(&*iter_a, a.m_Field, b.m_Object);
-		DataPointer dp_b(&*iter_b, b.m_Field, b.m_Object);
+		Pointer dp_a(&*iter_a, a.m_Field, b.m_Object);
+		Pointer dp_b(&*iter_b, b.m_Field, b.m_Object);
 
-		if (!m_InternalData->Equals(dp_a, dp_b))
+		if (!m_InternalTranslator->Equals(dp_a, dp_b))
 		{
 			return false;
 		}
@@ -81,39 +81,39 @@ bool Helium::Reflect::SimpleStlVectorData<T>::Equals( DataPointer a, DataPointer
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlVectorData<T>::Accept( DataPointer p, Visitor& visitor )
+void Helium::Reflect::SimpleStlVectorTranslator<T>::Accept( Pointer p, Visitor& visitor )
 {
 	std::vector<T> &v = p.As< std::vector<T> >();
 
 	for (std::vector<T>::iterator iter = v.begin();
 		iter != v.end(); ++iter)
 	{  
-		m_InternalData->Accept(DataPointer(&*iter, p.m_Field, p.m_Object), visitor);
+		m_InternalTranslator->Accept(Pointer(&*iter, p.m_Field, p.m_Object), visitor);
 	}
 }
 
 template <class T>
-size_t Helium::Reflect::SimpleStlVectorData<T>::GetLength( DataPointer container ) const
+size_t Helium::Reflect::SimpleStlVectorTranslator<T>::GetLength( Pointer container ) const
 {
 	std::vector<T> &v = container.As< std::vector<T> >();
 	return v.size();
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlVectorData<T>::Clear( DataPointer container )
+void Helium::Reflect::SimpleStlVectorTranslator<T>::Clear( Pointer container )
 {
 	std::vector<T> &v = container.As< std::vector<T> >();
 	v.clear();
 }
 
 template <class T>
-Helium::Reflect::Data* Helium::Reflect::SimpleStlVectorData<T>::GetItemData() const
+Helium::Reflect::Translator* Helium::Reflect::SimpleStlVectorTranslator<T>::GetItemTranslator() const
 {
-	return m_InternalData;
+	return m_InternalTranslator;
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlVectorData<T>::GetItems( DataPointer sequence, DynamicArray< DataPointer >& items ) const
+void Helium::Reflect::SimpleStlVectorTranslator<T>::GetItems( Pointer sequence, DynamicArray< Pointer >& items ) const
 {
 	std::vector<T> &v = sequence.As< std::vector<T> >();
 
@@ -121,47 +121,47 @@ void Helium::Reflect::SimpleStlVectorData<T>::GetItems( DataPointer sequence, Dy
 
 	for (std::vector<T>::iterator iter = v.begin(); iter != v.end(); ++iter)
 	{
-		items.Add(DataPointer(&*iter, sequence.m_Field, sequence.m_Object));
+		items.Add(Pointer(&*iter, sequence.m_Field, sequence.m_Object));
 	}
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlVectorData<T>::SetLength( DataPointer sequence, size_t length )
+void Helium::Reflect::SimpleStlVectorTranslator<T>::SetLength( Pointer sequence, size_t length )
 {
 	std::vector<T> &v = sequence.As< std::vector<T> >();
 	v.resize(length);
 }
 
 template <class T>
-Helium::Reflect::DataPointer Helium::Reflect::SimpleStlVectorData<T>::GetItem( DataPointer sequence, size_t at )
+Helium::Reflect::Pointer Helium::Reflect::SimpleStlVectorTranslator<T>::GetItem( Pointer sequence, size_t at )
 {
 	std::vector<T> &v = sequence.As< std::vector<T> >();
-	return DataPointer(&v[at], sequence.m_Field, sequence.m_Object);
+	return Pointer(&v[at], sequence.m_Field, sequence.m_Object);
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlVectorData<T>::SetItem( DataPointer sequence, size_t at, DataPointer value )
+void Helium::Reflect::SimpleStlVectorTranslator<T>::SetItem( Pointer sequence, size_t at, Pointer value )
 {
 	std::vector<T> &v = sequence.As< std::vector<T> >();
-	m_InternalData->Copy(value, DataPointer(&v[at], sequence.m_Field, sequence.m_Object));
+	m_InternalTranslator->Copy(value, Pointer(&v[at], sequence.m_Field, sequence.m_Object));
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlVectorData<T>::Insert( DataPointer sequence, size_t at, DataPointer value )
+void Helium::Reflect::SimpleStlVectorTranslator<T>::Insert( Pointer sequence, size_t at, Pointer value )
 {
 	std::vector<T> &v = sequence.As< std::vector<T> >();
 	v.insert(v.begin() + at, value.As<T>());
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlVectorData<T>::Remove( DataPointer sequence, size_t at )
+void Helium::Reflect::SimpleStlVectorTranslator<T>::Remove( Pointer sequence, size_t at )
 {
 	std::vector<T> &v = sequence.As< std::vector<T> >();
 	v.erase(v.begin() + at);
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlVectorData<T>::MoveUp( DataPointer sequence, Set< size_t >& items )
+void Helium::Reflect::SimpleStlVectorTranslator<T>::MoveUp( Pointer sequence, Set< size_t >& items )
 {
 	for (Set<size_t>::Iterator iter = items.Begin(); 
 		iter != items.End(); ++iter)
@@ -178,7 +178,7 @@ void Helium::Reflect::SimpleStlVectorData<T>::MoveUp( DataPointer sequence, Set<
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlVectorData<T>::MoveDown( DataPointer sequence, Set< size_t >& items )
+void Helium::Reflect::SimpleStlVectorTranslator<T>::MoveDown( Pointer sequence, Set< size_t >& items )
 {
 	std::vector<T> &v = sequence.As< std::vector<T> >();
 
@@ -197,7 +197,7 @@ void Helium::Reflect::SimpleStlVectorData<T>::MoveDown( DataPointer sequence, Se
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlVectorData<T>::SwapInternalValues( DataPointer sequence, size_t a, size_t b )
+void Helium::Reflect::SimpleStlVectorTranslator<T>::SwapInternalValues( Pointer sequence, size_t a, size_t b )
 {
 	std::vector<T> &v = sequence.As< std::vector<T> >();
 
@@ -214,45 +214,45 @@ void Helium::Reflect::SimpleStlVectorData<T>::SwapInternalValues( DataPointer se
 	std::vector<T>::iterator iter_a = v.begin() + a;
 	std::vector<T>::iterator iter_b = v.begin() + b;
 
-	DataPointer dp_a(&*iter_a, sequence.m_Field, sequence.m_Object);
-	DataPointer dp_b(&*iter_b, sequence.m_Field, sequence.m_Object);
-	DataPointer dp_temp(&temp, sequence.m_Field, sequence.m_Object);
+	Pointer dp_a(&*iter_a, sequence.m_Field, sequence.m_Object);
+	Pointer dp_b(&*iter_b, sequence.m_Field, sequence.m_Object);
+	Pointer dp_temp(&temp, sequence.m_Field, sequence.m_Object);
 
-	m_InternalData->Copy(dp_a, dp_temp);
-	m_InternalData->Copy(dp_b, dp_a);
-	m_InternalData->Copy(dp_temp, dp_b, CopyFlags::Notify);
+	m_InternalTranslator->Copy(dp_a, dp_temp);
+	m_InternalTranslator->Copy(dp_b, dp_a);
+	m_InternalTranslator->Copy(dp_temp, dp_b, CopyFlags::Notify);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 template <class T>
-Helium::Reflect::SimpleStlSetData<T>::SimpleStlSetData()
-	: SetData(sizeof(std::set<T>))
-	, m_InternalData(AllocateData<T>())
+Helium::Reflect::SimpleStlSetTranslator<T>::SimpleStlSetTranslator()
+	: SetTranslator(sizeof(std::set<T>))
+	, m_InternalTranslator(AllocateTranslator<T>())
 {
 
 }
 
 template <class T>
-Helium::Reflect::SimpleStlSetData<T>::~SimpleStlSetData()
+Helium::Reflect::SimpleStlSetTranslator<T>::~SimpleStlSetTranslator()
 {
-	delete m_InternalData;
+	delete m_InternalTranslator;
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlSetData<T>::Construct( DataPointer pointer )
+void Helium::Reflect::SimpleStlSetTranslator<T>::Construct( Pointer pointer )
 {
 	DefaultConstruct< std::set<T> >(pointer);
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlSetData<T>::Destruct( DataPointer pointer )
+void Helium::Reflect::SimpleStlSetTranslator<T>::Destruct( Pointer pointer )
 {
 	DefaultDestruct< std::set<T> >(pointer);
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlSetData<T>::Copy( DataPointer src, DataPointer dest, uint32_t flags /*= 0 */ )
+void Helium::Reflect::SimpleStlSetTranslator<T>::Copy( Pointer src, Pointer dest, uint32_t flags /*= 0 */ )
 {
 	if (flags & CopyFlags::Shallow)
 	{
@@ -269,16 +269,16 @@ void Helium::Reflect::SimpleStlSetData<T>::Copy( DataPointer src, DataPointer de
 		iter_src != s_src.end(); ++iter_src)
 	{
 		// Should be safe since we copy FROM this. Should not break const-ness (might increase a ref count or something like that though)
-		DataPointer dp_src(const_cast<T *>(&*iter_src), src.m_Field, src.m_Object);
+		Pointer dp_src(const_cast<T *>(&*iter_src), src.m_Field, src.m_Object);
 		T temp;
-		DataPointer dp_dest(&temp, dest.m_Field, dest.m_Object);
-		m_InternalData->Copy(dp_src, dp_dest, flags);
+		Pointer dp_dest(&temp, dest.m_Field, dest.m_Object);
+		m_InternalTranslator->Copy(dp_src, dp_dest, flags);
 		s_dest.insert(temp);
 	}
 }
 
 template <class T>
-bool Helium::Reflect::SimpleStlSetData<T>::Equals( DataPointer a, DataPointer b )
+bool Helium::Reflect::SimpleStlSetTranslator<T>::Equals( Pointer a, Pointer b )
 {
 #if 0
 	std::set<T> &s_a = a.As< std::set<T> >();
@@ -296,10 +296,10 @@ bool Helium::Reflect::SimpleStlSetData<T>::Equals( DataPointer a, DataPointer b 
 		++iter_a, iter_b)
 	{
 		// Should be safe as long as equality comparison doesn't break const-ness (shouldn't!)
-		DataPointer dp_a(const_cast<T *>(&*iter_a), a.m_Field, b.m_Object);
-		DataPointer dp_b(const_cast<T *>(&*iter_b), b.m_Field, b.m_Object);
+		Pointer dp_a(const_cast<T *>(&*iter_a), a.m_Field, b.m_Object);
+		Pointer dp_b(const_cast<T *>(&*iter_b), b.m_Field, b.m_Object);
 
-		if (!m_InternalData->Equals(dp_a, dp_b))
+		if (!m_InternalTranslator->Equals(dp_a, dp_b))
 		{
 			return false;
 		}
@@ -312,7 +312,7 @@ bool Helium::Reflect::SimpleStlSetData<T>::Equals( DataPointer a, DataPointer b 
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlSetData<T>::Accept( DataPointer p, Visitor& visitor )
+void Helium::Reflect::SimpleStlSetTranslator<T>::Accept( Pointer p, Visitor& visitor )
 {
 	std::set<T> &s = p.As< std::set<T> >();
 
@@ -320,33 +320,33 @@ void Helium::Reflect::SimpleStlSetData<T>::Accept( DataPointer p, Visitor& visit
 		iter != s.end(); ++iter)
 	{
 		// This const cast is downright dangerous.. visitors can definitely change values
-		DataPointer dp(const_cast<T *>(&*iter), p.m_Field, p.m_Object);
-		m_InternalData->Accept(dp, visitor);
+		Pointer dp(const_cast<T *>(&*iter), p.m_Field, p.m_Object);
+		m_InternalTranslator->Accept(dp, visitor);
 	}
 }
 
 template <class T>
-size_t Helium::Reflect::SimpleStlSetData<T>::GetLength( DataPointer container ) const
+size_t Helium::Reflect::SimpleStlSetTranslator<T>::GetLength( Pointer container ) const
 {
 	std::set<T> &s = container.As< std::set<T> >();
 	return s.size();
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlSetData<T>::Clear( DataPointer container )
+void Helium::Reflect::SimpleStlSetTranslator<T>::Clear( Pointer container )
 {
 	std::set<T> &s = container.As< std::set<T> >();
 	s.clear();
 }
 
 template <class T>
-Helium::Reflect::Data* Helium::Reflect::SimpleStlSetData<T>::GetItemData() const
+Helium::Reflect::Translator* Helium::Reflect::SimpleStlSetTranslator<T>::GetItemTranslator() const
 {
-	return m_InternalData;
+	return m_InternalTranslator;
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlSetData<T>::GetItems( DataPointer set, DynamicArray< DataPointer >& items ) const
+void Helium::Reflect::SimpleStlSetTranslator<T>::GetItems( Pointer set, DynamicArray< Pointer >& items ) const
 {
 	std::set<T> &v = set.As< std::set<T> >();
 	items.Reserve(v.size());
@@ -354,13 +354,13 @@ void Helium::Reflect::SimpleStlSetData<T>::GetItems( DataPointer set, DynamicArr
 	for (std::set<T>::iterator iter = v.begin(); iter != v.end(); ++iter)
 	{
 		// This is dangerous.. callers could modify values passed out
-		DataPointer dp(const_cast<T *>(&*iter), set.m_Field, set.m_Object);
+		Pointer dp(const_cast<T *>(&*iter), set.m_Field, set.m_Object);
 		items.Add(dp);
 	}
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlSetData<T>::InsertItem( DataPointer set, DataPointer item )
+void Helium::Reflect::SimpleStlSetTranslator<T>::InsertItem( Pointer set, Pointer item )
 {
 	// Not crazy about this insert going through the copy ctor instead of our copy implementation for the data type
 	std::set<T> &v = set.As< std::set<T> >();
@@ -368,7 +368,7 @@ void Helium::Reflect::SimpleStlSetData<T>::InsertItem( DataPointer set, DataPoin
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlSetData<T>::RemoveItem( DataPointer set, DataPointer item )
+void Helium::Reflect::SimpleStlSetTranslator<T>::RemoveItem( Pointer set, Pointer item )
 {
 	// Not crazy about this insert going through the c++ equal operator instead of the data type
 	std::set<T> &v = set.As< std::set<T> >();
@@ -376,7 +376,7 @@ void Helium::Reflect::SimpleStlSetData<T>::RemoveItem( DataPointer set, DataPoin
 }
 
 template <class T>
-bool Helium::Reflect::SimpleStlSetData<T>::ContainsItem( DataPointer set, DataPointer item ) const
+bool Helium::Reflect::SimpleStlSetTranslator<T>::ContainsItem( Pointer set, Pointer item ) const
 {
 	std::set<T> &s = set.As< std::set<T> >();
 
@@ -385,9 +385,9 @@ bool Helium::Reflect::SimpleStlSetData<T>::ContainsItem( DataPointer set, DataPo
 	for (std::set<T>::iterator iter = s.begin(); iter != s.end(); ++iter)
 	{
 		// Should be safe since we are checking equality
-		DataPointer a(const_cast<T *>(&*iter), set.m_Field, set.m_Object);
+		Pointer a(const_cast<T *>(&*iter), set.m_Field, set.m_Object);
 
-		if (m_InternalData->Equals(a, item))
+		if (m_InternalTranslator->Equals(a, item))
 		{
 			return true;
 		}
@@ -403,35 +403,35 @@ bool Helium::Reflect::SimpleStlSetData<T>::ContainsItem( DataPointer set, DataPo
 //////////////////////////////////////////////////////////////////////////
 
 template <class KeyT, class ValueT>
-Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::SimpleStlMapData()
-	: AssociationData(sizeof(std::map<KeyT, ValueT>))
-	, m_InternalDataKey(AllocateData<KeyT>())
-	, m_InternalDataValue(AllocateData<ValueT>())
+Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::SimpleStlMapTranslator()
+	: AssociationTranslator(sizeof(std::map<KeyT, ValueT>))
+	, m_InternalTranslatorKey(AllocateTranslator<KeyT>())
+	, m_InternalTranslatorValue(AllocateTranslator<ValueT>())
 {
 
 }
 
 template <class KeyT, class ValueT>
-Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::~SimpleStlMapData()
+Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::~SimpleStlMapTranslator()
 {
-	delete m_InternalDataKey;
-	delete m_InternalDataValue;
+	delete m_InternalTranslatorKey;
+	delete m_InternalTranslatorValue;
 }
 
 template <class KeyT, class ValueT>
-void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Construct( DataPointer pointer ) 
+void Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::Construct( Pointer pointer ) 
 {
 	DefaultConstruct< std::map<KeyT, ValueT> >(pointer);
 }
 
 template <class KeyT, class ValueT>
-void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Destruct( DataPointer pointer ) 
+void Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::Destruct( Pointer pointer ) 
 {
 	DefaultDestruct< std::map<KeyT, ValueT> >(pointer);
 }
 
 template <class KeyT, class ValueT>
-void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Copy( DataPointer src, DataPointer dest, uint32_t flags /*= 0 */ ) 
+void Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::Copy( Pointer src, Pointer dest, uint32_t flags /*= 0 */ ) 
 {
 	if (flags & CopyFlags::Shallow)
 	{
@@ -448,95 +448,95 @@ void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Copy( DataPointer src, Dat
 		iter_src != m_src.end(); ++iter_src)
 	{
 		// Should be safe since we copy FROM this. Should not break const-ness (might increase a ref count or something like that though)
-		DataPointer dp_src_key(const_cast<KeyT *>(&iter_src->first), src.m_Field, src.m_Object);
-		DataPointer dp_src_value(&iter_src->second, src.m_Field, src.m_Object);
+		Pointer dp_src_key(const_cast<KeyT *>(&iter_src->first), src.m_Field, src.m_Object);
+		Pointer dp_src_value(&iter_src->second, src.m_Field, src.m_Object);
 
 		std::map<KeyT, ValueT>::value_type temp;
 
-		DataPointer dp_dest_key(const_cast<ValueT *>(&temp.first), dest.m_Field, dest.m_Object);
-		DataPointer dp_dest_value(&temp.second, dest.m_Field, dest.m_Object);
+		Pointer dp_dest_key(const_cast<ValueT *>(&temp.first), dest.m_Field, dest.m_Object);
+		Pointer dp_dest_value(&temp.second, dest.m_Field, dest.m_Object);
 
-		m_InternalDataKey->Copy(dp_src_key, dp_dest_key, flags);
-		m_InternalDataValue->Copy(dp_src_value, dp_dest_value, flags);
+		m_InternalTranslatorKey->Copy(dp_src_key, dp_dest_key, flags);
+		m_InternalTranslatorValue->Copy(dp_src_value, dp_dest_value, flags);
 
 		m_dest.insert(temp);
 	}
 }
 
 template <class KeyT, class ValueT>
-bool Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Equals( DataPointer a, DataPointer b ) 
+bool Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::Equals( Pointer a, Pointer b ) 
 {
 	return DefaultEquals< std::map< KeyT, ValueT > >(a, b);
 }
 
 template <class KeyT, class ValueT>
-void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Accept( DataPointer p, Visitor& visitor ) 
+void Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::Accept( Pointer p, Visitor& visitor ) 
 {
 	std::map<KeyT, ValueT> &m = p.As< std::map<KeyT, ValueT> >();
 
 	for (std::map<KeyT, ValueT>::iterator iter = m.begin();
 		iter != m.end(); ++iter)
 	{
-		m_InternalDataKey->Accept(DataPointer(const_cast<KeyT *>(&iter->first), p.m_Field, p.m_Object), visitor);
-		m_InternalDataValue->Accept(DataPointer(&iter->second, p.m_Field, p.m_Object), visitor);
+		m_InternalTranslatorKey->Accept(Pointer(const_cast<KeyT *>(&iter->first), p.m_Field, p.m_Object), visitor);
+		m_InternalTranslatorValue->Accept(Pointer(&iter->second, p.m_Field, p.m_Object), visitor);
 	}
 }
 
 template <class KeyT, class ValueT>
-size_t Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetLength( DataPointer container ) const 
+size_t Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::GetLength( Pointer container ) const 
 {
 	std::map<KeyT, ValueT> &m = container.As< std::map<KeyT, ValueT> >();
 	return m.size();
 }
 
 template <class KeyT, class ValueT>
-void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::Clear( DataPointer container ) 
+void Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::Clear( Pointer container ) 
 {
 	std::map<KeyT, ValueT> &m = container.As< std::map<KeyT, ValueT> >();
 	return m.clear();
 }
 
 template <class KeyT, class ValueT>
-Helium::Reflect::Data* Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetKeyData() const
+Helium::Reflect::Translator* Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::GetKeyTranslator() const
 {
-	return m_InternalDataKey;
+	return m_InternalTranslatorKey;
 }
 
 template <class KeyT, class ValueT>
-Helium::Reflect::Data* Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetValueData() const
+Helium::Reflect::Translator* Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::GetValueTranslator() const
 {
-	return m_InternalDataValue;
+	return m_InternalTranslatorValue;
 }
 
 template <class KeyT, class ValueT>
-void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetItems( DataPointer association, DynamicArray<DataPointer>& keys, DynamicArray<DataPointer>& values )
+void Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::GetItems( Pointer association, DynamicArray<Pointer>& keys, DynamicArray<Pointer>& values )
 {
 	std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
 
 	for (std::map<KeyT, ValueT>::iterator iter = m.begin();
 		iter != m.end(); ++iter)
 	{
-		keys.Add(DataPointer(const_cast<KeyT *>(&iter->first), association.m_Field, association.m_Object));
-		values.Add(DataPointer(&iter->second, association.m_Field, association.m_Object));
+		keys.Add(Pointer(const_cast<KeyT *>(&iter->first), association.m_Field, association.m_Object));
+		values.Add(Pointer(&iter->second, association.m_Field, association.m_Object));
 	}
 }
 
 template <class KeyT, class ValueT>
-Helium::Reflect::DataPointer Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::GetItem( DataPointer association, DataPointer key )
+Helium::Reflect::Pointer Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::GetItem( Pointer association, Pointer key )
 {
 	std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
-	return DataPointer(&m[key.As<KeyT>()], association.m_Field, association.m_Object);
+	return Pointer(&m[key.As<KeyT>()], association.m_Field, association.m_Object);
 }
 
 template <class KeyT, class ValueT>
-void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::SetItem( DataPointer association, DataPointer key, DataPointer value )
+void Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::SetItem( Pointer association, Pointer key, Pointer value )
 {
 	std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
 	m[key.As<KeyT>()] = value.As<ValueT>();
 }
 
 template <class KeyT, class ValueT>
-void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::RemoveItem( DataPointer association, DataPointer key )
+void Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::RemoveItem( Pointer association, Pointer key )
 {
 	std::map<KeyT, ValueT> &m = association.As< std::map<KeyT, ValueT> >();
 	std::map<KeyT, ValueT>::iterator iter = m.find(key.As<KeyT>());
@@ -544,11 +544,11 @@ void Helium::Reflect::SimpleStlMapData<KeyT, ValueT>::RemoveItem( DataPointer as
 	if (iter != m.end())
 	{
 #if 0
-		DataPointer dp_key(const_cast<KeyT *>(&iter->first), association.m_Field, association.m_Object);
-		DataPointer dp_value(&iter->second, association.m_Field, association.m_Object);
+		Pointer dp_key(const_cast<KeyT *>(&iter->first), association.m_Field, association.m_Object);
+		Pointer dp_value(&iter->second, association.m_Field, association.m_Object);
 
-		m_InternalDataKey->Destruct(dp_key);
-		m_InternalDataValue->Destruct(dp_vlaue);
+		m_InternalTranslatorKey->Destruct(dp_key);
+		m_InternalTranslatorValue->Destruct(dp_vlaue);
 #endif
 
 		m.erase(iter);

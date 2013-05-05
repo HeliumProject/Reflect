@@ -24,7 +24,7 @@ namespace Helium
         class Class;
         template< class ClassT, class BaseT > class ObjectRegistrar;
         class Object;
-        class Data;
+        class Translator;
 
         //
         // ObjectRefCountSupport provides the support interface for managing reference counting data
@@ -59,10 +59,10 @@ namespace Helium
 #endif
 
         private:
-            struct StaticData;
+            struct StaticTranslator;
 
             /// Static proxy management data.
-            static StaticData* sm_pStaticData;
+            static StaticTranslator* sm_pStaticTranslator;
         };
 
         //

@@ -1,5 +1,5 @@
 #include "ReflectPch.h"
-#include "Reflect/DataDeduction.h"
+#include "Reflect/TranslatorDeduction.h"
 #include "Reflect/Object.h"
 
 using namespace Helium;
@@ -108,9 +108,9 @@ void TestObject::PopulateStructure( Reflect::Structure& comp )
 
 void Func()
 {
-	AllocateData< uint8_t >();
-	AllocateData< TestStruct >();
-	AllocateData< ObjectPtr >();
+	AllocateTranslator< uint8_t >();
+	AllocateTranslator< TestStruct >();
+	AllocateTranslator< ObjectPtr >();
 
 	StrongPtr< TestObject > object = new TestObject ();
 }

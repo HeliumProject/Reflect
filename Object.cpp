@@ -7,7 +7,7 @@
 #include "Reflect/Registry.h"
 #include "Reflect/Class.h"
 #include "Reflect/Registry.h"
-#include "Reflect/DataDeduction.h"
+#include "Reflect/TranslatorDeduction.h"
 
 #include <malloc.h>
 
@@ -15,7 +15,7 @@ using namespace Helium;
 using namespace Helium::Reflect;
 
 /// Static reference count proxy management data.
-struct ObjectRefCountSupport::StaticData
+struct ObjectRefCountSupport::StaticTranslator
 {
 	/// Number of proxy objects to allocate per block for the proxy pool.
 	static const size_t POOL_BLOCK_SIZE = 1024;
@@ -29,11 +29,11 @@ struct ObjectRefCountSupport::StaticData
 
 	/// @name Construction/Destruction
 	//@{
-	StaticData();
+	StaticTranslator();
 	//@}
 };
 
-ObjectRefCountSupport::StaticData* ObjectRefCountSupport::sm_pStaticData = NULL;
+ObjectRefCountSupport::StaticTranslator* ObjectRefCountSupport::sm_pStaticTranslator = NULL;
 
 const Class* Object::s_Class = NULL;
 ObjectRegistrar< Object, void > Object::s_Registrar( TXT("Object") );
@@ -48,20 +48,20 @@ RefCountProxy< Object >* ObjectRefCountSupport::Allocate()
 	// Lazy initialization of the proxy management data.  Even though this isn't thread-safe, it should still be fine as
 	// the proxy system should be initialized from the main thread before any sub-threads are spawned (i.e. during
 	// startup type initialization).
-	StaticData* pStaticData = sm_pStaticData;
-	if( !pStaticData )
+	StaticTranslator* pStaticTranslator = sm_pStaticTranslator;
+	if( !pStaticTranslator )
 	{
-		pStaticData = new StaticData;
-		HELIUM_ASSERT( pStaticData );
-		sm_pStaticData = pStaticData;
+		pStaticTranslator = new StaticTranslator;
+		HELIUM_ASSERT( pStaticTranslator );
+		sm_pStaticTranslator = pStaticTranslator;
 	}
 
-	RefCountProxy< Object >* pProxy = pStaticData->proxyPool.Allocate();
+	RefCountProxy< Object >* pProxy = pStaticTranslator->proxyPool.Allocate();
 	HELIUM_ASSERT( pProxy );
 
 #if HELIUM_ENABLE_MEMORY_TRACKING
 	ConcurrentHashSet< RefCountProxy< Object >* >::Accessor activeProxySetAccessor;
-	HELIUM_VERIFY( pStaticData->activeProxySet.Insert( activeProxySetAccessor, pProxy ) );
+	HELIUM_VERIFY( pStaticTranslator->activeProxySet.Insert( activeProxySetAccessor, pProxy ) );
 #endif
 
 	return pProxy;
@@ -76,14 +76,14 @@ void ObjectRefCountSupport::Release( RefCountProxy< Object >* pProxy )
 {
 	HELIUM_ASSERT( pProxy );
 
-	StaticData* pStaticData = sm_pStaticData;
-	HELIUM_ASSERT( pStaticData );
+	StaticTranslator* pStaticTranslator = sm_pStaticTranslator;
+	HELIUM_ASSERT( pStaticTranslator );
 
 #if HELIUM_ENABLE_MEMORY_TRACKING
-	HELIUM_VERIFY( pStaticData->activeProxySet.Remove( pProxy ) );
+	HELIUM_VERIFY( pStaticTranslator->activeProxySet.Remove( pProxy ) );
 #endif
 
-	pStaticData->proxyPool.Release( pProxy );
+	pStaticTranslator->proxyPool.Release( pProxy );
 }
 
 /// Release the name table and free all allocated memory.
@@ -123,8 +123,8 @@ void ObjectRefCountSupport::Shutdown()
 	}
 #endif  // HELIUM_ENABLE_MEMORY_TRACKING
 
-	delete sm_pStaticData;
-	sm_pStaticData = NULL;
+	delete sm_pStaticTranslator;
+	sm_pStaticTranslator = NULL;
 }
 
 #if HELIUM_ENABLE_MEMORY_TRACKING
@@ -140,9 +140,9 @@ void ObjectRefCountSupport::Shutdown()
 /// @see GetFirstActiveProxy()
 size_t ObjectRefCountSupport::GetActiveProxyCount()
 {
-	HELIUM_ASSERT( sm_pStaticData );
+	HELIUM_ASSERT( sm_pStaticTranslator );
 
-	return sm_pStaticData->activeProxySet.GetSize();
+	return sm_pStaticTranslator->activeProxySet.GetSize();
 }
 
 /// Initialize a constant accessor to the first active reference count proxy.
@@ -156,14 +156,14 @@ size_t ObjectRefCountSupport::GetActiveProxyCount()
 bool ObjectRefCountSupport::GetFirstActiveProxy(
 	ConcurrentHashSet< RefCountProxy< Object >* >::ConstAccessor& rAccessor )
 {
-	HELIUM_ASSERT( sm_pStaticData );
+	HELIUM_ASSERT( sm_pStaticTranslator );
 
-	return sm_pStaticData->activeProxySet.First( rAccessor );
+	return sm_pStaticTranslator->activeProxySet.First( rAccessor );
 }
 #endif
 
 /// Constructor.
-ObjectRefCountSupport::StaticData::StaticData()
+ObjectRefCountSupport::StaticTranslator::StaticTranslator()
 : proxyPool( POOL_BLOCK_SIZE )
 {
 }

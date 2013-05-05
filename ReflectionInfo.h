@@ -47,16 +47,16 @@ namespace Helium
 						Class,
 				
 				// data abstraction class hierarchy
-				Data,
-					ScalarData,
-					StructureData,
-					PointerData,
-					EnumerationData,
-					TypeData,
-					ContainerData,
-						SetData,
-						SequenceData,
-						AssociationData,
+				Translator,
+					ScalarTranslator,
+					StructureTranslator,
+					PointerTranslator,
+					EnumerationTranslator,
+					TypeTranslator,
+					ContainerTranslator,
+						SetTranslator,
+						SequenceTranslator,
+						AssociationTranslator,
 
 				Count,
 			};

@@ -7,7 +7,7 @@
 #include "Foundation/Log.h"
 
 #include "Reflect/Enumeration.h"
-#include "Reflect/DataDeduction.h"
+#include "Reflect/TranslatorDeduction.h"
 
 #include <io.h>
 

@@ -1,7 +1,7 @@
 #include "ReflectPch.h"
 #include "Type.h"
 #include "Registry.h"
-#include "Reflect/Data.h"
+#include "Reflect/Translator.h"
 
 #include "Platform/Locks.h"
 

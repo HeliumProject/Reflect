@@ -1,40 +1,40 @@
 #include "ReflectPch.h"
-#include "DataSimple.h"
+#include "Translators.h"
 
 using namespace Helium;
 using namespace Helium::Reflect;
 
-TypeData::TypeData()
-	: ScalarData( sizeof( const Type* ), ScalarTypes::String )
+TypeTranslator::TypeTranslator()
+	: ScalarTranslator( sizeof( const Type* ), ScalarTypes::String )
 {
 }
 
-void TypeData::Construct( DataPointer pointer )
+void TypeTranslator::Construct( Pointer pointer )
 {
 	DefaultConstruct< const Type* >( pointer );
 }
 
-void TypeData::Destruct( DataPointer pointer )
+void TypeTranslator::Destruct( Pointer pointer )
 {
 	DefaultDestruct< const Type* >( pointer );
 }
 
-void TypeData::Copy( DataPointer src, DataPointer dest, uint32_t flags )
+void TypeTranslator::Copy( Pointer src, Pointer dest, uint32_t flags )
 {
 	DefaultCopy< const Type* >( src, dest, flags );
 }
 
-bool TypeData::Equals( DataPointer a, DataPointer b )
+bool TypeTranslator::Equals( Pointer a, Pointer b )
 {
 	return DefaultEquals< const Type* >( a, b );
 }
 
-void TypeData::Accept( DataPointer pointer, Visitor& visitor )
+void TypeTranslator::Accept( Pointer pointer, Visitor& visitor )
 {
 	DefaultAccept< const Type* >( pointer, visitor );
 }
 
-void TypeData::Print( DataPointer pointer, String& string, ObjectIdentifier& identifier)
+void TypeTranslator::Print( Pointer pointer, String& string, ObjectIdentifier& identifier)
 {
 	string.Clear();
 
@@ -45,7 +45,7 @@ void TypeData::Print( DataPointer pointer, String& string, ObjectIdentifier& ide
 	}
 }
 
-void TypeData::Parse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged )
+void TypeTranslator::Parse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged )
 {
 	const Type* type = Registry::GetInstance()->GetType( string.GetData() );
 

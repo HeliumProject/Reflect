@@ -25,7 +25,7 @@ namespace Helium
                 return true;
             }
 
-            virtual bool VisitField(Data* /*data*/, void* /*address*/, const Field* /*field*/, Object* /*object*/)
+            virtual bool VisitField(Translator* /*translator*/, void* /*address*/, const Field* /*field*/, Object* /*object*/)
             {
                 return true; 
             }
