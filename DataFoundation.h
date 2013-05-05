@@ -1,6 +1,8 @@
 #pragma once
 
+#include "Foundation/FilePath.h"
 #include "Foundation/String.h"
+#include "Foundation/Name.h"
 #include "Foundation/Map.h"
 
 #include "Reflect/Registry.h"
@@ -30,6 +32,46 @@ namespace Helium
 		inline Data* AllocateData( const WideString&, const WideString& )
 		{
 			throw Reflect::Exception("Wide strings are not supported");
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		class HELIUM_REFLECT_API NameData : public ScalarData
+		{
+		public:
+			NameData();
+			virtual void Construct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual void Destruct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual void Copy( DataPointer src, DataPointer dest, uint32_t flags ) HELIUM_OVERRIDE;
+			virtual bool Equals( DataPointer a, DataPointer b ) HELIUM_OVERRIDE;
+			virtual void Accept( DataPointer pointer, Visitor& visitor ) HELIUM_OVERRIDE;
+			virtual void Print( DataPointer pointer, String& string, ObjectIdentifier& identifier ) HELIUM_OVERRIDE;
+			virtual void Parse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged ) HELIUM_OVERRIDE;
+		};
+
+		inline Data* AllocateData( const Name&, const Name& )
+		{
+			return new NameData;
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		class HELIUM_REFLECT_API FilePathData : public ScalarData
+		{
+		public:
+			FilePathData();
+			virtual void Construct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual void Destruct( DataPointer pointer ) HELIUM_OVERRIDE;
+			virtual void Copy( DataPointer src, DataPointer dest, uint32_t flags ) HELIUM_OVERRIDE;
+			virtual bool Equals( DataPointer a, DataPointer b ) HELIUM_OVERRIDE;
+			virtual void Accept( DataPointer pointer, Visitor& visitor ) HELIUM_OVERRIDE;
+			virtual void Print( DataPointer pointer, String& string, ObjectIdentifier& identifier ) HELIUM_OVERRIDE;
+			virtual void Parse( const String& string, DataPointer pointer, ObjectResolver& resolver, bool raiseChanged ) HELIUM_OVERRIDE;
+		};
+
+		inline Data* AllocateData( const FilePath&, const FilePath& )
+		{
+			return new FilePathData;
 		}
 
 		//////////////////////////////////////////////////////////////////////////

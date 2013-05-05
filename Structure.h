@@ -86,7 +86,7 @@ namespace Helium
 			static void Create( Structure const*& pointer, const tchar_t* name, const tchar_t* baseName );
 
 			// shared logic with class types
-			template< class CompositeT >
+			template< class StructureT >
 			static void Create( const tchar_t* name, const tchar_t* baseName, PopulateCompositeFunc populate, Structure* info );
 
 			// overloaded functions from Type
@@ -113,8 +113,8 @@ namespace Helium
 			const Field* FindFieldByOffset(uint32_t offset) const;
 
 			// finds the field info given a pointer to a member variable on a class.
-			template< class CompositeT, typename FieldT >
-			const Field* FindField( FieldT CompositeT::* pointerToMember ) const;
+			template< class StructureT, typename FieldT >
+			const Field* FindField( FieldT StructureT::* pointerToMember ) const;
 
 			// computes the number of fields in all our base classes (the base index for our fields)
 			uint32_t GetBaseFieldCount() const;
@@ -123,8 +123,8 @@ namespace Helium
 			Reflect::Field* AddField( const tchar_t* name, uint32_t size, uint32_t count, uint32_t offset, uint32_t flags, Data* data );
 
 			// compute the offset from the 'this' pointer for the specified pointer-to-member
-			template < class CompositeT, class FieldT >
-			static inline uint32_t GetOffset( FieldT CompositeT::* field );
+			template < class StructureT, class FieldT >
+			static inline uint32_t GetOffset( FieldT StructureT::* field );
 
 			// compute the count of a static array
 			template < class T, size_t N >
@@ -147,8 +147,8 @@ namespace Helium
 			static inline Data* AllocateData( std::true_type  /*is_array*/  );
 
 			// deduce and allocate the appropriate data object and append field data to the composite
-			template < class CompositeT, class FieldT >
-			inline Reflect::Field* AddField( FieldT CompositeT::* field, const tchar_t* name, uint32_t flags = 0, Data* data = NULL );
+			template < class StructureT, class FieldT >
+			inline Reflect::Field* AddField( FieldT StructureT::* field, const tchar_t* name, uint32_t flags = 0, Data* data = NULL );
 
 		public:
 			const Structure*         m_Base;         // the base type name
