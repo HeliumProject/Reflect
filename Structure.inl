@@ -14,11 +14,11 @@ void Helium::Reflect::Structure::Create( Structure const*& pointer, const tchar_
 	type->m_Default = new StructureT;
 }
 
-template< class CompositeT >
+template< class StructureT >
 void Helium::Reflect::Structure::Create( const tchar_t* name, const tchar_t* baseName, PopulateCompositeFunc populate, Structure* info )
 {
 	// the size
-	info->m_Size = sizeof( CompositeT );
+	info->m_Size = sizeof( StructureT );
 
 	// the name of this composite
 	info->m_Name = name;
@@ -69,16 +69,16 @@ void Helium::Reflect::Structure::Create( const tchar_t* name, const tchar_t* bas
 	}
 }
 
-template< class CompositeT, typename FieldT >
-const Helium::Reflect::Field* Helium::Reflect::Structure::FindField( FieldT CompositeT::* pointerToMember ) const
+template< class StructureT, typename FieldT >
+const Helium::Reflect::Field* Helium::Reflect::Structure::FindField( FieldT StructureT::* pointerToMember ) const
 {
-	return FindFieldByOffset( Reflect::Structure::GetOffset<CompositeT, FieldT>( pointerToMember ) );
+	return FindFieldByOffset( Reflect::Structure::GetOffset<StructureT, FieldT>( pointerToMember ) );
 }
 
-template < class CompositeT, class FieldT >
-uint32_t Helium::Reflect::Structure::GetOffset( FieldT CompositeT::* field )
+template < class StructureT, class FieldT >
+uint32_t Helium::Reflect::Structure::GetOffset( FieldT StructureT::* field )
 {
-	return (uint32_t) (uintptr_t) &( ((CompositeT*)NULL)->*field); 
+	return (uint32_t) (uintptr_t) &( ((StructureT*)NULL)->*field); 
 }
 
 template < class T, size_t N >
@@ -112,8 +112,8 @@ Helium::Reflect::Data* Helium::Reflect::Structure::AllocateData( std::true_type 
 	return Reflect::AllocateData< std::remove_extent< T >::type >();
 }
 
-template < class CompositeT, class FieldT >
-Helium::Reflect::Field* Helium::Reflect::Structure::AddField( FieldT CompositeT::* field, const tchar_t* name, uint32_t flags, Data* data )
+template < class StructureT, class FieldT >
+Helium::Reflect::Field* Helium::Reflect::Structure::AddField( FieldT StructureT::* field, const tchar_t* name, uint32_t flags, Data* data )
 {
 	if ( data == NULL )
 	{
