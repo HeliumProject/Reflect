@@ -8,7 +8,6 @@
 #include "Foundation/SmartPtr.h"
 
 #include "API.h"
-#include "TypeID.h"
 #include "ReflectionInfo.h"
 
 namespace Helium

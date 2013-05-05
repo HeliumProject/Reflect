@@ -40,7 +40,9 @@ namespace Helium
 			Object*      m_Object;
 		};
 
-		class Translator;
+		//
+		// Variables are a Pointer that allocate its own instance of the Translated data type
+		//
 
 		class HELIUM_REFLECT_API Variable : public Pointer, NonCopyable
 		{
