@@ -7,7 +7,7 @@ using namespace Reflect;
 
 #if !HELIUM_RELEASE
 
-class TestEnumeration
+struct TestEnumeration : Reflect::EnumerationBase
 {
 public:
 	enum Enum

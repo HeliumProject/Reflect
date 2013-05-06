@@ -1,3 +1,4 @@
+template<> Helium::Reflect::SimpleScalarTranslator< bool >::SimpleScalarTranslator()      : ScalarTranslator( 1, ScalarTypes::Boolean ) {}
 template<> Helium::Reflect::SimpleScalarTranslator< uint8_t >::SimpleScalarTranslator()   : ScalarTranslator( 1, ScalarTypes::Unsigned8 ) {}
 template<> Helium::Reflect::SimpleScalarTranslator< uint16_t >::SimpleScalarTranslator()  : ScalarTranslator( 2, ScalarTypes::Unsigned16 ) {}
 template<> Helium::Reflect::SimpleScalarTranslator< uint32_t >::SimpleScalarTranslator()  : ScalarTranslator( 4, ScalarTypes::Unsigned32 ) {}
@@ -280,8 +281,13 @@ template< class T >
 void Helium::Reflect::EnumerationTranslator<T>::Print( Pointer pointer, String& string, ObjectIdentifier& identifier)
 {
 	const Enumeration* enumeration = GetEnumeration< T >();
+
+	uint32_t value = 0;
+	value = static_cast< uint32_t >( pointer.As< T >() );
+	HELIUM_COMPILE_ASSERT( sizeof( T::Enum ) == sizeof( value ) );
+
 	tstring str;
-	enumeration->GetString( pointer.As< T >(), str );
+	enumeration->GetString( value, str );
 	string = str.c_str();
 }
 
@@ -289,8 +295,12 @@ template< class T >
 void Helium::Reflect::EnumerationTranslator<T>::Parse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged )
 {
 	const Enumeration* enumeration = GetEnumeration< T >();
-	tstring str = string;
-	enumeration->GetValue( str, pointer.As< T >() );
+	tstring str = string.GetData();
+
+	uint32_t value = 0;
+	enumeration->GetValue( str, value );
+	pointer.As< T >() = static_cast< T::Enum >( value );
+	HELIUM_COMPILE_ASSERT( sizeof( T::Enum ) == sizeof( value ) );
 
 	if ( raiseChanged && pointer.m_Object )
 	{

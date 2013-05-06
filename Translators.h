@@ -26,6 +26,7 @@ namespace Helium
 			virtual void Parse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged ) HELIUM_OVERRIDE;
 		};
 
+		inline Translator* AllocateTranslator( bool,  bool )          { return new SimpleScalarTranslator< bool >; }
 		inline Translator* AllocateTranslator( uint8_t,  uint8_t )    { return new SimpleScalarTranslator< uint8_t >; }
 		inline Translator* AllocateTranslator( uint16_t, uint16_t )   { return new SimpleScalarTranslator< uint16_t >; }
 		inline Translator* AllocateTranslator( uint32_t, uint32_t )   { return new SimpleScalarTranslator< uint32_t >; }
