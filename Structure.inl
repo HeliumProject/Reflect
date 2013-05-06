@@ -26,7 +26,7 @@ void Helium::Reflect::Structure::Create( const tchar_t* name, const tchar_t* bas
 	// lookup base class
 	if ( baseName )
 	{
-		info->m_Base = Reflect::Registry::GetInstance()->GetClass( baseName );
+		info->m_Base = Reflect::Registry::GetInstance()->GetStructure( baseName );
 
 		// if you hit this break your base class is not registered yet!
 		HELIUM_ASSERT( info->m_Base );

@@ -67,8 +67,8 @@ namespace Helium
             inline const Type* GetType( const tchar_t* name ) const;
             
             // structure lookup
-            const Structure* GetComposite( uint32_t crc ) const;
-            inline const Structure* GetComposite( const tchar_t* name ) const;
+            const Structure* GetStructure( uint32_t crc ) const;
+            inline const Structure* GetStructure( const tchar_t* name ) const;
 
             // class lookup
             const Class* GetClass( uint32_t crc ) const;
