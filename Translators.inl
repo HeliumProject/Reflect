@@ -179,7 +179,16 @@ void Helium::Reflect::PointerTranslator<T>::Copy( Pointer src, Pointer dest, uin
 	}
 	else
 	{
-		src.As< StrongPtr< T > >()->CopyTo( dest.As< StrongPtr< T > >() );
+		StrongPtr< T >& srcPtr ( src.As< StrongPtr< T > >() );
+		StrongPtr< T >& destPtr ( dest.As< StrongPtr< T > >() );
+		if ( srcPtr.ReferencesObject() )
+		{
+			destPtr = AssertCast< T >( srcPtr->Clone() );
+		}
+		else
+		{
+			destPtr = NULL;
+		}
 	}
 
 	if ( flags & CopyFlags::Notify && dest.m_Object )
