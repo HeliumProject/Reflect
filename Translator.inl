@@ -67,10 +67,10 @@ Helium::Reflect::Variable::~Variable()
 }
 
 template< class T >
-void Helium::Reflect::ObjectResolver::Resolve( const Name& identity, StrongPtr< T >& object )
+bool Helium::Reflect::ObjectResolver::Resolve( const Name& identity, StrongPtr< T >& object )
 {
 	const Class* pointerClass = Reflect::GetClass< T >();
-	this->Resolve( identity, reinterpret_cast< ObjectPtr& >( object ), pointerClass );
+	return this->Resolve( identity, reinterpret_cast< ObjectPtr& >( object ), pointerClass );
 }
 
 Helium::Reflect::DeferredResolver::Entry::Entry()

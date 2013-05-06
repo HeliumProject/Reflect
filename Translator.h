@@ -60,7 +60,7 @@ namespace Helium
 		class HELIUM_REFLECT_API ObjectIdentifier
 		{
 		public:
-			virtual void Identify( Object* object, Name& identity ) = 0;
+			virtual bool Identify( Object* object, Name& identity ) = 0;
 		};
 
 		//
@@ -70,10 +70,10 @@ namespace Helium
 		class HELIUM_REFLECT_API ObjectResolver
 		{
 		public:
-			virtual void Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass ) = 0;
+			virtual bool Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass ) = 0;
 
 			// helper to extract the class of the pointer
-			template< class T > void Resolve( const Name& identity, StrongPtr< T >& object );
+			template< class T > bool Resolve( const Name& identity, StrongPtr< T >& object );
 		};
 
 		//
@@ -83,7 +83,7 @@ namespace Helium
 		class HELIUM_REFLECT_API DeferredResolver : public ObjectResolver
 		{
 		public:
-			virtual void Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass ) HELIUM_OVERRIDE;
+			virtual bool Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass ) HELIUM_OVERRIDE;
 
 		protected:
 			struct Entry
