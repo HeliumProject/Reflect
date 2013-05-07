@@ -50,7 +50,7 @@ namespace Helium
 			inline Variable( Translator* translator );
 			inline ~Variable();
 
-			SmartPtr< Translator > m_Translator;
+			Translator *m_Translator;
 		};
 
 		//

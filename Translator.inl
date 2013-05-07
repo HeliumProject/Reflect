@@ -53,8 +53,7 @@ void Helium::Reflect::Pointer::RaiseChanged( bool doIt )
 }
 
 Helium::Reflect::Variable::Variable( Translator* translator )
-	: Pointer( static_cast< Field* >( NULL ), NULL, static_cast< Object* >( NULL ) )
-	, m_Translator( translator )
+	: m_Translator( translator )
 {
 	m_Address = new unsigned char[ m_Translator->m_Size ];
 	m_Translator->Construct( *this );
@@ -95,7 +94,7 @@ void Helium::Reflect::Translator::DefaultDestruct( Pointer pointer )
 template< class T >
 void Helium::Reflect::Translator::DefaultCopy( Pointer src, Pointer dest, uint32_t flags )
 {
-	HELIUM_ASSERT( src.m_Field == dest.m_Field );
+	HELIUM_ASSERT( !src.m_Field || !dest.m_Field || src.m_Field == dest.m_Field );
 	T& right = src.As<T>();
 	T& left = dest.As<T>();
 	left = right;
@@ -104,7 +103,7 @@ void Helium::Reflect::Translator::DefaultCopy( Pointer src, Pointer dest, uint32
 template< class T >
 bool Helium::Reflect::Translator::DefaultEquals( Pointer a, Pointer b )
 {
-	HELIUM_ASSERT( a.m_Field == b.m_Field );
+	HELIUM_ASSERT( !a.m_Field || !b.m_Field || a.m_Field == b.m_Field );
 	T& right = a.As<T>();
 	T& left = b.As<T>();
 	return left == right;
