@@ -13,28 +13,22 @@ StringTranslator::StringTranslator()
 
 void Helium::Reflect::StringTranslator::Construct( Pointer pointer )
 {
-	new ( pointer.m_Address ) String;
+	DefaultConstruct< String >( pointer );
 }
 
 void Helium::Reflect::StringTranslator::Destruct( Pointer pointer )
 {
-	static_cast< String* >( pointer.m_Address )->~String();
+	DefaultDestruct< String >( pointer );
 }
 
 void StringTranslator::Copy( Pointer src, Pointer dest, uint32_t flags )
 {
-	HELIUM_ASSERT( src.m_Field == dest.m_Field );
-	String& right = src.As<String>();
-	String& left = dest.As<String>();
-	left = right;
+	DefaultCopy< String >( src, dest, flags );
 }
 
 bool StringTranslator::Equals( Pointer a, Pointer b )
 {
-	HELIUM_ASSERT( a.m_Field == b.m_Field );
-	String& right = a.As<String>();
-	String& left = b.As<String>();
-	return left == right;
+	return DefaultEquals< String >( a, b );
 }
 
 void StringTranslator::Print( Pointer pointer, String& string, ObjectIdentifier& identifier )
@@ -49,7 +43,7 @@ void StringTranslator::Parse( const String& string, Pointer pointer, ObjectResol
 
 void StringTranslator::Accept( Pointer pointer, Visitor& visitor )
 {
-	visitor.VisitField( this, pointer.m_Address, pointer.m_Field, pointer.m_Object );
+	DefaultAccept< String >( pointer, visitor );
 }
 
 NameTranslator::NameTranslator()
@@ -59,28 +53,22 @@ NameTranslator::NameTranslator()
 
 void Helium::Reflect::NameTranslator::Construct( Pointer pointer )
 {
-	new ( pointer.m_Address ) String;
+	DefaultConstruct< Name >( pointer );
 }
 
 void Helium::Reflect::NameTranslator::Destruct( Pointer pointer )
 {
-	static_cast< Name* >( pointer.m_Address )->~Name();
+	DefaultDestruct< Name >( pointer );
 }
 
 void NameTranslator::Copy( Pointer src, Pointer dest, uint32_t flags )
 {
-	HELIUM_ASSERT( src.m_Field == dest.m_Field );
-	Name& right = src.As<Name>();
-	Name& left = dest.As<Name>();
-	left = right;
+	DefaultCopy< Name >( src, dest, flags );
 }
 
 bool NameTranslator::Equals( Pointer a, Pointer b )
 {
-	HELIUM_ASSERT( a.m_Field == b.m_Field );
-	Name& right = a.As<Name>();
-	Name& left = b.As<Name>();
-	return left == right;
+	return DefaultEquals< Name >( a, b );
 }
 
 void NameTranslator::Print( Pointer pointer, String& string, ObjectIdentifier& identifier )
@@ -95,7 +83,7 @@ void NameTranslator::Parse( const String& string, Pointer pointer, ObjectResolve
 
 void NameTranslator::Accept( Pointer pointer, Visitor& visitor )
 {
-	visitor.VisitField( this, pointer.m_Address, pointer.m_Field, pointer.m_Object );
+	DefaultAccept< Name >( pointer, visitor );
 }
 
 FilePathTranslator::FilePathTranslator()
@@ -105,28 +93,22 @@ FilePathTranslator::FilePathTranslator()
 
 void Helium::Reflect::FilePathTranslator::Construct( Pointer pointer )
 {
-	new ( pointer.m_Address ) FilePath;
+	DefaultConstruct< FilePath >( pointer );
 }
 
 void Helium::Reflect::FilePathTranslator::Destruct( Pointer pointer )
 {
-	static_cast< FilePath* >( pointer.m_Address )->~FilePath();
+	DefaultDestruct< FilePath >( pointer.m_Address );
 }
 
 void FilePathTranslator::Copy( Pointer src, Pointer dest, uint32_t flags )
 {
-	HELIUM_ASSERT( src.m_Field == dest.m_Field );
-	FilePath& right = src.As<FilePath>();
-	FilePath& left = dest.As<FilePath>();
-	left = right;
+	DefaultCopy< FilePath >( src, dest, flags );
 }
 
 bool FilePathTranslator::Equals( Pointer a, Pointer b )
 {
-	HELIUM_ASSERT( a.m_Field == b.m_Field );
-	FilePath& right = a.As<FilePath>();
-	FilePath& left = b.As<FilePath>();
-	return left == right;
+	return DefaultEquals< FilePath >( a, b );
 }
 
 void FilePathTranslator::Print( Pointer pointer, String& string, ObjectIdentifier& identifier )
@@ -141,5 +123,5 @@ void FilePathTranslator::Parse( const String& string, Pointer pointer, ObjectRes
 
 void FilePathTranslator::Accept( Pointer pointer, Visitor& visitor )
 {
-	visitor.VisitField( this, pointer.m_Address, pointer.m_Field, pointer.m_Object );
+	DefaultAccept< FilePath >( pointer, visitor );
 }

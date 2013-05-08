@@ -155,7 +155,7 @@ const Helium::Reflect::Structure* Helium::Reflect::SimpleStructureTranslator<T>:
 
 template< class T >
 Helium::Reflect::PointerTranslator<T>::PointerTranslator()
-	: ScalarTranslator( sizeof( T ), ScalarTypes::String )
+	: ScalarTranslator( sizeof( StrongPtr< T > ), ScalarTypes::String )
 {
 }
 

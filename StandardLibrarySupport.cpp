@@ -5,7 +5,7 @@ using namespace Helium;
 using namespace Helium::Reflect;
 
 StlStringTranslator::StlStringTranslator()
-	: ScalarTranslator( sizeof( String ), ScalarTypes::String )
+	: ScalarTranslator( sizeof( tstring ), ScalarTypes::String )
 {
 }
 
@@ -41,5 +41,5 @@ void StlStringTranslator::Parse( const String& string, Pointer pointer, ObjectRe
 
 void StlStringTranslator::Accept( Pointer pointer, Visitor& visitor )
 {
-	visitor.VisitField( this, pointer.m_Address, pointer.m_Field, pointer.m_Object );
+	DefaultAccept< tstring >( pointer, visitor );
 }

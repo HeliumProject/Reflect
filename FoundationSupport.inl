@@ -15,7 +15,7 @@ Helium::Reflect::SimpleDynamicArrayTranslator<T>::~SimpleDynamicArrayTranslator(
 template <class T>
 void Helium::Reflect::SimpleDynamicArrayTranslator<T>::Construct( Pointer pointer )
 {
-	DefaultConstruct< std::vector<T> >(pointer);
+	DefaultConstruct< DynamicArray<T> >(pointer);
 }
 
 template <class T>
