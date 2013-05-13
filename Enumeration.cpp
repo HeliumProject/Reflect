@@ -86,37 +86,24 @@ bool Enumeration::GetValue(const tstring& str, uint32_t& value) const
 {
 	if ( m_IsBitfield )
 	{
-		size_t length = str.length();
-		tchar_t* tmp = (tchar_t*)alloca( ( length + 1 ) * sizeof( tchar_t ) );
-		CopyString( tmp, length, str.c_str() );
-
 		std::vector< tstring > strs;
 
-		const tchar_t *token = FindNextToken( tmp, TXT('|') );
-		while( token )
+		const tchar_t *string = str.c_str();
+
+		while ( const tchar_t *stringFromPipe = FindCharacter( string, '|' ) )
 		{
-			strs.push_back(token);
-
-			/* Get next token: */
-			token = FindNextToken( token, TXT('|') );
+			tstring str(string, stringFromPipe - string);
+			strs.push_back(str);
+			string = stringFromPipe + 1;
 		}
+		
+		strs.push_back( string );
 
-		return GetBitfieldValue(strs, value);
+		return GetBitfieldValue( strs, value );
 	}
 	else
 	{
-		DynamicArray< EnumerationElement >::ConstIterator itr = m_Elements.Begin();
-		DynamicArray< EnumerationElement >::ConstIterator end = m_Elements.End();
-		for ( ; itr != end; ++itr )
-		{
-			if ( itr->m_Name == str )
-			{
-				value = itr->m_Value;
-				return true;
-			}
-		}
-
-		return false;
+		return GetSingleValue( str, value );
 	}
 }
 
@@ -171,6 +158,22 @@ bool Enumeration::GetString(const uint32_t value, tstring& str) const
 	}
 }
 
+bool Enumeration::GetSingleValue(const tstring& str, uint32_t& value) const
+{
+	DynamicArray< EnumerationElement >::ConstIterator itr = m_Elements.Begin();
+	DynamicArray< EnumerationElement >::ConstIterator end = m_Elements.End();
+	for ( ; itr != end; ++itr )
+	{
+		if ( itr->m_Name == str )
+		{
+			value = itr->m_Value;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool Enumeration::GetBitfieldValue(const std::vector< tstring >& strs, uint32_t& value) const
 {
 	value = 0;
@@ -183,7 +186,7 @@ bool Enumeration::GetBitfieldValue(const std::vector< tstring >& strs, uint32_t&
 		for ( ; itr != end; ++itr )
 		{
 			uint32_t flags;
-			if (GetValue(*itr, flags))
+			if (GetSingleValue(*itr, flags))
 			{
 				// set the bitfield value
 				SetFlags( value, static_cast<uint32_t>(flags) );

@@ -58,6 +58,9 @@ namespace Helium
 
 			DynamicArray< EnumerationElement > m_Elements;
 			bool                               m_IsBitfield;
+
+		private:
+			bool GetSingleValue(const tstring& str, uint32_t& value) const;
 		};
 
 		template< class EnumT >
