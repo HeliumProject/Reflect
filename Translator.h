@@ -50,7 +50,21 @@ namespace Helium
 			inline Variable( Translator* translator );
 			inline ~Variable();
 
-			Translator *m_Translator;
+			Translator* m_Translator;
+		};
+
+		//
+		// Data are a Pointer and Translator Pair
+		//
+
+		class HELIUM_REFLECT_API Data
+		{
+		public:
+			inline Data( Pointer pointer, Translator* translator );
+			inline Data( const Data& data );
+
+			Pointer     m_Pointer;
+			Translator* m_Translator;
 		};
 
 		//
@@ -173,14 +187,14 @@ namespace Helium
 
 			inline ScalarTranslator( size_t size, ScalarType type );
 
-			template< class T > void DefaultPrint( Pointer pointer, String& string, ObjectIdentifier& identifier );
-			template< class T > void DefaultParse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged );
+			template< class T > void DefaultPrint( Pointer pointer, String& string, ObjectIdentifier* identifier );
+			template< class T > void DefaultParse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged );
 
 			// value -> string
-			virtual void Print( Pointer pointer, String& string, ObjectIdentifier& identifier ) = 0;
+			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier = NULL ) = 0;
 
 			// string -> value
-			virtual void Parse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged ) = 0;
+			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver = NULL, bool raiseChanged = false ) = 0;
 
 			const ScalarType m_Type;
 		};
@@ -227,11 +241,11 @@ namespace Helium
 
 			virtual Translator* GetItemTranslator() const = 0;
 
-			virtual void  GetItems( Pointer set, DynamicArray< Pointer >& items ) const = 0;
+			virtual void        GetItems( Pointer set, DynamicArray< Pointer >& items ) const = 0;
 
-			virtual void  InsertItem( Pointer set, Pointer item ) = 0;
-			virtual void  RemoveItem( Pointer set, Pointer item ) = 0;
-			virtual bool  ContainsItem( Pointer set, Pointer item ) const = 0;
+			virtual void        InsertItem( Pointer set, Pointer item ) = 0;
+			virtual void        RemoveItem( Pointer set, Pointer item ) = 0;
+			virtual bool        ContainsItem( Pointer set, Pointer item ) const = 0;
 		};
 
 		//
@@ -245,12 +259,12 @@ namespace Helium
 			
 			inline SequenceTranslator( size_t size );
 
-			virtual Translator*       GetItemTranslator() const = 0;
+			virtual Translator* GetItemTranslator() const = 0;
 
 			virtual void        GetItems( Pointer sequence, DynamicArray< Pointer >& items ) const = 0;
 
 			virtual void        SetLength( Pointer sequence, size_t length ) = 0;
-			virtual Pointer GetItem( Pointer sequence, size_t at ) = 0;
+			virtual Pointer     GetItem( Pointer sequence, size_t at ) = 0;
 			virtual void        SetItem( Pointer sequence, size_t at, Pointer value ) = 0;
 			virtual void        Insert( Pointer sequence, size_t at, Pointer value ) = 0;
 			virtual void        Remove( Pointer sequence, size_t at ) = 0;
@@ -269,12 +283,12 @@ namespace Helium
 			
 			inline AssociationTranslator( size_t size );
 
-			virtual Translator*       GetKeyTranslator() const = 0;
-			virtual Translator*       GetValueTranslator() const = 0;
+			virtual Translator* GetKeyTranslator() const = 0;
+			virtual Translator* GetValueTranslator() const = 0;
 
 			virtual void        GetItems( Pointer association, DynamicArray<Pointer>& keys, DynamicArray<Pointer>& values ) = 0;
 
-			virtual Pointer GetItem( Pointer association, Pointer key ) = 0;
+			virtual Pointer     GetItem( Pointer association, Pointer key ) = 0;
 			virtual void        SetItem( Pointer association, Pointer key, Pointer value ) = 0;
 			virtual void        RemoveItem( Pointer association, Pointer key ) = 0;
 		};

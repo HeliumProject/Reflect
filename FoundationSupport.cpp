@@ -31,12 +31,12 @@ bool StringTranslator::Equals( Pointer a, Pointer b )
 	return DefaultEquals< String >( a, b );
 }
 
-void StringTranslator::Print( Pointer pointer, String& string, ObjectIdentifier& identifier )
+void StringTranslator::Print( Pointer pointer, String& string, ObjectIdentifier* identifier )
 {
 	string = pointer.As<String>();
 }
 
-void StringTranslator::Parse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged )
+void StringTranslator::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
 {
 	pointer.As<String>() = string;
 }
@@ -71,12 +71,12 @@ bool NameTranslator::Equals( Pointer a, Pointer b )
 	return DefaultEquals< Name >( a, b );
 }
 
-void NameTranslator::Print( Pointer pointer, String& string, ObjectIdentifier& identifier )
+void NameTranslator::Print( Pointer pointer, String& string, ObjectIdentifier* identifier )
 {
 	string = pointer.As<Name>().Get();
 }
 
-void NameTranslator::Parse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged )
+void NameTranslator::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
 {
 	pointer.As<Name>().Set( string );
 }
@@ -111,12 +111,12 @@ bool FilePathTranslator::Equals( Pointer a, Pointer b )
 	return DefaultEquals< FilePath >( a, b );
 }
 
-void FilePathTranslator::Print( Pointer pointer, String& string, ObjectIdentifier& identifier )
+void FilePathTranslator::Print( Pointer pointer, String& string, ObjectIdentifier* identifier )
 {
 	string = pointer.As<FilePath>();
 }
 
-void FilePathTranslator::Parse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged )
+void FilePathTranslator::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
 {
 	pointer.As<FilePath>().Set( string );
 }

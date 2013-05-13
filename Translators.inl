@@ -47,19 +47,19 @@ void Helium::Reflect::SimpleScalarTranslator<T>::Accept( Pointer pointer, Visito
 }
 
 template< class T >
-void Helium::Reflect::SimpleScalarTranslator<T>::Print( Pointer pointer, String& string, ObjectIdentifier& identifier )
+void Helium::Reflect::SimpleScalarTranslator<T>::Print( Pointer pointer, String& string, ObjectIdentifier* identifier )
 {
 	DefaultPrint< T >( pointer, string, identifier );
 }
 
 template< class T >
-void Helium::Reflect::SimpleScalarTranslator<T>::Parse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged )
+void Helium::Reflect::SimpleScalarTranslator<T>::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
 {
 	DefaultParse< T >( string, pointer, resolver, raiseChanged );
 }
 
 template<>
-inline void Helium::Reflect::SimpleScalarTranslator<uint8_t>::Print( Pointer pointer, String& string, ObjectIdentifier& identifier )
+inline void Helium::Reflect::SimpleScalarTranslator<uint8_t>::Print( Pointer pointer, String& string, ObjectIdentifier* identifier )
 {
 	uint16_t v = pointer.As<uint8_t>();
 
@@ -69,7 +69,7 @@ inline void Helium::Reflect::SimpleScalarTranslator<uint8_t>::Print( Pointer poi
 }
 
 template<>
-inline void Helium::Reflect::SimpleScalarTranslator<uint8_t>::Parse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged )
+inline void Helium::Reflect::SimpleScalarTranslator<uint8_t>::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
 {
 	std::stringstream str ( string.GetData() );
 	uint16_t v = 0;
@@ -79,7 +79,7 @@ inline void Helium::Reflect::SimpleScalarTranslator<uint8_t>::Parse( const Strin
 }
 
 template<>
-inline void Helium::Reflect::SimpleScalarTranslator<int8_t>::Print( Pointer pointer, String& string, ObjectIdentifier& identifier )
+inline void Helium::Reflect::SimpleScalarTranslator<int8_t>::Print( Pointer pointer, String& string, ObjectIdentifier* identifier )
 {
 	int16_t v = pointer.As<int8_t>();
 
@@ -89,7 +89,7 @@ inline void Helium::Reflect::SimpleScalarTranslator<int8_t>::Print( Pointer poin
 }
 
 template<>
-inline void Helium::Reflect::SimpleScalarTranslator<int8_t>::Parse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged )
+inline void Helium::Reflect::SimpleScalarTranslator<int8_t>::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
 {
 	std::stringstream str ( string.GetData() );
 	int16_t v = 0;
@@ -221,21 +221,27 @@ void Helium::Reflect::PointerTranslator<T>::Accept( Pointer pointer, Visitor& vi
 }
 
 template< class T >
-void Helium::Reflect::PointerTranslator<T>::Print( Pointer pointer, String& string, ObjectIdentifier& identifier)
+void Helium::Reflect::PointerTranslator<T>::Print( Pointer pointer, String& string, ObjectIdentifier* identifier)
 {
-	Name name;
-	identifier.Identify( pointer.As< StrongPtr< T > >(), name );
-	string = name.Get();
+	if ( identifier )
+	{
+		Name name;
+		identifier->Identify( pointer.As< StrongPtr< T > >(), name );
+		string = name.Get();
+	}
 }
 
 template< class T >
-void Helium::Reflect::PointerTranslator<T>::Parse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged )
+void Helium::Reflect::PointerTranslator<T>::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
 {
-	resolver.Resolve( Name( string ), pointer.As< StrongPtr< T > >() );
-
-	if ( raiseChanged && pointer.m_Object )
+	if ( resolver )
 	{
-		pointer.m_Object->RaiseChanged( pointer.m_Field ); 
+		resolver->Resolve( Name( string ), pointer.As< StrongPtr< T > >() );
+
+		if ( raiseChanged && pointer.m_Object )
+		{
+			pointer.m_Object->RaiseChanged( pointer.m_Field ); 
+		}
 	}
 }
 
@@ -278,7 +284,7 @@ void Helium::Reflect::EnumerationTranslator<T>::Accept( Pointer pointer, Visitor
 }
 
 template< class T >
-void Helium::Reflect::EnumerationTranslator<T>::Print( Pointer pointer, String& string, ObjectIdentifier& identifier)
+void Helium::Reflect::EnumerationTranslator<T>::Print( Pointer pointer, String& string, ObjectIdentifier* identifier)
 {
 	const Enumeration* enumeration = GetEnumeration< T >();
 
@@ -292,7 +298,7 @@ void Helium::Reflect::EnumerationTranslator<T>::Print( Pointer pointer, String& 
 }
 
 template< class T >
-void Helium::Reflect::EnumerationTranslator<T>::Parse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged )
+void Helium::Reflect::EnumerationTranslator<T>::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
 {
 	const Enumeration* enumeration = GetEnumeration< T >();
 	tstring str = string.GetData();

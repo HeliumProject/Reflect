@@ -34,7 +34,7 @@ void TypeTranslator::Accept( Pointer pointer, Visitor& visitor )
 	DefaultAccept< const Type* >( pointer, visitor );
 }
 
-void TypeTranslator::Print( Pointer pointer, String& string, ObjectIdentifier& identifier)
+void TypeTranslator::Print( Pointer pointer, String& string, ObjectIdentifier* identifier)
 {
 	string.Clear();
 
@@ -45,7 +45,7 @@ void TypeTranslator::Print( Pointer pointer, String& string, ObjectIdentifier& i
 	}
 }
 
-void TypeTranslator::Parse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged )
+void TypeTranslator::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
 {
 	const Type* type = Registry::GetInstance()->GetType( string.GetData() );
 

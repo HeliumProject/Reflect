@@ -65,6 +65,18 @@ Helium::Reflect::Variable::~Variable()
 	delete[] m_Address;
 }
 
+Helium::Reflect::Data::Data( Pointer pointer, Translator* translator )
+	: m_Pointer( pointer )
+	, m_Translator( translator )
+{
+}
+
+Helium::Reflect::Data::Data( const Data& rhs )
+	: m_Pointer( rhs.m_Pointer )
+	, m_Translator( rhs.m_Translator )
+{
+}
+
 template< class T >
 bool Helium::Reflect::ObjectResolver::Resolve( const Name& identity, StrongPtr< T >& object )
 {
@@ -127,7 +139,7 @@ Helium::Reflect::ScalarTranslator::ScalarTranslator( size_t size, ScalarType typ
 }
 
 template< class T >
-void Helium::Reflect::ScalarTranslator::DefaultPrint( Pointer pointer, String& string, ObjectIdentifier& identifier )
+void Helium::Reflect::ScalarTranslator::DefaultPrint( Pointer pointer, String& string, ObjectIdentifier* identifier )
 {
 	std::stringstream str;
 	str << pointer.As<T>();
@@ -135,7 +147,7 @@ void Helium::Reflect::ScalarTranslator::DefaultPrint( Pointer pointer, String& s
 }
 
 template< class T >
-void Helium::Reflect::ScalarTranslator::DefaultParse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged )
+void Helium::Reflect::ScalarTranslator::DefaultParse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
 {
 	std::stringstream str ( string.GetData() );
 	str >> pointer.As<T>();

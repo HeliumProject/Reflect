@@ -16,8 +16,8 @@ namespace Helium
 			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) HELIUM_OVERRIDE;
 			virtual bool Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
 			virtual void Accept( Pointer pointer, Visitor& visitor ) HELIUM_OVERRIDE;
-			virtual void Print( Pointer pointer, String& string, ObjectIdentifier& identifier ) HELIUM_OVERRIDE;
-			virtual void Parse( const String& string, Pointer pointer, ObjectResolver& resolver, bool raiseChanged ) HELIUM_OVERRIDE;
+			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier ) HELIUM_OVERRIDE;
+			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
 		};
 
 		inline Translator* AllocateTranslator( const tstring&, const tstring& )
