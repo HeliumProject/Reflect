@@ -22,6 +22,8 @@ Field::Field()
 , m_Offset( 0 )
 , m_Flags( 0 )
 , m_Index( ~0 )
+, m_KeyType( NULL )
+, m_ValueType( NULL )
 , m_Translator( NULL )
 {
 
@@ -283,20 +285,11 @@ uint32_t Structure::GetBaseFieldCount() const
 	return count;
 }
 
-Reflect::Field* Structure::AddField( const tchar_t* name, uint32_t size, uint32_t count, uint32_t offset, uint32_t flags, Translator* translator )
+Reflect::Field* Structure::AddField()
 {
-	// deduction of the data class has failed, you must provide one yourself!
-	HELIUM_ASSERT( translator );
-
 	Field field;
 	field.m_Composite = this;
-	field.m_Name = name;
-	field.m_Size = size;
-	field.m_Offset = offset;
-	field.m_Flags = flags;
 	field.m_Index = GetBaseFieldCount() + (uint32_t)m_Fields.GetSize();
-	field.m_Translator = translator;
 	m_Fields.Add( field );
-
 	return &m_Fields.GetLast();
 }

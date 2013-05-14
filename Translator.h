@@ -294,11 +294,25 @@ namespace Helium
 		};
 
 		//
-		// Translator class allocation
+		// Type and Translator deduction
 		//  Function overloading semantics provide for easier selection of a type T than using only templates
 		//   The first parameter gets overloaded with different arument types for the compiler to select the appropriate function
 		//   The second parameter ensures the bare type in the template argument is available for further deduction
 		//
+
+		template< class T >
+		const Type* DeduceKeyType()
+		{
+			T t = T ();
+			return DeduceKeyType( t, t );
+		}
+
+		template< class T >
+		const Type* DeduceValueType()
+		{
+			T t = T ();
+			return DeduceValueType( t, t );
+		}
 
 		template< class T >
 		Translator* AllocateTranslator()

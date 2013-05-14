@@ -47,9 +47,11 @@ namespace Helium
 			const tchar_t*   m_Name;       // name of this field
 			uint32_t         m_Size;       // the size of this field
 			uint32_t         m_Count;      // the static array size
-			uintptr_t        m_Offset;     // the offset to the field
+			uint32_t         m_Offset;     // the offset to the field
 			uint32_t         m_Flags;      // flags for special behavior
 			uint32_t         m_Index;      // the unique id of this field
+			const Type*      m_KeyType;    // the key type, if any, of the internal data
+			const Type*      m_ValueType;  // the value type, if any, of the internal data
 			Translator*      m_Translator; // interface to the data
 		};
 
@@ -120,7 +122,7 @@ namespace Helium
 			uint32_t GetBaseFieldCount() const;
 
 			// concrete field population functions, called from template functions below with deducted data
-			Reflect::Field* AddField( const tchar_t* name, uint32_t size, uint32_t count, uint32_t offset, uint32_t flags, Translator* translator );
+			Reflect::Field* AddField();
 
 			// compute the offset from the 'this' pointer for the specified pointer-to-member
 			template < class StructureT, class FieldT >
@@ -138,11 +140,21 @@ namespace Helium
 			template < class T >
 			static inline uint32_t GetCount( std::true_type  /*is_array*/  );
 
+			// deduce key type
+			template < class T >
+			static inline const Type* DeduceKeyType( std::false_type /*is_array*/ );
+			template < class T >
+			static inline const Type* DeduceKeyType( std::true_type  /*is_array*/  );
+
+			// deduce value type
+			template < class T >
+			static inline const Type* DeduceValueType( std::false_type /*is_array*/ );
+			template < class T >
+			static inline const Type* DeduceValueType( std::true_type  /*is_array*/  );
+
 			// create translator object
 			template < class T >
 			static inline Translator* AllocateTranslator( std::false_type /*is_array*/ );
-
-			// create translator object
 			template < class T >
 			static inline Translator* AllocateTranslator( std::true_type  /*is_array*/  );
 

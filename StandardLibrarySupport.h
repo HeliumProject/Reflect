@@ -20,6 +20,14 @@ namespace Helium
 			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
 		};
 
+		inline const Type* DeduceKeyType( const tstring&, const tstring& )
+		{
+			return NULL;
+		}
+		inline const Type* DeduceValueType( const tstring&, const tstring& )
+		{
+			return NULL;
+		}
 		inline Translator* AllocateTranslator( const tstring&, const tstring& )
 		{
 			return new StlStringTranslator;
@@ -61,6 +69,16 @@ namespace Helium
 		};
 		
 		template <class T>
+		inline const Type* DeduceKeyType( const std::vector<T>&, const std::vector<T>& )
+		{
+			return NULL;
+		}
+		template <class T>
+		inline const Type* DeduceValueType( const std::vector<T>&, const std::vector<T>& )
+		{
+			return DeduceValueType<T>();
+		}
+		template <class T>
 		inline Translator* AllocateTranslator( const std::vector<T>&, const std::vector<T>& )
 		{
 			return new SimpleStlVectorTranslator<T>();
@@ -97,6 +115,16 @@ namespace Helium
 			Translator* m_InternalTranslator;
 		};
 		
+		template <class T>
+		inline const Type* DeduceKeyType( const std::set<T>&, const std::set<T>& )
+		{
+			return NULL;
+		}
+		template <class T>
+		inline const Type* DeduceValueType( const std::set<T>&, const std::set<T>& )
+		{
+			return DeduceValueType<T>();
+		}
 		template <class T>
 		inline Translator* AllocateTranslator( const std::set<T>&, const std::set<T>& )
 		{
@@ -136,6 +164,16 @@ namespace Helium
 			Translator* m_InternalTranslatorValue;
 		};
 		
+		template <class KeyT, class ValueT>
+		inline const Type* DeduceKeyType( const std::map<KeyT, ValueT>&, const std::map<KeyT, ValueT>& )
+		{
+			return DeduceValueType<KeyT>();
+		}
+		template <class KeyT, class ValueT>
+		inline const Type* DeduceValueType( const std::map<KeyT, ValueT>&, const std::map<KeyT, ValueT>& )
+		{
+			return DeduceValueType<ValueT>();
+		}
 		template <class KeyT, class ValueT>
 		inline Translator* AllocateTranslator( const std::map<KeyT, ValueT>&, const std::map<KeyT, ValueT>& )
 		{

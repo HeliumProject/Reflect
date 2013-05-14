@@ -101,6 +101,30 @@ uint32_t Helium::Reflect::Structure::GetCount( std::true_type /* is_array */ )
 }
 
 template < class T >
+const Helium::Reflect::Type* Helium::Reflect::Structure::DeduceKeyType( std::false_type /* is_array */ )
+{
+	return Reflect::DeduceKeyType< T >();
+}
+
+template < class T >
+const Helium::Reflect::Type* Helium::Reflect::Structure::DeduceKeyType( std::true_type /* is_array */ )
+{
+	return Reflect::DeduceKeyType< std::remove_extent< T >::type >();
+}
+
+template < class T >
+const Helium::Reflect::Type* Helium::Reflect::Structure::DeduceValueType( std::false_type /* is_array */ )
+{
+	return Reflect::DeduceValueType< T >();
+}
+
+template < class T >
+const Helium::Reflect::Type* Helium::Reflect::Structure::DeduceValueType( std::true_type /* is_array */ )
+{
+	return Reflect::DeduceValueType< std::remove_extent< T >::type >();
+}
+
+template < class T >
 Helium::Reflect::Translator* Helium::Reflect::Structure::AllocateTranslator( std::false_type /* is_array */ )
 {
 	return Reflect::AllocateTranslator< T >();
@@ -115,12 +139,16 @@ Helium::Reflect::Translator* Helium::Reflect::Structure::AllocateTranslator( std
 template < class StructureT, class FieldT >
 Helium::Reflect::Field* Helium::Reflect::Structure::AddField( FieldT StructureT::* field, const tchar_t* name, uint32_t flags, Translator* translator )
 {
-	if ( translator == NULL )
-	{
-		translator = AllocateTranslator<FieldT>( std::is_array< FieldT >() );
-	}
-
-	return AddField( name, sizeof(FieldT), GetCount< FieldT >( std::is_array< FieldT >() ), GetOffset(field), flags, translator );
+	Field* f = AddField();
+	f->m_Name = name;
+	f->m_Size = sizeof(FieldT);
+	f->m_Count = GetCount< FieldT >( std::is_array< FieldT >() );
+	f->m_Offset = GetOffset(field);
+	f->m_Flags = flags;
+	f->m_KeyType = DeduceKeyType<FieldT>( std::is_array< FieldT >() );
+	f->m_ValueType = DeduceValueType<FieldT>( std::is_array< FieldT >() );
+	f->m_Translator = translator ? translator : AllocateTranslator<FieldT>( std::is_array< FieldT >() );
+	return f;
 }
 
 //
