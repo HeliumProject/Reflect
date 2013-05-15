@@ -1,7 +1,9 @@
 #pragma once
 
 #include <sstream>
-#include <type_traits>
+
+#include "Platform/Types.h"
+#include "Platform/Utility.h"
 
 #include "Foundation/TUID.h"
 #include "Foundation/Name.h"

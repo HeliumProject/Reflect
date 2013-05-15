@@ -7,7 +7,6 @@
 #include "Foundation/Set.h"
 
 #include "Reflect/API.h"
-#include "Reflect/Object.h"
 #include "Reflect/ReflectionInfo.h"
 
 namespace Helium
@@ -23,17 +22,17 @@ namespace Helium
 		class HELIUM_REFLECT_API Pointer
 		{
 		public:
-			inline Pointer();
-			inline Pointer( const Field* field, Object* object, uint32_t index = 0 );
-			inline Pointer( const Field* field, void* composite, Object* object, uint32_t index = 0 );
-			inline Pointer( void *rawPtr, const Field* field = NULL, Object* object = NULL );
-			inline Pointer( const Pointer& rhs );
+			Pointer();
+			Pointer( const Field* field, Object* object, uint32_t index = 0 );
+			Pointer( const Field* field, void* composite, Object* object, uint32_t index = 0 );
+			Pointer( void *rawPtr, const Field* field = NULL, Object* object = NULL );
+			Pointer( const Pointer& rhs );
 
 			// resolve the actual memory address of the data as some specific type of data (danger!)
 			template< class T > T& As();
 
 			// if we point to an object, notify the host object that it was changed (if doIt is true)
-			inline void RaiseChanged( bool doIt = true );
+			void RaiseChanged( bool doIt = true );
 
 			void*        m_Address;
 			const Field* m_Field;

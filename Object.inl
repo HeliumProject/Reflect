@@ -16,13 +16,13 @@ void Helium::Reflect::Object::FieldChanged( FieldT* fieldAddress ) const
 }
 
 template< class ObjectT, class FieldT >
-void Helium::Reflect::Object::ChangeField( FieldT ObjectT::* field, const FieldT& newValue )
+void Helium::Reflect::Object::ChangeField( FieldT ObjectT::* pointerToMember, const FieldT& newValue )
 {
     // set the field via pointer-to-member on the deduced templated type (!)
-    this->*field = newValue;
+    this->*pointerToMember = newValue;
 
     // find the field in our reflection information
-    const Reflect::Field* field = GetClass()->FindField( field );
+    const Reflect::Field* field = GetClass()->FindField( pointerToMember );
 
     // your field is not exposed to Reflect, add it in your Structure function
     HELIUM_ASSERT( field );

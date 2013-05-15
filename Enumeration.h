@@ -1,8 +1,7 @@
 #pragma once
 
-#include <hash_map>
-
 #include "Foundation/DynamicArray.h"
+
 #include "Reflect/Type.h"
 
 namespace Helium

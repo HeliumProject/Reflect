@@ -1,7 +1,3 @@
-//
-// Structure
-//
-
 template< class StructureT >
 void Helium::Reflect::Structure::Create( Structure const*& pointer, const tchar_t* name, const tchar_t* baseName )
 {

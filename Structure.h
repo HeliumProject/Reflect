@@ -1,6 +1,7 @@
 #pragma once
 
-#include <type_traits>
+#include "Platform/Types.h"
+#include "Platform/Utility.h"
 
 #include "Foundation/Attribute.h"
 #include "Foundation/DynamicArray.h"
@@ -8,6 +9,8 @@
 
 #include "Reflect/Type.h"
 #include "Reflect/Visitor.h"
+#include "Reflect/Registry.h"
+#include "Reflect/Translator.h"
 
 namespace Helium
 {

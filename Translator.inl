@@ -1,55 +1,7 @@
-Helium::Reflect::Pointer::Pointer()
-	: m_Address( 0x0 )
-	, m_Field( 0 )
-	, m_Object( 0 )
-{
-
-}
-
-Helium::Reflect::Pointer::Pointer( const Field* field, Object* object, uint32_t index )
-	: m_Address( 0x0 )
-	, m_Field( field )
-	, m_Object( object )
-{
-	m_Address = reinterpret_cast< char* >( object ) + ( m_Field->m_Offset + ( ( m_Field->m_Size / m_Field->m_Count ) * index ) );
-}
-
-Helium::Reflect::Pointer::Pointer( const Field* field, void* composite, Object* object, uint32_t index )
-	: m_Address( 0x0 )
-	, m_Field( field )
-	, m_Object( object )
-{
-	m_Address = reinterpret_cast< char* >( composite ) + ( m_Field->m_Offset + ( ( m_Field->m_Size / m_Field->m_Count ) * index ) );
-}
-
-Helium::Reflect::Pointer::Pointer( void *rawPtr, const Field* field, Object* object )
-	: m_Address( rawPtr )
-	, m_Field( field )
-	, m_Object( object )
-{
-
-}
-
-Helium::Reflect::Pointer::Pointer( const Pointer& rhs )
-	: m_Address( rhs.m_Address )
-	, m_Field( rhs.m_Field )
-	, m_Object( rhs.m_Object )
-{
-
-}
-
 template< class T >
 T& Helium::Reflect::Pointer::As()
 {
 	return *reinterpret_cast< T* >( m_Address );
-}
-
-void Helium::Reflect::Pointer::RaiseChanged( bool doIt )
-{
-	if ( doIt && m_Object )
-	{
-		m_Object->RaiseChanged( m_Field );
-	}
 }
 
 Helium::Reflect::Variable::Variable( Translator* translator )
@@ -62,7 +14,7 @@ Helium::Reflect::Variable::Variable( Translator* translator )
 Helium::Reflect::Variable::~Variable()
 {
 	m_Translator->Destruct( *this );
-	delete[] m_Address;
+	delete[] static_cast< char* >( m_Address );
 }
 
 Helium::Reflect::Data::Data( Pointer pointer, Translator* translator )
@@ -166,11 +118,7 @@ void Helium::Reflect::ScalarTranslator::DefaultParse( const String& string, Poin
 {
 	std::stringstream str ( string.GetData() );
 	str >> pointer.As<T>();
-
-	if ( raiseChanged && pointer.m_Object )
-	{
-		pointer.m_Object->RaiseChanged( pointer.m_Field ); 
-	}
+	pointer.RaiseChanged( raiseChanged ); 
 }
 
 Helium::Reflect::StructureTranslator::StructureTranslator( size_t size )

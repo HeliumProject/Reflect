@@ -27,3 +27,9 @@ Helium::Reflect::ObjectPtr Helium::Reflect::Registry::CreateInstance( const tcha
     uint32_t crc = Crc32( name );
     return CreateInstance( crc );
 }
+
+template<class T>
+Helium::SmartPtr< T > Helium::Reflect::Registry::CreateInstance()
+{
+    return Reflect::AssertCast< T >( CreateInstance( Reflect::GetClass< T >() ) );
+}
