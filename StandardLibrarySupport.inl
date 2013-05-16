@@ -453,7 +453,7 @@ void Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::Copy( Pointer src, P
 
 		std::map<KeyT, ValueT>::value_type temp;
 
-		Pointer dp_dest_key(const_cast<ValueT *>(&temp.first), dest.m_Field, dest.m_Object);
+		Pointer dp_dest_key(const_cast<KeyT *>(&temp.first), dest.m_Field, dest.m_Object);
 		Pointer dp_dest_value(&temp.second, dest.m_Field, dest.m_Object);
 
 		m_InternalTranslatorKey->Copy(dp_src_key, dp_dest_key, flags);

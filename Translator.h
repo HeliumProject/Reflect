@@ -63,6 +63,9 @@ namespace Helium
 			inline Data( Pointer pointer, Translator* translator );
 			inline Data( const Data& data );
 
+			inline bool operator==( const Data& rhs );
+			inline bool operator!=( const Data& rhs );
+
 			Pointer     m_Pointer;
 			Translator* m_Translator;
 		};

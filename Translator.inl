@@ -77,6 +77,21 @@ Helium::Reflect::Data::Data( const Data& rhs )
 {
 }
 
+bool Helium::Reflect::Data::operator==( const Data& rhs )
+{
+	HELIUM_ASSERT( m_Translator == rhs.m_Translator );
+	if ( m_Translator == rhs.m_Translator )
+	{
+		return m_Translator->Equals( m_Pointer, rhs.m_Pointer );
+	}
+	return false;
+}
+
+bool Helium::Reflect::Data::operator!=( const Data& rhs )
+{
+	return !this->operator==( rhs );
+}
+
 template< class T >
 bool Helium::Reflect::ObjectResolver::Resolve( const Name& identity, StrongPtr< T >& object )
 {

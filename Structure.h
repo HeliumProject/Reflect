@@ -43,7 +43,7 @@ namespace Helium
 			// determine if this field should be serialized
 			bool ShouldSerialize( void* address, Object* object, uint32_t index = 0 ) const;
 
-			const Structure* m_Composite;  // the type we are a field of
+			const Structure* m_Structure;  // the type we are a field of
 			const tchar_t*   m_Name;       // name of this field
 			uint32_t         m_Size;       // the size of this field
 			uint32_t         m_Count;      // the static array size

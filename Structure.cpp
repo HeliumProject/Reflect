@@ -15,7 +15,7 @@ using namespace Helium::Reflect;
 #pragma TODO("Remove separate base/derived structure macros in favor of registering StructureBase (like Object)")
 
 Field::Field()
-: m_Composite( NULL )
+: m_Structure( NULL )
 , m_Name( NULL )
 , m_Size( 0 )
 , m_Count( 1 )
@@ -32,7 +32,7 @@ Field::Field()
 bool Field::IsDefaultValue( void* address, Object* object, uint32_t index ) const
 {
 	Pointer value ( this, address, object, index );
-	Pointer default ( this, m_Composite->m_Default, object, index );
+	Pointer default ( this, m_Structure->m_Default, NULL, index );
 	return m_Translator->Equals( value, default );
 }
 
@@ -288,7 +288,7 @@ uint32_t Structure::GetBaseFieldCount() const
 Reflect::Field* Structure::AddField()
 {
 	Field field;
-	field.m_Composite = this;
+	field.m_Structure = this;
 	field.m_Index = GetBaseFieldCount() + (uint32_t)m_Fields.GetSize();
 	m_Fields.Add( field );
 	return &m_Fields.GetLast();

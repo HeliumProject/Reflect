@@ -171,7 +171,7 @@ namespace Helium
 
 		//////////////////////////////////////////////////////////////////////////
 
-		class TypeTranslator : public ScalarTranslator
+		class HELIUM_REFLECT_API TypeTranslator : public ScalarTranslator
 		{
 		public:
 			REFLECTION_TYPE( ReflectionTypes::TypeTranslator, TypeTranslator, ScalarTranslator );
