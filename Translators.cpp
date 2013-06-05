@@ -6,6 +6,16 @@
 using namespace Helium;
 using namespace Helium::Reflect;
 
+void Reflect::Identify( ObjectIdentifier* identifier, Pointer pointer, Name& name )
+{
+	identifier->Identify( pointer.As< ObjectPtr >(), name );
+}
+
+void Reflect::Resolve( ObjectResolver* resolver, Name name, Pointer pointer )
+{
+	resolver->Resolve( name, pointer.As< ObjectPtr >() );
+}
+
 TypeTranslator::TypeTranslator()
 	: ScalarTranslator( sizeof( const Type* ), ScalarTypes::String )
 {

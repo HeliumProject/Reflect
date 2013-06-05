@@ -38,9 +38,8 @@ void Helium::Reflect::SimpleDynamicArrayTranslator<T>::Copy( Pointer src, Pointe
 
 	v_dest.Resize(v_src.GetSize());
 
-	DynamicArray<T>::Iterator iter_src = v_src.Begin();
-	DynamicArray<T>::Iterator iter_dest = v_dest.Begin();
-
+	typename DynamicArray<T>::Iterator iter_src = v_src.Begin();
+	typename DynamicArray<T>::Iterator iter_dest = v_dest.Begin();
 	for (; iter_src != v_src.End(); ++iter_src, ++iter_dest)
 	{
 		Pointer dp_src(&*iter_src, src.m_Field, src.m_Object);
@@ -107,7 +106,7 @@ void Helium::Reflect::SimpleDynamicArrayTranslator<T>::GetItems( Pointer sequenc
 
 	items.Reserve(v.GetSize());
 
-	for (DynamicArray<T>::Iterator iter = v.Begin(); iter != v.End(); ++iter)
+	for ( typename DynamicArray<T>::Iterator iter = v.Begin(); iter != v.End(); ++iter )
 	{
 		items.Add(Pointer(&*iter, sequence.m_Field, sequence.m_Object));
 	}
@@ -199,8 +198,8 @@ void Helium::Reflect::SimpleDynamicArrayTranslator<T>::SwapInternalValues( Point
 
 	T temp;
 
-	DynamicArray<T>::Iterator iter_a = v.Begin() + a;
-	DynamicArray<T>::Iterator iter_b = v.Begin() + b;
+	typename DynamicArray<T>::Iterator iter_a = v.Begin() + a;
+	typename DynamicArray<T>::Iterator iter_b = v.Begin() + b;
 
 	Pointer dp_a(&*iter_a, sequence.m_Field, sequence.m_Object);
 	Pointer dp_b(&*iter_b, sequence.m_Field, sequence.m_Object);
@@ -253,8 +252,7 @@ void Helium::Reflect::SimpleSetTranslator<T>::Copy( Pointer src, Pointer dest, u
 
 	s_dest.Clear();
 
-	for (Set<T>::Iterator iter_src = s_src.Begin();
-		iter_src != s_src.End(); ++iter_src)
+	for ( typename Set<T>::Iterator iter_src = s_src.Begin(); iter_src != s_src.End(); ++iter_src )
 	{
 		// Should be safe since we copy FROM this. Should not break const-ness (might increase a ref count or something like that though)
 		Pointer dp_src(const_cast<T *>(&*iter_src), src.m_Field, src.m_Object);
@@ -325,7 +323,7 @@ void Helium::Reflect::SimpleSetTranslator<T>::GetItems( Pointer set, DynamicArra
 	Set<T> &v = set.As< Set<T> >();
 	items.Reserve(v.GetSize());
 
-	for (Set<T>::Iterator iter = v.Begin(); iter != v.End(); ++iter)
+	for ( typename Set<T>::Iterator iter = v.Begin(); iter != v.End(); ++iter )
 	{
 		// This is dangerous.. callers could modify values passed out
 		Pointer dp(const_cast<T *>(&*iter), set.m_Field, set.m_Object);
@@ -338,7 +336,7 @@ void Helium::Reflect::SimpleSetTranslator<T>::InsertItem( Pointer set, Pointer i
 {
 	// Not crazy about this insert going through the copy ctor instead of our copy implementation for the data type
 	Set<T> &v = set.As< Set<T> >();
-	v.Insert(Set<T>::ValueType(item.As<T>()));
+	v.Insert( typename Set<T>::ValueType(item.As<T>()) );
 }
 
 template <class T>
@@ -346,7 +344,7 @@ void Helium::Reflect::SimpleSetTranslator<T>::RemoveItem( Pointer set, Pointer i
 {
 	// Not crazy about this insert going through the c++ equal operator instead of the data type
 	Set<T> &v = set.As< Set<T> >();
-	v.Remove(Set<T>::ValueType(item.As<T>()));
+	v.Remove( typename Set<T>::ValueType(item.As<T>()) );
 }
 
 template <class T>
@@ -370,7 +368,7 @@ bool Helium::Reflect::SimpleSetTranslator<T>::ContainsItem( Pointer set, Pointer
 	return false;
 #endif
 
-	Set<T>::Iterator iter = s.Find(item.As<T>());
+	typename Set<T>::Iterator iter = s.Find(item.As<T>());
 	return iter != s.End();
 }
 
@@ -418,14 +416,13 @@ void Helium::Reflect::SimpleMapTranslator<KeyT, ValueT>::Copy( Pointer src, Poin
 
 	m_dest.Clear();
 
-	for (Map<KeyT, ValueT>::Iterator iter_src = m_src.Begin();
-		iter_src != m_src.End(); ++iter_src)
+	for ( typename Map<KeyT, ValueT>::Iterator iter_src = m_src.Begin(); iter_src != m_src.End(); ++iter_src )
 	{
 		// Should be safe since we copy FROM this. Should not break const-ness (might increase a ref count or something like that though)
 		Pointer dp_src_key(const_cast<KeyT *>(&iter_src->First()), src.m_Field, src.m_Object);
 		Pointer dp_src_value(&iter_src->Second(), src.m_Field, src.m_Object);
 
-		Map<KeyT, ValueT>::ValueType temp;
+		typename Map<KeyT, ValueT>::ValueType temp;
 
 		Pointer dp_dest_key(const_cast<ValueT *>(&temp.First()), dest.m_Field, dest.m_Object);
 		Pointer dp_dest_value(&temp.Second(), dest.m_Field, dest.m_Object);
@@ -474,8 +471,7 @@ void Helium::Reflect::SimpleMapTranslator<KeyT, ValueT>::GetItems( Pointer assoc
 {
 	Map<KeyT, ValueT> &m = association.As< Map<KeyT, ValueT> >();
 
-	for (Map<KeyT, ValueT>::Iterator iter = m.Begin();
-		iter != m.End(); ++iter)
+	for ( typename Map<KeyT, ValueT>::Iterator iter = m.Begin(); iter != m.End(); ++iter )
 	{
 		keys.Add(Pointer(const_cast<KeyT *>(&iter->First()), association.m_Field, association.m_Object));
 		values.Add(Pointer(&iter->Second(), association.m_Field, association.m_Object));
@@ -500,7 +496,7 @@ template <class KeyT, class ValueT>
 void Helium::Reflect::SimpleMapTranslator<KeyT, ValueT>::RemoveItem( Pointer association, Pointer key )
 {
 	Map<KeyT, ValueT> &m = association.As< Map<KeyT, ValueT> >();
-	Map<KeyT, ValueT>::Iterator iter = m.Find(key.As<KeyT>());
+	typename Map<KeyT, ValueT>::Iterator iter = m.Find(key.As<KeyT>());
 
 	if (iter != m.End())
 	{

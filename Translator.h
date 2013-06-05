@@ -257,25 +257,13 @@ namespace Helium
 		//
 
 		template< class T >
-		const Type* DeduceKeyType()
-		{
-			T t = T ();
-			return DeduceKeyType( t, t );
-		}
+		const Type* DeduceKeyType();
 
 		template< class T >
-		const Type* DeduceValueType()
-		{
-			T t = T ();
-			return DeduceValueType( t, t );
-		}
+		const Type* DeduceValueType();
 
 		template< class T >
-		Translator* AllocateTranslator()
-		{
-			T t = T ();
-			return AllocateTranslator( t, t );
-		}
+		Translator* AllocateTranslator();
 	}
 }
 

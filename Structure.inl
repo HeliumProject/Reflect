@@ -105,7 +105,7 @@ const Helium::Reflect::Type* Helium::Reflect::Structure::DeduceKeyType( std::fal
 template < class T >
 const Helium::Reflect::Type* Helium::Reflect::Structure::DeduceKeyType( std::true_type /* is_array */ )
 {
-	return Reflect::DeduceKeyType< std::remove_extent< T >::type >();
+	return Reflect::DeduceKeyType< typename std::remove_extent< T >::type >();
 }
 
 template < class T >
@@ -117,7 +117,7 @@ const Helium::Reflect::Type* Helium::Reflect::Structure::DeduceValueType( std::f
 template < class T >
 const Helium::Reflect::Type* Helium::Reflect::Structure::DeduceValueType( std::true_type /* is_array */ )
 {
-	return Reflect::DeduceValueType< std::remove_extent< T >::type >();
+	return Reflect::DeduceValueType< typename std::remove_extent< T >::type >();
 }
 
 template < class T >
@@ -129,7 +129,7 @@ Helium::Reflect::Translator* Helium::Reflect::Structure::AllocateTranslator( std
 template < class T >
 Helium::Reflect::Translator* Helium::Reflect::Structure::AllocateTranslator( std::true_type /* is_array */ )
 {
-	return Reflect::AllocateTranslator< std::remove_extent< T >::type >();
+	return Reflect::AllocateTranslator< typename std::remove_extent< T >::type >();
 }
 
 template < class StructureT, class FieldT >

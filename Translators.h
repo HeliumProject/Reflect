@@ -29,6 +29,18 @@ namespace Helium
 			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
 		};
 
+		template<> Helium::Reflect::SimpleScalarTranslator< bool >::SimpleScalarTranslator()      : ScalarTranslator( 1, ScalarTypes::Boolean ) {}
+		template<> Helium::Reflect::SimpleScalarTranslator< uint8_t >::SimpleScalarTranslator()   : ScalarTranslator( 1, ScalarTypes::Unsigned8 ) {}
+		template<> Helium::Reflect::SimpleScalarTranslator< uint16_t >::SimpleScalarTranslator()  : ScalarTranslator( 2, ScalarTypes::Unsigned16 ) {}
+		template<> Helium::Reflect::SimpleScalarTranslator< uint32_t >::SimpleScalarTranslator()  : ScalarTranslator( 4, ScalarTypes::Unsigned32 ) {}
+		template<> Helium::Reflect::SimpleScalarTranslator< uint64_t >::SimpleScalarTranslator()  : ScalarTranslator( 8, ScalarTypes::Unsigned64 ) {}
+		template<> Helium::Reflect::SimpleScalarTranslator< int8_t >::SimpleScalarTranslator()    : ScalarTranslator( 1, ScalarTypes::Signed8 ) {}
+		template<> Helium::Reflect::SimpleScalarTranslator< int16_t >::SimpleScalarTranslator()   : ScalarTranslator( 2, ScalarTypes::Signed16 ) {}
+		template<> Helium::Reflect::SimpleScalarTranslator< int32_t >::SimpleScalarTranslator()   : ScalarTranslator( 4, ScalarTypes::Signed32 ) {}
+		template<> Helium::Reflect::SimpleScalarTranslator< int64_t >::SimpleScalarTranslator()   : ScalarTranslator( 8, ScalarTypes::Signed64 ) {}
+		template<> Helium::Reflect::SimpleScalarTranslator< float32_t >::SimpleScalarTranslator() : ScalarTranslator( 4, ScalarTypes::Float32 ) {}
+		template<> Helium::Reflect::SimpleScalarTranslator< float64_t >::SimpleScalarTranslator() : ScalarTranslator( 8, ScalarTypes::Float64 ) {}
+
 		inline const Type* DeduceKeyType( bool, bool )                { return NULL; }
 		inline const Type* DeduceValueType( bool, bool )              { return NULL; }
 		inline Translator* AllocateTranslator( bool,  bool )          { return new SimpleScalarTranslator< bool >; }
@@ -135,6 +147,9 @@ namespace Helium
 		{
 			return new PointerTranslator< T >;
 		}
+
+		void Identify( ObjectIdentifier* identifier, Pointer pointer, Name& name );
+		void Resolve( ObjectResolver* resolver, Name name, Pointer pointer );
 
 		//////////////////////////////////////////////////////////////////////////
 

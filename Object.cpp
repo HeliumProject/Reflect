@@ -9,8 +9,6 @@
 #include "Reflect/Registry.h"
 #include "Reflect/TranslatorDeduction.h"
 
-#include <malloc.h>
-
 using namespace Helium;
 using namespace Helium::Reflect;
 
@@ -331,4 +329,15 @@ ObjectPtr Object::Clone()
 void Object::RaiseChanged( const Field* field ) const
 {
 	e_Changed.Raise( ObjectChangeArgs( this, field ) );
+}
+
+bool DeferredResolver::Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass )
+{
+	Entry entry;
+	entry.m_Pointer = &pointer;
+	entry.m_PointerClass = pointerClass;
+	entry.m_Identity = identity;
+	m_Entries.Add( entry );
+
+	return true;
 }

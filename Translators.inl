@@ -1,19 +1,6 @@
-template<> Helium::Reflect::SimpleScalarTranslator< bool >::SimpleScalarTranslator()      : ScalarTranslator( 1, ScalarTypes::Boolean ) {}
-template<> Helium::Reflect::SimpleScalarTranslator< uint8_t >::SimpleScalarTranslator()   : ScalarTranslator( 1, ScalarTypes::Unsigned8 ) {}
-template<> Helium::Reflect::SimpleScalarTranslator< uint16_t >::SimpleScalarTranslator()  : ScalarTranslator( 2, ScalarTypes::Unsigned16 ) {}
-template<> Helium::Reflect::SimpleScalarTranslator< uint32_t >::SimpleScalarTranslator()  : ScalarTranslator( 4, ScalarTypes::Unsigned32 ) {}
-template<> Helium::Reflect::SimpleScalarTranslator< uint64_t >::SimpleScalarTranslator()  : ScalarTranslator( 8, ScalarTypes::Unsigned64 ) {}
-template<> Helium::Reflect::SimpleScalarTranslator< int8_t >::SimpleScalarTranslator()    : ScalarTranslator( 1, ScalarTypes::Signed8 ) {}
-template<> Helium::Reflect::SimpleScalarTranslator< int16_t >::SimpleScalarTranslator()   : ScalarTranslator( 2, ScalarTypes::Signed16 ) {}
-template<> Helium::Reflect::SimpleScalarTranslator< int32_t >::SimpleScalarTranslator()   : ScalarTranslator( 4, ScalarTypes::Signed32 ) {}
-template<> Helium::Reflect::SimpleScalarTranslator< int64_t >::SimpleScalarTranslator()   : ScalarTranslator( 8, ScalarTypes::Signed64 ) {}
-template<> Helium::Reflect::SimpleScalarTranslator< float32_t >::SimpleScalarTranslator() : ScalarTranslator( 4, ScalarTypes::Float32 ) {}
-template<> Helium::Reflect::SimpleScalarTranslator< float64_t >::SimpleScalarTranslator() : ScalarTranslator( 8, ScalarTypes::Float64 ) {}
-
 template< class T >
 Helium::Reflect::SimpleScalarTranslator<T>::SimpleScalarTranslator()
 {
-	HELIUM_COMPILE_ASSERT( false );
 }
 
 template< class T >
@@ -117,11 +104,7 @@ void Helium::Reflect::SimpleStructureTranslator<T>::Copy( Pointer src, Pointer d
 {
 	const Structure* structure = Reflect::GetStructure< T >();
 	structure->Copy( src.m_Address, src.m_Object, dest.m_Address, dest.m_Object );
-
-	if ( flags & CopyFlags::Notify && dest.m_Object )
-	{
-		dest.m_Object->RaiseChanged( dest.m_Field ); 
-	}
+	dest.RaiseChanged( flags & CopyFlags::Notify ); 
 }
 
 template< class T >
@@ -171,7 +154,7 @@ void Helium::Reflect::PointerTranslator<T>::Copy( Pointer src, Pointer dest, uin
 		StrongPtr< T >& destPtr ( dest.As< StrongPtr< T > >() );
 		if ( srcPtr.ReferencesObject() )
 		{
-			destPtr = AssertCast< T >( srcPtr->Clone() );
+			destPtr = srcPtr->Clone();
 		}
 		else
 		{
@@ -179,10 +162,7 @@ void Helium::Reflect::PointerTranslator<T>::Copy( Pointer src, Pointer dest, uin
 		}
 	}
 
-	if ( flags & CopyFlags::Notify && dest.m_Object )
-	{
-		dest.m_Object->RaiseChanged( dest.m_Field ); 
-	}
+	dest.RaiseChanged( flags & CopyFlags::Notify ); 
 }
 
 template< class T >
@@ -197,12 +177,12 @@ bool Helium::Reflect::PointerTranslator<T>::Equals( Pointer a, Pointer b )
 }
 
 template< class T >
-void Helium::Reflect::PointerTranslator<T>::Print( Pointer pointer, String& string, ObjectIdentifier* identifier)
+void Helium::Reflect::PointerTranslator<T>::Print( Pointer pointer, String& string, ObjectIdentifier* identifier )
 {
 	if ( identifier )
 	{
 		Name name;
-		identifier->Identify( pointer.As< StrongPtr< T > >(), name );
+		Identify( identifier, pointer, name );
 		string = name.Get();
 	}
 }
@@ -212,12 +192,8 @@ void Helium::Reflect::PointerTranslator<T>::Parse( const String& string, Pointer
 {
 	if ( resolver )
 	{
-		resolver->Resolve( Name( string ), pointer.As< StrongPtr< T > >() );
-
-		if ( raiseChanged && pointer.m_Object )
-		{
-			pointer.m_Object->RaiseChanged( pointer.m_Field ); 
-		}
+		Resolve( resolver, Name( string ), pointer );
+		pointer.RaiseChanged( raiseChanged );
 	}
 }
 
@@ -260,7 +236,7 @@ void Helium::Reflect::EnumerationTranslator<T>::Print( Pointer pointer, String& 
 
 	uint32_t value = 0;
 	value = static_cast< uint32_t >( pointer.As< T >() );
-	HELIUM_COMPILE_ASSERT( sizeof( T::Enum ) == sizeof( value ) );
+	HELIUM_COMPILE_ASSERT( sizeof( typename T::Enum ) == sizeof( value ) );
 
 	tstring str;
 	enumeration->GetString( value, str );
@@ -275,11 +251,9 @@ void Helium::Reflect::EnumerationTranslator<T>::Parse( const String& string, Poi
 
 	uint32_t value = 0;
 	enumeration->GetValue( str, value );
-	pointer.As< T >() = static_cast< T::Enum >( value );
-	HELIUM_COMPILE_ASSERT( sizeof( T::Enum ) == sizeof( value ) );
+	pointer.As< T >() = static_cast< typename T::Enum >( value );
+	HELIUM_COMPILE_ASSERT( sizeof( typename T::Enum ) == sizeof( value ) );
 
-	if ( raiseChanged && pointer.m_Object )
-	{
-		pointer.m_Object->RaiseChanged( pointer.m_Field ); 
-	}
+	pointer.RaiseChanged( raiseChanged ); 
 }
+

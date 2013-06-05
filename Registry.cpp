@@ -9,8 +9,6 @@
 #include "Reflect/Object.h"
 #include "Reflect/TranslatorDeduction.h"
 
-#include <io.h>
-
 // Prints the callstack for every init and cleanup call
 // #define REFLECT_DEBUG_INIT_AND_CLEANUP
 
@@ -59,7 +57,7 @@ struct CaseInsensitiveNameCompare
 
     bool operator()( const KeyValue< const tchar_t*, T >& rhs )
     {
-        return CaseInsensitiveCompare( *rhs.First(), *value ) == 0;
+        return CaseInsensitiveCompare<T>( *rhs.First(), *value ) == 0;
     }
 };
 

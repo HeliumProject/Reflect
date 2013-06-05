@@ -32,8 +32,8 @@ Field::Field()
 bool Field::IsDefaultValue( void* address, Object* object, uint32_t index ) const
 {
 	Pointer value ( this, address, object, index );
-	Pointer default ( this, m_Structure->m_Default, NULL, index );
-	return m_Translator->Equals( value, default );
+	Pointer defaultValue ( this, m_Structure->m_Default, NULL, index );
+	return m_Translator->Equals( value, defaultValue );
 }
 
 bool Field::ShouldSerialize( void* address, Object* object, uint32_t index ) const
@@ -65,7 +65,7 @@ Structure::Structure()
 
 Structure::~Structure()
 {
-	delete m_Default;
+	delete static_cast< char* >( m_Default );
 }
 
 Structure* Structure::Create()
