@@ -148,8 +148,8 @@ namespace Helium
 			return new PointerTranslator< T >;
 		}
 
-		void Identify( ObjectIdentifier* identifier, Pointer pointer, Name& name );
-		void Resolve( ObjectResolver* resolver, Name name, Pointer pointer );
+		HELIUM_REFLECT_API void Identify( ObjectIdentifier* identifier, Pointer pointer, Name& name );
+		HELIUM_REFLECT_API void Resolve( ObjectResolver* resolver, Name name, Pointer pointer );
 
 		//////////////////////////////////////////////////////////////////////////
 

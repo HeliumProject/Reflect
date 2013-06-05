@@ -154,7 +154,7 @@ void Helium::Reflect::PointerTranslator<T>::Copy( Pointer src, Pointer dest, uin
 		StrongPtr< T >& destPtr ( dest.As< StrongPtr< T > >() );
 		if ( srcPtr.ReferencesObject() )
 		{
-			destPtr = srcPtr->Clone();
+			destPtr = static_cast< T* >( srcPtr->Clone().Ptr() );
 		}
 		else
 		{
