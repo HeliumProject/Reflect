@@ -2,7 +2,7 @@ template< class FieldT >
 void Helium::Reflect::Object::FieldChanged( FieldT* fieldAddress ) const
 {
     // the offset of the field is the address of the field minus the address of this object instance
-    uintptr_t fieldOffset = ((uint32_t)fieldAddress - (uint32_t)this);
+    uintptr_t fieldOffset = ((uintptr_t)fieldAddress - (uintptr_t)this);
 
     // find the field in our reflection information
     const Reflect::Field* field = GetClass()->FindFieldByOffset( fieldOffset );
