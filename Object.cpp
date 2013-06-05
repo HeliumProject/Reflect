@@ -261,18 +261,6 @@ void Object::PostDeserialize( const Reflect::Field* field )
 {
 }
 
-void Object::Accept( Visitor& visitor )
-{
-	if ( !visitor.VisitObject( this ) )
-	{
-		return;
-	}
-
-	const Class* type = GetClass();
-
-	type->Visit( this, this, visitor );
-}
-
 bool Object::Equals( Object* object )
 {
 	const Class* type = GetClass();
@@ -326,7 +314,7 @@ void Object::CopyTo( Object* object )
 
 ObjectPtr Object::Clone()
 {
-	ObjectPtr clone = Registry::GetInstance()->CreateInstance( GetClass() );
+	ObjectPtr clone = GetClass()->m_Creator();
 
 	PreSerialize( NULL );
 	clone->PreDeserialize( NULL );

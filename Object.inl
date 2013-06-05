@@ -137,3 +137,17 @@ inline const DerivedT* Helium::Reflect::SafeCast(const Reflect::Object* base)
         return NULL;
     }
 }
+
+template< class T >
+bool Helium::Reflect::ObjectResolver::Resolve( const Name& identity, StrongPtr< T >& object )
+{
+	const Class* pointerClass = Reflect::GetClass< T >();
+	return this->Resolve( identity, reinterpret_cast< ObjectPtr& >( object ), pointerClass );
+}
+
+Helium::Reflect::DeferredResolver::Entry::Entry()
+	: m_Pointer( NULL )
+	, m_PointerClass( NULL )
+{
+
+}

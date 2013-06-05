@@ -45,20 +45,6 @@ bool Helium::Reflect::Data::operator!=( const Data& rhs )
 }
 
 template< class T >
-bool Helium::Reflect::ObjectResolver::Resolve( const Name& identity, StrongPtr< T >& object )
-{
-	const Class* pointerClass = Reflect::GetClass< T >();
-	return this->Resolve( identity, reinterpret_cast< ObjectPtr& >( object ), pointerClass );
-}
-
-Helium::Reflect::DeferredResolver::Entry::Entry()
-	: m_Pointer( NULL )
-	, m_PointerClass( NULL )
-{
-
-}
-
-template< class T >
 void Helium::Reflect::Translator::DefaultConstruct( Pointer pointer )
 {
 	new ( pointer.m_Address ) T;
@@ -86,12 +72,6 @@ bool Helium::Reflect::Translator::DefaultEquals( Pointer a, Pointer b )
 	T& right = a.As<T>();
 	T& left = b.As<T>();
 	return left == right;
-}
-
-template< class T >
-void Helium::Reflect::Translator::DefaultAccept( Pointer pointer, Visitor& visitor )
-{
-	visitor.VisitField( this, pointer.m_Address, pointer.m_Field, pointer.m_Object );
 }
 
 Helium::Reflect::Translator::Translator( size_t size )

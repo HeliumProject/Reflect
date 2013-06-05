@@ -18,13 +18,12 @@ namespace Helium
 {
     namespace Reflect
     {
-        class Type;
-        class Field;
-        class Structure;
-        class Class;
-        template< class ClassT, class BaseT > class ObjectRegistrar;
-        class Object;
         class Translator;
+
+        class Object;
+		typedef Helium::StrongPtr<Object> ObjectPtr;
+		typedef Helium::StrongPtr<const Object> ConstObjectPtr;
+
 
         //
         // ObjectRefCountSupport provides the support interface for managing reference counting data
@@ -145,9 +144,6 @@ namespace Helium
             // Utilities
             //
 
-            // Visits fields recursively, used to interactively traverse structures
-            virtual void                Accept( Visitor& visitor );
-
             // Do comparison logic against other object, checks type and field data
             virtual bool                Equals( Object* object );
 
@@ -205,7 +201,52 @@ namespace Helium
 
         template<class DerivedT>
         inline const DerivedT* SafeCast(const Reflect::Object* base);
-    }
+
+
+		//
+		// Specifies an identifier for an object
+		//
+
+		class HELIUM_REFLECT_API ObjectIdentifier
+		{
+		public:
+			virtual bool Identify( Object* object, Name& identity ) = 0;
+		};
+
+		//
+		// Resolves an identifier to an object instance
+		//
+
+		class HELIUM_REFLECT_API ObjectResolver
+		{
+		public:
+			virtual bool Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass ) = 0;
+
+			// helper to extract the class of the pointer
+			template< class T > bool Resolve( const Name& identity, StrongPtr< T >& object );
+		};
+
+		//
+		// Resolver class that defers resolution until a later time (after the objects have been loaded)
+		//
+
+		class HELIUM_REFLECT_API DeferredResolver : public ObjectResolver
+		{
+		public:
+			virtual bool Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass ) HELIUM_OVERRIDE;
+
+		protected:
+			struct Entry
+			{
+				inline Entry();
+
+				ObjectPtr*	 m_Pointer;
+				const Class* m_PointerClass;
+				Name         m_Identity;
+			};
+			DynamicArray< Entry > m_Entries;
+		};
+	}
 }
 
 // declares creator for constructable types

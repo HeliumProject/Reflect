@@ -13,11 +13,13 @@ namespace Helium
 {
 	namespace Reflect
 	{
+		class Field;
+		class ObjectIdentifier;
+		class ObjectResolver;
+
 		//
 		// A pointer to some typed data (owned by the object itself or someone else
 		//
-
-		class Field;
 
 		class HELIUM_REFLECT_API Pointer
 		{
@@ -70,50 +72,6 @@ namespace Helium
 		};
 
 		//
-		// Specifies an identifier for an object
-		//
-
-		class HELIUM_REFLECT_API ObjectIdentifier
-		{
-		public:
-			virtual bool Identify( Object* object, Name& identity ) = 0;
-		};
-
-		//
-		// Resolves an identifier to an object instance
-		//
-
-		class HELIUM_REFLECT_API ObjectResolver
-		{
-		public:
-			virtual bool Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass ) = 0;
-
-			// helper to extract the class of the pointer
-			template< class T > bool Resolve( const Name& identity, StrongPtr< T >& object );
-		};
-
-		//
-		// Resolver class that defers resolution until a later time (after the objects have been loaded)
-		//
-
-		class HELIUM_REFLECT_API DeferredResolver : public ObjectResolver
-		{
-		public:
-			virtual bool Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass ) HELIUM_OVERRIDE;
-
-		protected:
-			struct Entry
-			{
-				inline Entry();
-
-				ObjectPtr*	 m_Pointer;
-				const Class* m_PointerClass;
-				Name         m_Identity;
-			};
-			DynamicArray< Entry > m_Entries;
-		};
-
-		//
 		// Translator abstraction object, worker for an entire class of data
 		//
 
@@ -137,7 +95,6 @@ namespace Helium
 			template< class T > HELIUM_FORCEINLINE void DefaultDestruct( Pointer pointer );
 			template< class T > HELIUM_FORCEINLINE void DefaultCopy( Pointer src, Pointer dest, uint32_t flags );
 			template< class T > HELIUM_FORCEINLINE bool DefaultEquals( Pointer a, Pointer b );
-			template< class T > HELIUM_FORCEINLINE void DefaultAccept( Pointer p, Visitor& visitor );
 
 			// call the constructor (in-place)
 			virtual void Construct( Pointer pointer ) = 0;
@@ -150,9 +107,6 @@ namespace Helium
 
 			// tests for equivalence across instances
 			virtual bool Equals( Pointer a, Pointer b ) = 0;
-
-			// explore contents
-			virtual void Accept( Pointer p, Visitor& visitor ) = 0;
 
 			// sizeof(), in bytes
 			const size_t m_Size;

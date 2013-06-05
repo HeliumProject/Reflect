@@ -13,10 +13,6 @@ namespace Helium
 {
     namespace Reflect
     {
-        class Object;
-        template<class DerivedT>
-        DerivedT* AssertCast( Reflect::Object* base );
-
         // Callbacks for external APIs
         typedef void (*CreatedFunc)(Object* object);
         typedef void (*DestroyedFunc)(Object* object);
@@ -81,14 +77,6 @@ namespace Helium
             // enumeration lookup
             inline const Enumeration* GetEnumeration( uint32_t crc ) const;
             inline const Enumeration* GetEnumeration( const tchar_t* name ) const;
-
-            // create instances of classes
-            ObjectPtr CreateInstance( const Class* type ) const;
-            ObjectPtr CreateInstance( uint32_t crc ) const;
-            inline ObjectPtr CreateInstance( const tchar_t* name ) const;
-
-            template<class T>
-            Helium::SmartPtr< T > CreateInstance();
 
         private:
             M_HashToType        m_TypesByHash;

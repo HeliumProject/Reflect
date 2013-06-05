@@ -81,18 +81,6 @@ bool Helium::Reflect::SimpleDynamicArrayTranslator<T>::Equals( Pointer a, Pointe
 }
 
 template <class T>
-void Helium::Reflect::SimpleDynamicArrayTranslator<T>::Accept( Pointer p, Visitor& visitor )
-{
-	DynamicArray<T> &v = p.As< DynamicArray<T> >();
-
-	for (DynamicArray<T>::Iterator iter = v.Begin();
-		iter != v.End(); ++iter)
-	{  
-		m_InternalTranslator->Accept(Pointer(&*iter, p.m_Field, p.m_Object), visitor);
-	}
-}
-
-template <class T>
 size_t Helium::Reflect::SimpleDynamicArrayTranslator<T>::GetLength( Pointer container ) const
 {
 	DynamicArray<T> &v = container.As< DynamicArray<T> >();
@@ -312,20 +300,6 @@ bool Helium::Reflect::SimpleSetTranslator<T>::Equals( Pointer a, Pointer b )
 }
 
 template <class T>
-void Helium::Reflect::SimpleSetTranslator<T>::Accept( Pointer p, Visitor& visitor )
-{
-	Set<T> &s = p.As< Set<T> >();
-
-	for (Set<T>::Iterator iter = s.Begin();
-		iter != s.End(); ++iter)
-	{
-		// This const cast is downright dangerous.. visitors can definitely change values
-		Pointer dp(const_cast<T *>(&*iter), p.m_Field, p.m_Object);
-		m_InternalTranslator->Accept(dp, visitor);
-	}
-}
-
-template <class T>
 size_t Helium::Reflect::SimpleSetTranslator<T>::GetLength( Pointer container ) const
 {
 	Set<T> &s = container.As< Set<T> >();
@@ -467,19 +441,6 @@ template <class KeyT, class ValueT>
 bool Helium::Reflect::SimpleMapTranslator<KeyT, ValueT>::Equals( Pointer a, Pointer b ) 
 {
 	return DefaultEquals< Map< KeyT, ValueT > >(a, b);
-}
-
-template <class KeyT, class ValueT>
-void Helium::Reflect::SimpleMapTranslator<KeyT, ValueT>::Accept( Pointer p, Visitor& visitor ) 
-{
-	Map<KeyT, ValueT> &m = p.As< Map<KeyT, ValueT> >();
-
-	for (Map<KeyT, ValueT>::Iterator iter = m.Begin();
-		iter != m.End(); ++iter)
-	{
-		m_InternalTranslatorKey->Accept(Pointer(const_cast<KeyT *>(&iter->First()), p.m_Field, p.m_Object), visitor);
-		m_InternalTranslatorValue->Accept(Pointer(&iter->Second(), p.m_Field, p.m_Object), visitor);
-	}
 }
 
 template <class KeyT, class ValueT>

@@ -1,6 +1,8 @@
 #include "ReflectPch.h"
 #include "FoundationSupport.h"
 
+#include "Reflect/Object.h"
+
 using namespace Helium;
 using namespace Helium::Reflect;
 
@@ -41,11 +43,6 @@ void StringTranslator::Parse( const String& string, Pointer pointer, ObjectResol
 	pointer.As<String>() = string;
 }
 
-void StringTranslator::Accept( Pointer pointer, Visitor& visitor )
-{
-	DefaultAccept< String >( pointer, visitor );
-}
-
 NameTranslator::NameTranslator()
 	: ScalarTranslator( sizeof( Name ), ScalarTypes::String )
 {
@@ -81,11 +78,6 @@ void NameTranslator::Parse( const String& string, Pointer pointer, ObjectResolve
 	pointer.As<Name>().Set( string );
 }
 
-void NameTranslator::Accept( Pointer pointer, Visitor& visitor )
-{
-	DefaultAccept< Name >( pointer, visitor );
-}
-
 FilePathTranslator::FilePathTranslator()
 	: ScalarTranslator( sizeof( FilePath ), ScalarTypes::String )
 {
@@ -119,9 +111,4 @@ void FilePathTranslator::Print( Pointer pointer, String& string, ObjectIdentifie
 void FilePathTranslator::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
 {
 	pointer.As<FilePath>().Set( string );
-}
-
-void FilePathTranslator::Accept( Pointer pointer, Visitor& visitor )
-{
-	DefaultAccept< FilePath >( pointer, visitor );
 }

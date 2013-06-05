@@ -173,26 +173,6 @@ bool Structure::Equals(void* compositeA, Object* objectA, void* compositeB, Obje
 	return true;
 }
 
-void Structure::Visit(void* composite, Object* object, Visitor& visitor) const
-{
-	if (!composite)
-	{
-		return;
-	}
-
-	for ( const Structure* current = this; current != NULL; current = current->m_Base )
-	{
-		DynamicArray< Field >::ConstIterator itr = current->m_Fields.Begin();
-		DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
-		for ( ; itr != end; ++itr )
-		{
-			const Field* field = &*itr;
-
-			field->m_Translator->Accept( Pointer ( field, composite, object ), visitor );
-		}
-	}
-}
-
 void Structure::Copy( void* compositeSource, Object* objectSource, void* compositeDestination, Object* objectDestination ) const
 {
 	if ( compositeSource != compositeDestination )

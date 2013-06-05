@@ -1,6 +1,8 @@
 #include "ReflectPch.h"
 #include "StandardLibrarySupport.h"
 
+#include "Reflect/Object.h"
+
 using namespace Helium;
 using namespace Helium::Reflect;
 
@@ -37,9 +39,4 @@ void StlStringTranslator::Print( Pointer pointer, String& string, ObjectIdentifi
 void StlStringTranslator::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
 {
 	pointer.As< tstring >() = string.GetData();
-}
-
-void StlStringTranslator::Accept( Pointer pointer, Visitor& visitor )
-{
-	DefaultAccept< tstring >( pointer, visitor );
 }
