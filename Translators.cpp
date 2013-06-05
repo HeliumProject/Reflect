@@ -1,6 +1,8 @@
 #include "ReflectPch.h"
 #include "Translators.h"
 
+#include "Reflect/Object.h"
+
 using namespace Helium;
 using namespace Helium::Reflect;
 
@@ -27,11 +29,6 @@ void TypeTranslator::Copy( Pointer src, Pointer dest, uint32_t flags )
 bool TypeTranslator::Equals( Pointer a, Pointer b )
 {
 	return DefaultEquals< const Type* >( a, b );
-}
-
-void TypeTranslator::Accept( Pointer pointer, Visitor& visitor )
-{
-	DefaultAccept< const Type* >( pointer, visitor );
 }
 
 void TypeTranslator::Print( Pointer pointer, String& string, ObjectIdentifier* identifier)

@@ -41,12 +41,6 @@ bool Helium::Reflect::SimpleScalarTranslator<T>::Equals( Pointer a, Pointer b )
 }
 
 template< class T >
-void Helium::Reflect::SimpleScalarTranslator<T>::Accept( Pointer pointer, Visitor& visitor )
-{
-	DefaultAccept< T >( pointer, visitor );
-}
-
-template< class T >
 void Helium::Reflect::SimpleScalarTranslator<T>::Print( Pointer pointer, String& string, ObjectIdentifier* identifier )
 {
 	DefaultPrint< T >( pointer, string, identifier );
@@ -139,13 +133,6 @@ bool Helium::Reflect::SimpleStructureTranslator<T>::Equals( Pointer a, Pointer b
 }
 
 template< class T >
-void Helium::Reflect::SimpleStructureTranslator<T>::Accept( Pointer pointer, Visitor& visitor )
-{
-	const Structure* structure = Reflect::GetStructure< T >();
-	structure->Visit( pointer.m_Address, pointer.m_Object, visitor );
-}
-
-template< class T >
 const Helium::Reflect::Structure* Helium::Reflect::SimpleStructureTranslator<T>::GetStructure() const
 {
 	return Reflect::GetStructure< T >();
@@ -210,17 +197,6 @@ bool Helium::Reflect::PointerTranslator<T>::Equals( Pointer a, Pointer b )
 }
 
 template< class T >
-void Helium::Reflect::PointerTranslator<T>::Accept( Pointer pointer, Visitor& visitor )
-{
-	if ( !visitor.VisitPointer( pointer.As< ObjectPtr >() ) )
-	{
-		return;
-	}
-
-	pointer.As< StrongPtr< T > >()->Accept( visitor );
-}
-
-template< class T >
 void Helium::Reflect::PointerTranslator<T>::Print( Pointer pointer, String& string, ObjectIdentifier* identifier)
 {
 	if ( identifier )
@@ -275,12 +251,6 @@ template< class T >
 bool Helium::Reflect::EnumerationTranslator<T>::Equals( Pointer a, Pointer b )
 {
 	return DefaultEquals<T>( a, b );
-}
-
-template< class T >
-void Helium::Reflect::EnumerationTranslator<T>::Accept( Pointer pointer, Visitor& visitor )
-{
-	DefaultAccept<T>( pointer, visitor );
 }
 
 template< class T >

@@ -6,7 +6,7 @@
 
 #include "Foundation/Log.h"
 
-#include "Reflect/Enumeration.h"
+#include "Reflect/Object.h"
 #include "Reflect/TranslatorDeduction.h"
 
 #include <io.h>
@@ -214,32 +214,4 @@ const Class* Registry::GetClass( uint32_t crc ) const
 const Enumeration* Registry::GetEnumeration( uint32_t crc ) const
 {
     return ReflectionCast< const Enumeration >( GetType( crc ) );
-}
-
-ObjectPtr Registry::CreateInstance( const Class* type ) const
-{
-    if ( type && type->m_Creator )
-    {
-        return type->m_Creator();
-    }
-    else
-    {
-        return NULL;
-    }
-}
-
-ObjectPtr Registry::CreateInstance( uint32_t crc ) const
-{
-    M_HashToType::ConstIterator found = m_TypesByHash.Find( crc );
-
-    if ( found != m_TypesByHash.End() )
-    {
-        const Class* type = ReflectionCast< const Class >( found->Second() );
-        if ( type )
-        {
-            return CreateInstance( type );
-        }
-    }
-
-    return NULL;
 }

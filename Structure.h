@@ -8,7 +8,6 @@
 #include "Foundation/Set.h"
 
 #include "Reflect/Type.h"
-#include "Reflect/Visitor.h"
 #include "Reflect/Registry.h"
 #include "Reflect/Translator.h"
 
@@ -105,9 +104,6 @@ namespace Helium
 
 			// Compare two composite instances of *this* type
 			bool Equals( void* compositeA, Object* objectA, void* compositeB, Object* objectB ) const;
-
-			// visits fields recursively, used to interactively traverse structures
-			void Visit( void* composite, Object* object, Visitor& visitor ) const;
 
 			// copies data from one instance to another by finding a common base class and cloning all of the fields from the source object into the destination object.
 			void Copy( void* compositeSource, Object* objectSource, void* compositeDestination, Object* objectDestination ) const;

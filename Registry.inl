@@ -21,15 +21,3 @@ const Helium::Reflect::Enumeration* Helium::Reflect::Registry::GetEnumeration( c
     uint32_t crc = Crc32( name );
     return GetEnumeration( crc );
 }
-
-Helium::Reflect::ObjectPtr Helium::Reflect::Registry::CreateInstance( const tchar_t* name ) const
-{
-    uint32_t crc = Crc32( name );
-    return CreateInstance( crc );
-}
-
-template<class T>
-Helium::SmartPtr< T > Helium::Reflect::Registry::CreateInstance()
-{
-    return Reflect::AssertCast< T >( CreateInstance( Reflect::GetClass< T >() ) );
-}

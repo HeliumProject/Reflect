@@ -81,18 +81,6 @@ bool Helium::Reflect::SimpleStlVectorTranslator<T>::Equals( Pointer a, Pointer b
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlVectorTranslator<T>::Accept( Pointer p, Visitor& visitor )
-{
-	std::vector<T> &v = p.As< std::vector<T> >();
-
-	for (std::vector<T>::iterator iter = v.begin();
-		iter != v.end(); ++iter)
-	{  
-		m_InternalTranslator->Accept(Pointer(&*iter, p.m_Field, p.m_Object), visitor);
-	}
-}
-
-template <class T>
 size_t Helium::Reflect::SimpleStlVectorTranslator<T>::GetLength( Pointer container ) const
 {
 	std::vector<T> &v = container.As< std::vector<T> >();
@@ -312,20 +300,6 @@ bool Helium::Reflect::SimpleStlSetTranslator<T>::Equals( Pointer a, Pointer b )
 }
 
 template <class T>
-void Helium::Reflect::SimpleStlSetTranslator<T>::Accept( Pointer p, Visitor& visitor )
-{
-	std::set<T> &s = p.As< std::set<T> >();
-
-	for (std::set<T>::iterator iter = s.begin();
-		iter != s.end(); ++iter)
-	{
-		// This const cast is downright dangerous.. visitors can definitely change values
-		Pointer dp(const_cast<T *>(&*iter), p.m_Field, p.m_Object);
-		m_InternalTranslator->Accept(dp, visitor);
-	}
-}
-
-template <class T>
 size_t Helium::Reflect::SimpleStlSetTranslator<T>::GetLength( Pointer container ) const
 {
 	std::set<T> &s = container.As< std::set<T> >();
@@ -467,19 +441,6 @@ template <class KeyT, class ValueT>
 bool Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::Equals( Pointer a, Pointer b ) 
 {
 	return DefaultEquals< std::map< KeyT, ValueT > >(a, b);
-}
-
-template <class KeyT, class ValueT>
-void Helium::Reflect::SimpleStlMapTranslator<KeyT, ValueT>::Accept( Pointer p, Visitor& visitor ) 
-{
-	std::map<KeyT, ValueT> &m = p.As< std::map<KeyT, ValueT> >();
-
-	for (std::map<KeyT, ValueT>::iterator iter = m.begin();
-		iter != m.end(); ++iter)
-	{
-		m_InternalTranslatorKey->Accept(Pointer(const_cast<KeyT *>(&iter->first), p.m_Field, p.m_Object), visitor);
-		m_InternalTranslatorValue->Accept(Pointer(&iter->second, p.m_Field, p.m_Object), visitor);
-	}
 }
 
 template <class KeyT, class ValueT>

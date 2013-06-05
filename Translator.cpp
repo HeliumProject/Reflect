@@ -1,6 +1,7 @@
 #include "ReflectPch.h"
-#include "Reflect/Translator.h"
+#include "Translator.h"
 
+#include "Reflect/Object.h"
 #include "Reflect/Structure.h"
 
 using namespace Helium;
