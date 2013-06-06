@@ -306,7 +306,7 @@ void Object::CopyTo( Object* object )
 			}
 		}
 
-		type->Copy( this, this, object, object );
+		type->Copy( this, this, object, object, true );
 	}
 }
 

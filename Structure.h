@@ -106,7 +106,7 @@ namespace Helium
 			bool Equals( void* compositeA, Object* objectA, void* compositeB, Object* objectB ) const;
 
 			// copies data from one instance to another by finding a common base class and cloning all of the fields from the source object into the destination object.
-			void Copy( void* compositeSource, Object* objectSource, void* compositeDestination, Object* objectDestination ) const;
+			void Copy( void* compositeSource, Object* objectSource, void* compositeDestination, Object* objectDestination, bool shallowCopy = false ) const;
 
 			// find a field in this composite
 			const Field* FindFieldByName(uint32_t crc) const;
