@@ -95,7 +95,7 @@ void ObjectRefCountSupport::Shutdown()
 	{
 		HELIUM_TRACE(
 			TraceLevels::Error,
-			TXT( "%" ) TPRIuSZ TXT( " reference counted object(s) still active during shutdown!\n" ),
+			TXT( "%" ) PRIuSZ TXT( " reference counted object(s) still active during shutdown!\n" ),
 			Reflect::ObjectRefCountSupport::GetActiveProxyCount() );
   
 #if 0
@@ -109,7 +109,7 @@ void ObjectRefCountSupport::Shutdown()
 
 			HELIUM_TRACE(
 				TraceLevels::Error,
-				TXT( "   - 0x%p: (%" ) TPRIu16 TXT( " strong ref(s), %" ) TPRIu16 TXT( " weak ref(s))\n" ),
+				TXT( "   - 0x%p: (%" ) PRIu16 TXT( " strong ref(s), %" ) PRIu16 TXT( " weak ref(s))\n" ),
 				pProxy,
 				pProxy->GetStrongRefCount(),
 				pProxy->GetWeakRefCount() );
