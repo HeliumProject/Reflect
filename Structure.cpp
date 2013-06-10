@@ -32,6 +32,7 @@ Field::Field()
 bool Field::IsDefaultValue( void* address, Object* object, uint32_t index ) const
 {
 	Pointer value ( this, address, object, index );
+	HELIUM_ASSERT( m_Structure->m_Default );
 	Pointer defaultValue ( this, m_Structure->m_Default, NULL, index );
 	return m_Translator->Equals( value, defaultValue );
 }
