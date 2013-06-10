@@ -26,7 +26,7 @@ Type::~Type()
 
 void Type::Register() const
 {
-    const tchar_t* type = ReflectionTypes::Strings[ GetReflectionType() ];
+    const char* type = ReflectionTypes::Strings[ GetReflectionType() ];
     Log::Debug( TXT( "Reflect %s: 0x%p, Size: %4d, Name: %s (0x%08x)\n" ), type, this, m_Size, m_Name, Crc32( m_Name ) );
 }
 
@@ -38,7 +38,7 @@ void Type::Unregister() const
 TypeRegistrar* TypeRegistrar::s_Head[ RegistrarTypes::Count ] = { NULL, NULL, NULL };
 TypeRegistrar* TypeRegistrar::s_Tail[ RegistrarTypes::Count ] = { NULL, NULL, NULL };
 
-TypeRegistrar::TypeRegistrar( const tchar_t* name )
+TypeRegistrar::TypeRegistrar( const char* name )
 : m_Name( name )
 , m_Next( NULL )
 {

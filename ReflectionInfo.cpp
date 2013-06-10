@@ -4,7 +4,7 @@
 using namespace Helium;
 using namespace Helium::Reflect;
 
-const tchar_t* ReflectionTypes::Strings[ ReflectionTypes::Count ] =
+const char* ReflectionTypes::Strings[ ReflectionTypes::Count ] =
 {
 	TXT("Type"),
 	TXT("Enumeration"),

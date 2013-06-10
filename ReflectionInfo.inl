@@ -1,12 +1,12 @@
 template<class T>
-void Helium::Reflect::PropertyCollection::SetProperty( const tstring& key, const T& value ) const
+void Helium::Reflect::PropertyCollection::SetProperty( const std::string& key, const T& value ) const
 {
-	tostringstream str;
+	std::ostringstream str;
 	str << value;
 
 	if ( !str.fail() )
 	{
-		SetProperty<tstring>( key, str.str() );
+		SetProperty<std::string>( key, str.str() );
 	}
 }
 
@@ -15,7 +15,7 @@ namespace Helium
 	namespace Reflect
 	{
 		template<>
-		inline void PropertyCollection::SetProperty( const tstring& key, const tstring& value ) const
+		inline void PropertyCollection::SetProperty( const std::string& key, const std::string& value ) const
 		{
 			m_Properties[key] = value;
 		}
@@ -23,14 +23,14 @@ namespace Helium
 }
 
 template<class T>
-bool Helium::Reflect::PropertyCollection::GetProperty( const tstring& key, T& value ) const
+bool Helium::Reflect::PropertyCollection::GetProperty( const std::string& key, T& value ) const
 {
-	tstring strValue;
-	bool result = GetProperty<tstring>( key, strValue );
+	std::string strValue;
+	bool result = GetProperty<std::string>( key, strValue );
 
 	if ( result )
 	{
-		tistringstream str( strValue );
+		std::istringstream str( strValue );
 		str >> value;
 		return !str.fail();
 	}
@@ -43,9 +43,9 @@ namespace Helium
 	namespace Reflect
 	{
 		template<>
-		inline bool PropertyCollection::GetProperty( const tstring& key, tstring& value ) const
+		inline bool PropertyCollection::GetProperty( const std::string& key, std::string& value ) const
 		{
-			std::map< tstring, tstring >::const_iterator found = m_Properties.find( key ); 
+			std::map< std::string, std::string >::const_iterator found = m_Properties.find( key ); 
 			if ( found != m_Properties.end() )
 			{
 				value = found->second;
@@ -57,14 +57,14 @@ namespace Helium
 	}
 }
 
-inline const tstring& Helium::Reflect::PropertyCollection::GetProperty( const tstring& key ) const
+inline const std::string& Helium::Reflect::PropertyCollection::GetProperty( const std::string& key ) const
 {
-	std::map< tstring, tstring >::const_iterator found = m_Properties.find( key );
+	std::map< std::string, std::string >::const_iterator found = m_Properties.find( key );
 	if ( found != m_Properties.end() )
 	{
 		return found->second;
 	}
 
-	static tstring empty;
+	static std::string empty;
 	return empty;
 }

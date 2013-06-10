@@ -238,7 +238,7 @@ void Helium::Reflect::EnumerationTranslator<T>::Print( Pointer pointer, String& 
 	value = static_cast< uint32_t >( pointer.As< T >() );
 	HELIUM_COMPILE_ASSERT( sizeof( typename T::Enum ) == sizeof( value ) );
 
-	tstring str;
+	std::string str;
 	enumeration->GetString( value, str );
 	string = str.c_str();
 }
@@ -247,7 +247,7 @@ template< class T >
 void Helium::Reflect::EnumerationTranslator<T>::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
 {
 	const Enumeration* enumeration = GetEnumeration< T >();
-	tstring str = string.GetData();
+	std::string str = string.GetData();
 
 	uint32_t value = 0;
 	enumeration->GetValue( str, value );

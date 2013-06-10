@@ -61,7 +61,7 @@ namespace Helium
 				Count,
 			};
 
-			extern const tchar_t* Strings[ ReflectionTypes::Count ];
+			extern const char* Strings[ ReflectionTypes::Count ];
 		}
 		typedef ReflectionTypes::ReflectionType ReflectionType;
 
@@ -72,16 +72,16 @@ namespace Helium
 		class HELIUM_REFLECT_API PropertyCollection
 		{
 		protected:
-			mutable std::map< tstring, tstring > m_Properties;
+			mutable std::map< std::string, std::string > m_Properties;
 
 		public:
 			template<class T>
-			inline void SetProperty( const tstring& key, const T& value ) const;
+			inline void SetProperty( const std::string& key, const T& value ) const;
 
 			template<class T>
-			inline bool GetProperty( const tstring& key, T& value ) const;
+			inline bool GetProperty( const std::string& key, T& value ) const;
 
-			inline const tstring& GetProperty( const tstring& key ) const;
+			inline const std::string& GetProperty( const std::string& key ) const;
 		};
 
 		//

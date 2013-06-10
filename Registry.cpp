@@ -30,15 +30,15 @@ Profile::Accumulator Reflect::g_PostDeserializeAccum ( "Reflect Deserialize Post
 template< class T >
 struct CaseInsensitiveCompare
 {
-    const tstring& value;
+    const std::string& value;
 
-    CaseInsensitiveCompare( const tstring& str )
+    CaseInsensitiveCompare( const std::string& str )
         : value( str )
     {
 
     }
 
-    bool operator()( const std::pair< const tstring, T >& rhs )
+    bool operator()( const std::pair< const std::string, T >& rhs )
     {
         return CaseInsensitiveCompare( rhs.first.c_str(), value.c_str() ) == 0;
     }
@@ -47,15 +47,15 @@ struct CaseInsensitiveCompare
 template< class T >
 struct CaseInsensitiveNameCompare
 {
-    const tchar_t* value;
+    const char* value;
 
-    CaseInsensitiveNameCompare( const tchar_t* name )
+    CaseInsensitiveNameCompare( const char* name )
         : value( name )
     {
 
     }
 
-    bool operator()( const KeyValue< const tchar_t*, T >& rhs )
+    bool operator()( const KeyValue< const char*, T >& rhs )
     {
         return CaseInsensitiveCompare<T>( *rhs.First(), *value ) == 0;
     }
@@ -167,7 +167,7 @@ void Registry::UnregisterType(const Type* type)
     m_TypesByHash.Remove( crc );
 }
 
-void Registry::AliasType( const Type* type, const tchar_t* alias )
+void Registry::AliasType( const Type* type, const char* alias )
 {
     HELIUM_ASSERT( IsMainThread() );
 
@@ -175,7 +175,7 @@ void Registry::AliasType( const Type* type, const tchar_t* alias )
     m_TypesByHash.Insert( M_HashToType::ValueType( crc, type ) );
 }
 
-void Registry::UnaliasType( const Type* type, const tchar_t* alias )
+void Registry::UnaliasType( const Type* type, const char* alias )
 {
     HELIUM_ASSERT( IsMainThread() );
 

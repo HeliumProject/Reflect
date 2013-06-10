@@ -18,15 +18,15 @@ namespace Helium
 			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
 		};
 
-		inline const Type* DeduceKeyType( const tstring&, const tstring& )
+		inline const Type* DeduceKeyType( const std::string&, const std::string& )
 		{
 			return NULL;
 		}
-		inline const Type* DeduceValueType( const tstring&, const tstring& )
+		inline const Type* DeduceValueType( const std::string&, const std::string& )
 		{
 			return NULL;
 		}
-		inline Translator* AllocateTranslator( const tstring&, const tstring& )
+		inline Translator* AllocateTranslator( const std::string&, const std::string& )
 		{
 			return new StlStringTranslator;
 		}

@@ -24,7 +24,7 @@ Class* Class::Create()
 }
 
 template<>
-void Class::Create< Object >( Class const*& pointer, const tchar_t* name, const tchar_t* baseName, CreateObjectFunc creator )
+void Class::Create< Object >( Class const*& pointer, const char* name, const char* baseName, CreateObjectFunc creator )
 {
     Class* type = Class::Create();
     pointer = type;

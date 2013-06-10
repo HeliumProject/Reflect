@@ -17,7 +17,7 @@ EnumerationElement::EnumerationElement()
 
 }
 
-EnumerationElement::EnumerationElement( uint32_t value, const tstring& name, const tstring& helpText )
+EnumerationElement::EnumerationElement( uint32_t value, const std::string& name, const std::string& helpText )
 	: m_Value( value )
 	, m_Name( name )
 	, m_HelpText( helpText )
@@ -54,7 +54,7 @@ void Enumeration::Unregister() const
 	Type::Unregister();
 }
 
-void Enumeration::AddElement( uint32_t value, const tstring& name, const tstring& helpText )
+void Enumeration::AddElement( uint32_t value, const std::string& name, const std::string& helpText )
 {
 	EnumerationElement element ( value, name, helpText );
 
@@ -82,17 +82,17 @@ bool Enumeration::IsValid(uint32_t value) const
 	return false;
 }
 
-bool Enumeration::GetValue(const tstring& str, uint32_t& value) const
+bool Enumeration::GetValue(const std::string& str, uint32_t& value) const
 {
 	if ( m_IsBitfield )
 	{
-		std::vector< tstring > strs;
+		std::vector< std::string > strs;
 
-		const tchar_t *string = str.c_str();
+		const char *string = str.c_str();
 
-		while ( const tchar_t *stringFromPipe = FindCharacter( string, '|' ) )
+		while ( const char *stringFromPipe = FindCharacter( string, '|' ) )
 		{
-			tstring str(string, stringFromPipe - string);
+			std::string str(string, stringFromPipe - string);
 			strs.push_back(str);
 			string = stringFromPipe + 1;
 		}
@@ -107,13 +107,13 @@ bool Enumeration::GetValue(const tstring& str, uint32_t& value) const
 	}
 }
 
-bool Enumeration::GetString(const uint32_t value, tstring& str) const
+bool Enumeration::GetString(const uint32_t value, std::string& str) const
 {
 	if ( m_IsBitfield )
 	{
 		bool first = true;
 
-		std::vector< tstring > strs;
+		std::vector< std::string > strs;
 		if (!GetBitfieldStrings(value, strs))
 		{
 			return false;
@@ -125,8 +125,8 @@ bool Enumeration::GetString(const uint32_t value, tstring& str) const
 		}
 
 		// search the map
-		std::vector< tstring >::const_iterator itr = strs.begin();
-		std::vector< tstring >::const_iterator end = strs.end();
+		std::vector< std::string >::const_iterator itr = strs.begin();
+		std::vector< std::string >::const_iterator end = strs.end();
 		for ( ; itr != end; ++itr )
 		{
 			if ( !first )
@@ -158,7 +158,7 @@ bool Enumeration::GetString(const uint32_t value, tstring& str) const
 	}
 }
 
-bool Enumeration::GetSingleValue(const tstring& str, uint32_t& value) const
+bool Enumeration::GetSingleValue(const std::string& str, uint32_t& value) const
 {
 	DynamicArray< EnumerationElement >::ConstIterator itr = m_Elements.Begin();
 	DynamicArray< EnumerationElement >::ConstIterator end = m_Elements.End();
@@ -174,15 +174,15 @@ bool Enumeration::GetSingleValue(const tstring& str, uint32_t& value) const
 	return false;
 }
 
-bool Enumeration::GetBitfieldValue(const std::vector< tstring >& strs, uint32_t& value) const
+bool Enumeration::GetBitfieldValue(const std::vector< std::string >& strs, uint32_t& value) const
 {
 	value = 0;
 
 	HELIUM_ASSERT( m_IsBitfield );
 	if ( m_IsBitfield )
 	{
-		std::vector< tstring >::const_iterator itr = strs.begin();
-		std::vector< tstring >::const_iterator end = strs.end();
+		std::vector< std::string >::const_iterator itr = strs.begin();
+		std::vector< std::string >::const_iterator end = strs.end();
 		for ( ; itr != end; ++itr )
 		{
 			uint32_t flags;
@@ -197,7 +197,7 @@ bool Enumeration::GetBitfieldValue(const std::vector< tstring >& strs, uint32_t&
 	return value == 0 || !strs.empty();
 }
 
-bool Enumeration::GetBitfieldStrings(const uint32_t value, std::vector< tstring >& strs) const
+bool Enumeration::GetBitfieldStrings(const uint32_t value, std::vector< std::string >& strs) const
 {
 	HELIUM_ASSERT( m_IsBitfield );
 	if ( m_IsBitfield )

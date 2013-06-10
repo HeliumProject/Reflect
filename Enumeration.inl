@@ -1,5 +1,5 @@
 template< class T >
-void Helium::Reflect::Enumeration::Create( Enumeration const*& pointer, const tchar_t* name )
+void Helium::Reflect::Enumeration::Create( Enumeration const*& pointer, const char* name )
 {
 	Enumeration* type = new Enumeration();
 	pointer = type;
@@ -21,7 +21,7 @@ void Helium::Reflect::Enumeration::SetFlags(uint32_t& value, uint32_t flags)
 }
 
 template< class EnumerationT >
-Helium::Reflect::EnumRegistrar< EnumerationT >::EnumRegistrar(const tchar_t* name)
+Helium::Reflect::EnumRegistrar< EnumerationT >::EnumRegistrar(const char* name)
 	: TypeRegistrar( name )
 {
 	HELIUM_ASSERT( EnumerationT::s_Enumeration == NULL );

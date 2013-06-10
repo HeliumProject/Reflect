@@ -1,5 +1,5 @@
 template< class StructureT >
-void Helium::Reflect::Structure::Create( Structure const*& pointer, const tchar_t* name, const tchar_t* baseName )
+void Helium::Reflect::Structure::Create( Structure const*& pointer, const char* name, const char* baseName )
 {
 	Structure* type = Structure::Create();
 	pointer = type;
@@ -11,7 +11,7 @@ void Helium::Reflect::Structure::Create( Structure const*& pointer, const tchar_
 }
 
 template< class StructureT >
-void Helium::Reflect::Structure::Create( const tchar_t* name, const tchar_t* baseName, PopulateCompositeFunc populate, Structure* info )
+void Helium::Reflect::Structure::Create( const char* name, const char* baseName, PopulateCompositeFunc populate, Structure* info )
 {
 	// the size
 	info->m_Size = sizeof( StructureT );
@@ -133,7 +133,7 @@ Helium::Reflect::Translator* Helium::Reflect::Structure::AllocateTranslator( std
 }
 
 template < class StructureT, class FieldT >
-Helium::Reflect::Field* Helium::Reflect::Structure::AddField( FieldT StructureT::* field, const tchar_t* name, uint32_t flags, Translator* translator )
+Helium::Reflect::Field* Helium::Reflect::Structure::AddField( FieldT StructureT::* field, const char* name, uint32_t flags, Translator* translator )
 {
 	Field* f = AddField();
 	f->m_Name = name;
@@ -152,7 +152,7 @@ Helium::Reflect::Field* Helium::Reflect::Structure::AddField( FieldT StructureT:
 //
 
 template< class StructureT, class BaseT >
-Helium::Reflect::StructureRegistrar< StructureT, BaseT >::StructureRegistrar(const tchar_t* name)
+Helium::Reflect::StructureRegistrar< StructureT, BaseT >::StructureRegistrar(const char* name)
 	: TypeRegistrar( name )
 {
 	HELIUM_ASSERT( StructureT::s_Structure == NULL );
@@ -187,7 +187,7 @@ void Helium::Reflect::StructureRegistrar< StructureT, BaseT >::Unregister()
 }
 
 template< class StructureT >
-Helium::Reflect::StructureRegistrar< StructureT, void >::StructureRegistrar(const tchar_t* name)
+Helium::Reflect::StructureRegistrar< StructureT, void >::StructureRegistrar(const char* name)
 	: TypeRegistrar( name )
 {
 	HELIUM_ASSERT( StructureT::s_Structure == NULL );

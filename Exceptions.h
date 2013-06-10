@@ -13,7 +13,7 @@ namespace Helium
 		class Exception : public Helium::Exception
 		{
 		public:
-			Exception( const tchar_t *msgFormat, ... )
+			Exception( const char *msgFormat, ... )
 			{
 				va_list msgArgs;
 				va_start( msgArgs, msgFormat );
@@ -32,7 +32,7 @@ namespace Helium
 		class CastException : public Reflect::Exception
 		{
 		public:
-			CastException( const tchar_t *msgFormat, ... )
+			CastException( const char *msgFormat, ... )
 			{
 				va_list msgArgs;
 				va_start( msgArgs, msgFormat );
@@ -51,7 +51,7 @@ namespace Helium
 		class TypeInformationException : public Reflect::Exception
 		{
 		public:
-			TypeInformationException( const tchar_t *msgFormat, ... )
+			TypeInformationException( const char *msgFormat, ... )
 			{
 				va_list msgArgs;
 				va_start( msgArgs, msgFormat );

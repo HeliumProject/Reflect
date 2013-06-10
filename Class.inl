@@ -1,5 +1,5 @@
 template< class ClassT >
-void Helium::Reflect::Class::Create( Class const*& pointer, const tchar_t* name, const tchar_t* baseName, CreateObjectFunc creator )
+void Helium::Reflect::Class::Create( Class const*& pointer, const char* name, const char* baseName, CreateObjectFunc creator )
 {
 	Class* type = Class::Create();
 	pointer = type;
@@ -27,7 +27,7 @@ void Helium::Reflect::Class::Create( Class const*& pointer, const tchar_t* name,
 }
 
 template< class ClassT, class BaseT >
-Helium::Reflect::ObjectRegistrar< ClassT, BaseT >::ObjectRegistrar(const tchar_t* name)
+Helium::Reflect::ObjectRegistrar< ClassT, BaseT >::ObjectRegistrar(const char* name)
 	: TypeRegistrar( name )
 {
 	HELIUM_ASSERT( ClassT::s_Class == NULL );
@@ -62,7 +62,7 @@ void Helium::Reflect::ObjectRegistrar< ClassT, BaseT >::Unregister()
 }
 
 template< class ClassT >
-Helium::Reflect::ObjectRegistrar< ClassT, void >::ObjectRegistrar(const tchar_t* name)
+Helium::Reflect::ObjectRegistrar< ClassT, void >::ObjectRegistrar(const char* name)
 	: TypeRegistrar( name )
 {
 	HELIUM_ASSERT( ClassT::s_Class == NULL );

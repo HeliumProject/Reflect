@@ -22,11 +22,11 @@ namespace Helium
 		{
 		public:
 			EnumerationElement();
-			EnumerationElement( uint32_t value, const tstring& name, const tstring& helpText = TXT( "FIXME: SET THE HELP TEXT FOR THIS ENUMERATION ELEMENT" ) );
+			EnumerationElement( uint32_t value, const std::string& name, const std::string& helpText = TXT( "FIXME: SET THE HELP TEXT FOR THIS ENUMERATION ELEMENT" ) );
 
 			uint32_t    m_Value;    // the value of the object
-			tstring     m_Name;     // the name of the object
-			tstring     m_HelpText; // the help text for the object
+			std::string     m_Name;     // the name of the object
+			std::string     m_HelpText; // the help text for the object
 		};
 
 		class HELIUM_REFLECT_API Enumeration : public Type
@@ -38,19 +38,19 @@ namespace Helium
 			~Enumeration();
 
 			template<class T>
-			static void Create( Enumeration const*& pointer, const tchar_t* name );
+			static void Create( Enumeration const*& pointer, const char* name );
 
 			virtual void Register() const HELIUM_OVERRIDE;
 			virtual void Unregister() const HELIUM_OVERRIDE;
 
-			void AddElement(uint32_t value, const tstring& name, const tstring& helpText = TXT( "FIXME: SET THE HELP TEXT FOR THIS ENUMERATION ELEMENT" ) );
+			void AddElement(uint32_t value, const std::string& name, const std::string& helpText = TXT( "FIXME: SET THE HELP TEXT FOR THIS ENUMERATION ELEMENT" ) );
 			bool IsValid(uint32_t value) const;
 
-			bool GetValue(const tstring& str, uint32_t& value) const;
-			bool GetString(const uint32_t value, tstring& str) const;
+			bool GetValue(const std::string& str, uint32_t& value) const;
+			bool GetString(const uint32_t value, std::string& str) const;
 
-			bool GetBitfieldValue(const std::vector< tstring >& strs, uint32_t& value) const;
-			bool GetBitfieldStrings(const uint32_t value, std::vector< tstring >& strs) const;
+			bool GetBitfieldValue(const std::vector< std::string >& strs, uint32_t& value) const;
+			bool GetBitfieldStrings(const uint32_t value, std::vector< std::string >& strs) const;
 
 			inline static bool IsFlagSet(uint32_t value, uint32_t flag);
 			inline static void SetFlags(uint32_t& value, uint32_t flags);
@@ -59,14 +59,14 @@ namespace Helium
 			bool                               m_IsBitfield;
 
 		private:
-			bool GetSingleValue(const tstring& str, uint32_t& value) const;
+			bool GetSingleValue(const std::string& str, uint32_t& value) const;
 		};
 
 		template< class EnumT >
 		class EnumRegistrar : public TypeRegistrar
 		{
 		public:
-			EnumRegistrar(const tchar_t* name);
+			EnumRegistrar(const char* name);
 			~EnumRegistrar();
 
 			virtual void Register();

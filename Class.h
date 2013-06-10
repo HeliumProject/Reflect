@@ -31,7 +31,7 @@ namespace Helium
 			static Class* Create();
 
 			template< class ClassT >
-			static void Create( Class const*& pointer, const tchar_t* name, const tchar_t* baseName, CreateObjectFunc creator = NULL );
+			static void Create( Class const*& pointer, const char* name, const char* baseName, CreateObjectFunc creator = NULL );
 
 		public:
 			CreateObjectFunc        m_Creator;  // factory function for creating instances of this class
@@ -43,13 +43,13 @@ namespace Helium
 
 		// Object, the most base class needs explicit implementation
 		template<>
-		void Class::Create< Object >( Class const*& pointer, const tchar_t* name, const tchar_t* baseName, CreateObjectFunc creator );
+		void Class::Create< Object >( Class const*& pointer, const char* name, const char* baseName, CreateObjectFunc creator );
 
 		template< class ClassT, class BaseT >
 		class ObjectRegistrar : public TypeRegistrar
 		{
 		public:
-			ObjectRegistrar(const tchar_t* name);
+			ObjectRegistrar(const char* name);
 			~ObjectRegistrar();
 
 			virtual void Register();
@@ -60,7 +60,7 @@ namespace Helium
 		class ObjectRegistrar< ClassT, void > : public TypeRegistrar
 		{
 		public:
-			ObjectRegistrar(const tchar_t* name);
+			ObjectRegistrar(const char* name);
 			~ObjectRegistrar();
 
 			virtual void Register();

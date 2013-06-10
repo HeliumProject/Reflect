@@ -59,24 +59,24 @@ namespace Helium
             void UnregisterType( const Type* type );
 
             // give a type an alias (for legacy considerations)
-            void AliasType( const Type* type, const tchar_t* alias );
-            void UnaliasType( const Type* type, const tchar_t* alias );
+            void AliasType( const Type* type, const char* alias );
+            void UnaliasType( const Type* type, const char* alias );
 
             // type lookup
             const Type* GetType( uint32_t crc ) const;
-            inline const Type* GetType( const tchar_t* name ) const;
+            inline const Type* GetType( const char* name ) const;
             
             // structure lookup
             const Structure* GetStructure( uint32_t crc ) const;
-            inline const Structure* GetStructure( const tchar_t* name ) const;
+            inline const Structure* GetStructure( const char* name ) const;
 
             // class lookup
             const Class* GetClass( uint32_t crc ) const;
-            inline const Class* GetClass( const tchar_t* name ) const;
+            inline const Class* GetClass( const char* name ) const;
 
             // enumeration lookup
             inline const Enumeration* GetEnumeration( uint32_t crc ) const;
-            inline const Enumeration* GetEnumeration( const tchar_t* name ) const;
+            inline const Enumeration* GetEnumeration( const char* name ) const;
 
         private:
             M_HashToType        m_TypesByHash;

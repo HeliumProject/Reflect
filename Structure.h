@@ -46,7 +46,7 @@ namespace Helium
 			bool ShouldSerialize( void* address, Object* object, uint32_t index = 0 ) const;
 
 			const Structure* m_Structure;  // the type we are a field of
-			const tchar_t*   m_Name;       // name of this field
+			const char*   m_Name;       // name of this field
 			uint32_t         m_Size;       // the size of this field
 			uint32_t         m_Count;      // the static array size
 			uint32_t         m_Offset;     // the offset to the field
@@ -87,11 +87,11 @@ namespace Helium
 
 			// creator for structure types
 			template< class StructureT >
-			static void Create( Structure const*& pointer, const tchar_t* name, const tchar_t* baseName );
+			static void Create( Structure const*& pointer, const char* name, const char* baseName );
 
 			// shared logic with class types
 			template< class StructureT >
-			static void Create( const tchar_t* name, const tchar_t* baseName, PopulateCompositeFunc populate, Structure* info );
+			static void Create( const char* name, const char* baseName, PopulateCompositeFunc populate, Structure* info );
 
 			// overloaded functions from Type
 			virtual void Register() const HELIUM_OVERRIDE;
@@ -159,7 +159,7 @@ namespace Helium
 
 			// deduce and allocate the appropriate translator object and append field data to the composite
 			template < class StructureT, class FieldT >
-			inline Reflect::Field* AddField( FieldT StructureT::* field, const tchar_t* name, uint32_t flags = 0, Translator* translator = NULL );
+			inline Reflect::Field* AddField( FieldT StructureT::* field, const char* name, uint32_t flags = 0, Translator* translator = NULL );
 
 		public:
 			const Structure*         m_Base;         // the base type name
@@ -174,7 +174,7 @@ namespace Helium
 		class StructureRegistrar : public TypeRegistrar
 		{
 		public:
-			StructureRegistrar(const tchar_t* name);
+			StructureRegistrar(const char* name);
 			~StructureRegistrar();
 
 			virtual void Register();
@@ -185,7 +185,7 @@ namespace Helium
 		class StructureRegistrar< ClassT, void > : public TypeRegistrar
 		{
 		public:
-			StructureRegistrar(const tchar_t* name);
+			StructureRegistrar(const char* name);
 			~StructureRegistrar();
 
 			virtual void Register();
