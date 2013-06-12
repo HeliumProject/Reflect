@@ -75,7 +75,7 @@ namespace Helium
             inline const Class* GetClass( const char* name ) const;
 
             // enumeration lookup
-            inline const Enumeration* GetEnumeration( uint32_t crc ) const;
+            const Enumeration* GetEnumeration( uint32_t crc ) const;
             inline const Enumeration* GetEnumeration( const char* name ) const;
 
         private:
