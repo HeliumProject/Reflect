@@ -39,44 +39,50 @@ void Helium::Reflect::SimpleScalarTranslator<T>::Parse( const String& string, Po
 	DefaultParse< T >( string, pointer, resolver, raiseChanged );
 }
 
-template<>
-inline void Helium::Reflect::SimpleScalarTranslator<uint8_t>::Print( Pointer pointer, String& string, ObjectIdentifier* identifier )
+namespace Helium
 {
-	uint16_t v = pointer.As<uint8_t>();
+	namespace Reflect
+	{
+		template<>
+		inline void SimpleScalarTranslator<uint8_t>::Print( Pointer pointer, String& string, ObjectIdentifier* identifier )
+		{
+			uint16_t v = pointer.As<uint8_t>();
 
-	std::stringstream str;
-	str << v;
-	string = str.str().c_str();
-}
+			std::stringstream str;
+			str << v;
+			string = str.str().c_str();
+		}
 
-template<>
-inline void Helium::Reflect::SimpleScalarTranslator<uint8_t>::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
-{
-	std::stringstream str ( string.GetData() );
-	uint16_t v = 0;
-	str >> v;
-	
-	pointer.As<uint8_t>() = static_cast<uint8_t>( v );
-}
+		template<>
+		inline void SimpleScalarTranslator<uint8_t>::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
+		{
+			std::stringstream str ( string.GetData() );
+			uint16_t v = 0;
+			str >> v;
+			
+			pointer.As<uint8_t>() = static_cast<uint8_t>( v );
+		}
 
-template<>
-inline void Helium::Reflect::SimpleScalarTranslator<int8_t>::Print( Pointer pointer, String& string, ObjectIdentifier* identifier )
-{
-	int16_t v = pointer.As<int8_t>();
+		template<>
+		inline void SimpleScalarTranslator<int8_t>::Print( Pointer pointer, String& string, ObjectIdentifier* identifier )
+		{
+			int16_t v = pointer.As<int8_t>();
 
-	std::stringstream str;
-	str << v;
-	string = str.str().c_str();
-}
+			std::stringstream str;
+			str << v;
+			string = str.str().c_str();
+		}
 
-template<>
-inline void Helium::Reflect::SimpleScalarTranslator<int8_t>::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
-{
-	std::stringstream str ( string.GetData() );
-	int16_t v = 0;
-	str >> v;
-	
-	pointer.As<int8_t>() = static_cast<int8_t>( v );
+		template<>
+		inline void SimpleScalarTranslator<int8_t>::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
+		{
+			std::stringstream str ( string.GetData() );
+			int16_t v = 0;
+			str >> v;
+			
+			pointer.As<int8_t>() = static_cast<int8_t>( v );
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
