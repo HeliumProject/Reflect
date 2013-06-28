@@ -100,17 +100,17 @@ namespace Helium
 		};
 
 		template< class T >
-		const Type* DeduceKeyType( const StructureBase&, T )
+		const Type* DeduceKeyType( const StructureBase&, const T& )
 		{
 			return NULL;
 		}
 		template< class T >
-		const Type* DeduceValueType( const StructureBase&, T )
+		const Type* DeduceValueType( const StructureBase&, const T& )
 		{
 			return Reflect::GetStructure< T >();
 		}
 		template< class T >
-		Translator* AllocateTranslator( const StructureBase&, T )
+		Translator* AllocateTranslator( const StructureBase&, const T& )
 		{
 			return new SimpleStructureTranslator< T >;
 		}
@@ -169,17 +169,17 @@ namespace Helium
 		};
 
 		template< class T >
-		const Type* DeduceKeyType( const EnumerationBase&, T )
+		const Type* DeduceKeyType( const EnumerationBase&, const T& )
 		{
 			return NULL;
 		}
 		template< class T >
-		const Type* DeduceValueType( const EnumerationBase&, T )
+		const Type* DeduceValueType( const EnumerationBase&, const T& )
 		{
 			return Reflect::GetEnumeration< T >();
 		}
 		template< class T >
-		Translator* AllocateTranslator( const EnumerationBase&, T )
+		Translator* AllocateTranslator( const EnumerationBase&, const T& )
 		{
 			return new EnumerationTranslator< T >;
 		}
