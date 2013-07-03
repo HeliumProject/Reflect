@@ -24,7 +24,7 @@ namespace Helium
 			EnumerationElement();
 			EnumerationElement( uint32_t value, const std::string& name, const std::string& helpText = TXT( "FIXME: SET THE HELP TEXT FOR THIS ENUMERATION ELEMENT" ) );
 
-			uint32_t    m_Value;    // the value of the object
+			uint32_t        m_Value;    // the value of the object
 			std::string     m_Name;     // the name of the object
 			std::string     m_HelpText; // the help text for the object
 		};
