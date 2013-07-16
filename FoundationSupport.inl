@@ -377,10 +377,10 @@ bool Helium::Reflect::SimpleSetTranslator<T>::ContainsItem( Pointer set, Pointer
 template <class KeyT, class ValueT>
 Helium::Reflect::SimpleMapTranslator<KeyT, ValueT>::SimpleMapTranslator()
 	: AssociationTranslator(sizeof(Map<KeyT, ValueT>))
-	, m_InternalTranslatorKey(AllocateTranslator<KeyT>())
+	, m_InternalTranslatorKey(ReflectionCast< ScalarTranslator >( AllocateTranslator<KeyT>() ))
 	, m_InternalTranslatorValue(AllocateTranslator<ValueT>())
 {
-
+	HELIUM_ASSERT( m_InternalTranslatorKey );
 }
 
 template <class KeyT, class ValueT>
@@ -455,7 +455,7 @@ void Helium::Reflect::SimpleMapTranslator<KeyT, ValueT>::Clear( Pointer containe
 }
 
 template <class KeyT, class ValueT>
-Helium::Reflect::Translator* Helium::Reflect::SimpleMapTranslator<KeyT, ValueT>::GetKeyTranslator() const
+Helium::Reflect::ScalarTranslator* Helium::Reflect::SimpleMapTranslator<KeyT, ValueT>::GetKeyTranslator() const
 {
 	return m_InternalTranslatorKey;
 }

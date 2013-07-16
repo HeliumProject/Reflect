@@ -239,14 +239,14 @@ namespace Helium
 			
 			inline AssociationTranslator( size_t size );
 
-			virtual Translator* GetKeyTranslator() const = 0;
-			virtual Translator* GetValueTranslator() const = 0;
+			virtual ScalarTranslator* GetKeyTranslator() const = 0;
+			virtual Translator*       GetValueTranslator() const = 0;
 
-			virtual void        GetItems( Pointer association, DynamicArray<Pointer>& keys, DynamicArray<Pointer>& values ) = 0;
+			virtual void              GetItems( Pointer association, DynamicArray<Pointer>& keys, DynamicArray<Pointer>& values ) = 0;
 
-			virtual Pointer     GetItem( Pointer association, Pointer key ) = 0;
-			virtual void        SetItem( Pointer association, Pointer key, Pointer value ) = 0;
-			virtual void        RemoveItem( Pointer association, Pointer key ) = 0;
+			virtual Pointer           GetItem( Pointer association, Pointer key ) = 0;
+			virtual void              SetItem( Pointer association, Pointer key, Pointer value ) = 0;
+			virtual void              RemoveItem( Pointer association, Pointer key ) = 0;
 		};
 
 		//

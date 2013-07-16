@@ -137,26 +137,26 @@ namespace Helium
 			virtual ~SimpleStlMapTranslator();
 
 			// Translator
-			virtual void        Construct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void        Destruct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void        Copy( Pointer src, Pointer dest, uint32_t flags = 0 ) HELIUM_OVERRIDE;
-			virtual bool        Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
+			virtual void              Construct( Pointer pointer ) HELIUM_OVERRIDE;
+			virtual void              Destruct( Pointer pointer ) HELIUM_OVERRIDE;
+			virtual void              Copy( Pointer src, Pointer dest, uint32_t flags = 0 ) HELIUM_OVERRIDE;
+			virtual bool              Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
 
 			// ContainerTranslator
-			virtual size_t      GetLength( Pointer container ) const HELIUM_OVERRIDE;
-			virtual void        Clear( Pointer container ) HELIUM_OVERRIDE;
+			virtual size_t            GetLength( Pointer container ) const HELIUM_OVERRIDE;
+			virtual void              Clear( Pointer container ) HELIUM_OVERRIDE;
 
-			// SetTranslator
-			virtual Translator* GetKeyTranslator() const HELIUM_OVERRIDE;
-			virtual Translator* GetValueTranslator() const HELIUM_OVERRIDE;
-			virtual void        GetItems( Pointer association, DynamicArray<Pointer>& keys, DynamicArray<Pointer>& values ) HELIUM_OVERRIDE;
-			virtual Pointer     GetItem( Pointer association, Pointer key ) HELIUM_OVERRIDE;
-			virtual void        SetItem( Pointer association, Pointer key, Pointer value ) HELIUM_OVERRIDE;
-			virtual void        RemoveItem( Pointer association, Pointer key ) HELIUM_OVERRIDE;
+			// AssocationTranslator
+			virtual ScalarTranslator* GetKeyTranslator() const HELIUM_OVERRIDE;
+			virtual Translator*       GetValueTranslator() const HELIUM_OVERRIDE;
+			virtual void              GetItems( Pointer association, DynamicArray<Pointer>& keys, DynamicArray<Pointer>& values ) HELIUM_OVERRIDE;
+			virtual Pointer           GetItem( Pointer association, Pointer key ) HELIUM_OVERRIDE;
+			virtual void              SetItem( Pointer association, Pointer key, Pointer value ) HELIUM_OVERRIDE;
+			virtual void              RemoveItem( Pointer association, Pointer key ) HELIUM_OVERRIDE;
 
 		private:
-			Translator* m_InternalTranslatorKey;
-			Translator* m_InternalTranslatorValue;
+			ScalarTranslator*   m_InternalTranslatorKey;
+			Translator*         m_InternalTranslatorValue;
 		};
 		
 		template <class KeyT, class ValueT>
