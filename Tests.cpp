@@ -6,6 +6,12 @@ using namespace Reflect;
 
 #if !HELIUM_RELEASE
 
+struct EmptyBaseCheck : StructureBase
+{
+	uint32_t variable;
+};
+HELIUM_COMPILE_ASSERT( sizeof( EmptyBaseCheck ) == sizeof( uint32_t ) ); // check for empty-base optimization
+
 REFLECT_DEFINE_ENUMERATION( TestEnumeration );
 
 void TestEnumeration::EnumerateEnum( Enumeration& info )
