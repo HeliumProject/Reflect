@@ -7,7 +7,7 @@ void Helium::Reflect::Enumeration::Create( Enumeration const*& pointer, const ch
 	type->m_Size = sizeof(T);
 	type->m_Name = name;
 
-	T::EnumerateEnum( *type );
+	T::PopulateEnumeration( *type );
 }
 
 bool Helium::Reflect::Enumeration::IsFlagSet(uint32_t value, uint32_t flag)

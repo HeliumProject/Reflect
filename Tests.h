@@ -9,7 +9,6 @@ namespace Helium
 	{
 		struct TestEnumeration : EnumerationBase
 		{
-		public:
 			enum Enum
 			{
 				ValueOne,
@@ -17,14 +16,11 @@ namespace Helium
 			};
 
 			REFLECT_DECLARE_ENUMERATION( TestEnumeration );
-			static void EnumerateEnum( Enumeration& info );
+			static void PopulateEnumeration( Enumeration& info );
 		};
 
-		struct TestStruct : StructureBase
+		struct TestStructure : StructureBase
 		{
-			REFLECT_DECLARE_BASE_STRUCTURE( TestStruct );
-			static void PopulateStructure( Structure& comp );
-
 			uint8_t  m_Uint8;
 			uint16_t m_Uint16;
 			uint32_t m_Uint32;
@@ -45,20 +41,21 @@ namespace Helium
 			DynamicArray<uint32_t> m_FoundationDynamicArrayUint32;
 			Set<uint32_t> m_FoundationSetUint32;
 			Map<uint32_t, uint32_t> m_FoundationMapUint32;
+
+			REFLECT_DECLARE_BASE_STRUCTURE( TestStructure );
+			static void PopulateStructure( Structure& comp );
 		};
 
 		class TestObject : public Object
 		{
-		public:
-			REFLECT_DECLARE_OBJECT( TestObject, Object );
-			static void PopulateStructure( Structure& comp );
-
-		private:
-			TestStruct m_Struct;
-			TestStruct m_StructArray[ 8 ];
+			TestStructure m_Struct;
+			TestStructure m_StructArray[ 8 ];
 
 			TestEnumeration m_Enumeration;
 			TestEnumeration m_EnumerationArray[ 8 ];
+
+			REFLECT_DECLARE_OBJECT( TestObject, Object );
+			static void PopulateStructure( Structure& comp );
 		};
 
 		void RunTests();
