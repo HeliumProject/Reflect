@@ -81,7 +81,7 @@ namespace Helium
 		{
 			return NULL;
 		}
-		inline const Type* DeduceVauleType( const FilePath&, const FilePath& )
+		inline const Type* DeduceValueType( const FilePath&, const FilePath& )
 		{
 			return NULL;
 		}
