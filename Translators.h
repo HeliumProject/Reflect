@@ -29,17 +29,17 @@ namespace Helium
 			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
 		};
 
-		template<> SimpleScalarTranslator< bool >::SimpleScalarTranslator();
-		template<> SimpleScalarTranslator< uint8_t >::SimpleScalarTranslator();
-		template<> SimpleScalarTranslator< uint16_t >::SimpleScalarTranslator();
-		template<> SimpleScalarTranslator< uint32_t >::SimpleScalarTranslator();
-		template<> SimpleScalarTranslator< uint64_t >::SimpleScalarTranslator();
-		template<> SimpleScalarTranslator< int8_t >::SimpleScalarTranslator();
-		template<> SimpleScalarTranslator< int16_t >::SimpleScalarTranslator();
-		template<> SimpleScalarTranslator< int32_t >::SimpleScalarTranslator();
-		template<> SimpleScalarTranslator< int64_t >::SimpleScalarTranslator();
-		template<> SimpleScalarTranslator< float32_t >::SimpleScalarTranslator();
-		template<> SimpleScalarTranslator< float64_t >::SimpleScalarTranslator();
+		template<> inline SimpleScalarTranslator< bool >::SimpleScalarTranslator()      : ScalarTranslator( 1, ScalarTypes::Boolean ) {}
+		template<> inline SimpleScalarTranslator< uint8_t >::SimpleScalarTranslator()   : ScalarTranslator( 1, ScalarTypes::Unsigned8 ) {}
+		template<> inline SimpleScalarTranslator< uint16_t >::SimpleScalarTranslator()  : ScalarTranslator( 2, ScalarTypes::Unsigned16 ) {}
+		template<> inline SimpleScalarTranslator< uint32_t >::SimpleScalarTranslator()  : ScalarTranslator( 4, ScalarTypes::Unsigned32 ) {}
+		template<> inline SimpleScalarTranslator< uint64_t >::SimpleScalarTranslator()  : ScalarTranslator( 8, ScalarTypes::Unsigned64 ) {}
+		template<> inline SimpleScalarTranslator< int8_t >::SimpleScalarTranslator()    : ScalarTranslator( 1, ScalarTypes::Signed8 ) {}
+		template<> inline SimpleScalarTranslator< int16_t >::SimpleScalarTranslator()   : ScalarTranslator( 2, ScalarTypes::Signed16 ) {}
+		template<> inline SimpleScalarTranslator< int32_t >::SimpleScalarTranslator()   : ScalarTranslator( 4, ScalarTypes::Signed32 ) {}
+		template<> inline SimpleScalarTranslator< int64_t >::SimpleScalarTranslator()   : ScalarTranslator( 8, ScalarTypes::Signed64 ) {}
+		template<> inline SimpleScalarTranslator< float32_t >::SimpleScalarTranslator() : ScalarTranslator( 4, ScalarTypes::Float32 ) {}
+		template<> inline SimpleScalarTranslator< float64_t >::SimpleScalarTranslator() : ScalarTranslator( 8, ScalarTypes::Float64 ) {}
 
 		inline const Type* DeduceKeyType( bool, bool )                { return NULL; }
 		inline const Type* DeduceValueType( bool, bool )              { return NULL; }
