@@ -12,7 +12,7 @@
 using namespace Helium;
 using namespace Helium::Reflect;
 
-#pragma TODO("Remove separate base/derived structure macros in favor of registering StructureBase (like Object)")
+#pragma TODO("Remove separate base/derived structure macros in favor of registering Struct (like Object)")
 
 Field::Field()
 : m_Structure( NULL )

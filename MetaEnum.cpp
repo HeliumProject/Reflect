@@ -9,15 +9,15 @@ using namespace Helium::Reflect;
 
 #pragma TODO("Ditch STL in favor of Foundation containers")
 #pragma TODO("Switch to uint64_t for wider bitfield support")
-#pragma TODO("Make AddElement return an EnumerationElement for easier meta-data addition")
+#pragma TODO("Make AddElement return an MetaEnum::Element for easier meta-data addition")
 
-EnumerationElement::EnumerationElement()
+MetaEnum::Element::Element()
 	: m_Value( 0x0 )
 {
 
 }
 
-EnumerationElement::EnumerationElement( uint32_t value, const std::string& name, const std::string& helpText )
+MetaEnum::Element::Element( uint32_t value, const std::string& name, const std::string& helpText )
 	: m_Value( value )
 	, m_Name( name )
 	, m_HelpText( helpText )
@@ -41,8 +41,8 @@ void MetaEnum::Register() const
 	MetaType::Register();
 
 	uint32_t computedSize = 0;
-	DynamicArray< EnumerationElement >::ConstIterator itr = m_Elements.Begin();
-	DynamicArray< EnumerationElement >::ConstIterator end = m_Elements.End();
+	DynamicArray< MetaEnum::Element >::ConstIterator itr = m_Elements.Begin();
+	DynamicArray< MetaEnum::Element >::ConstIterator end = m_Elements.End();
 	for ( ; itr != end; ++itr )
 	{
 		Log::Debug( TXT( "  Value: %8d, Name: %s\n" ), itr->m_Value, itr->m_Name.c_str() );
@@ -56,7 +56,7 @@ void MetaEnum::Unregister() const
 
 void MetaEnum::AddElement( uint32_t value, const std::string& name, const std::string& helpText )
 {
-	EnumerationElement element ( value, name, helpText );
+	MetaEnum::Element element ( value, name, helpText );
 
 	m_Elements.Add( element );
 
@@ -69,8 +69,8 @@ void MetaEnum::AddElement( uint32_t value, const std::string& name, const std::s
 
 bool MetaEnum::IsValid(uint32_t value) const
 {
-	DynamicArray< EnumerationElement >::ConstIterator itr = m_Elements.Begin();
-	DynamicArray< EnumerationElement >::ConstIterator end = m_Elements.End();
+	DynamicArray< MetaEnum::Element >::ConstIterator itr = m_Elements.Begin();
+	DynamicArray< MetaEnum::Element >::ConstIterator end = m_Elements.End();
 	for ( ; itr != end; ++itr )
 	{
 		if ( itr->m_Value == value )
@@ -143,8 +143,8 @@ bool MetaEnum::GetString(const uint32_t value, std::string& str) const
 	}
 	else
 	{
-		DynamicArray< EnumerationElement >::ConstIterator itr = m_Elements.Begin();
-		DynamicArray< EnumerationElement >::ConstIterator end = m_Elements.End();
+		DynamicArray< MetaEnum::Element >::ConstIterator itr = m_Elements.Begin();
+		DynamicArray< MetaEnum::Element >::ConstIterator end = m_Elements.End();
 		for ( ; itr != end; ++itr )
 		{
 			if ( itr->m_Value == value )
@@ -160,8 +160,8 @@ bool MetaEnum::GetString(const uint32_t value, std::string& str) const
 
 bool MetaEnum::GetSingleValue(const std::string& str, uint32_t& value) const
 {
-	DynamicArray< EnumerationElement >::ConstIterator itr = m_Elements.Begin();
-	DynamicArray< EnumerationElement >::ConstIterator end = m_Elements.End();
+	DynamicArray< MetaEnum::Element >::ConstIterator itr = m_Elements.Begin();
+	DynamicArray< MetaEnum::Element >::ConstIterator end = m_Elements.End();
 	for ( ; itr != end; ++itr )
 	{
 		if ( itr->m_Name == str )
@@ -203,8 +203,8 @@ bool MetaEnum::GetBitfieldStrings(const uint32_t value, std::vector< std::string
 	if ( m_IsBitfield )
 	{
 		// search the map
-		DynamicArray< EnumerationElement >::ConstIterator itr = m_Elements.Begin();
-		DynamicArray< EnumerationElement >::ConstIterator end = m_Elements.End();
+		DynamicArray< MetaEnum::Element >::ConstIterator itr = m_Elements.Begin();
+		DynamicArray< MetaEnum::Element >::ConstIterator end = m_Elements.End();
 		for ( ; itr != end; ++itr )
 		{
 			if ( IsFlagSet( value, itr->m_Value ) )

@@ -5,13 +5,13 @@ void Helium::Reflect::MetaStruct::Create( MetaStruct const*& pointer, const char
 	pointer = type;
 
 	// populate reflection information
-	MetaStruct::Create< StructureT >( name, baseName, &StructureT::PopulateStructure, type );
+	MetaStruct::Create< StructureT >( name, baseName, &StructureT::PopulateMetaType, type );
 
 	type->m_Default = new StructureT;
 }
 
 template< class StructureT >
-void Helium::Reflect::MetaStruct::Create( const char* name, const char* baseName, PopulateCompositeFunc populate, MetaStruct* info )
+void Helium::Reflect::MetaStruct::Create( const char* name, const char* baseName, PopulateMetaTypeFunc populate, MetaStruct* info )
 {
 	// the size
 	info->m_Size = sizeof( StructureT );
@@ -155,7 +155,7 @@ template< class StructureT, class BaseT >
 Helium::Reflect::MetaStructRegistrar< StructureT, BaseT >::MetaStructRegistrar(const char* name)
 	: MetaTypeRegistrar( name )
 {
-	HELIUM_ASSERT( StructureT::s_Structure == NULL );
+	HELIUM_ASSERT( StructureT::s_MetaStruct == NULL );
 	MetaTypeRegistrar::AddToList( RegistrarTypes::MetaStruct, this );
 }
 
@@ -169,20 +169,20 @@ Helium::Reflect::MetaStructRegistrar< StructureT, BaseT >::~MetaStructRegistrar(
 template< class StructureT, class BaseT >
 void Helium::Reflect::MetaStructRegistrar< StructureT, BaseT >::Register()
 {
-	if ( StructureT::s_Structure == NULL )
+	if ( StructureT::s_MetaStruct == NULL )
 	{
 		BaseT::s_Registrar.Register();
-		AddTypeToRegistry( StructureT::CreateStructure() );
+		AddTypeToRegistry( StructureT::CreateMetaStruct() );
 	}
 }
 
 template< class StructureT, class BaseT >
 void Helium::Reflect::MetaStructRegistrar< StructureT, BaseT >::Unregister()
 {
-	if ( StructureT::s_Structure != NULL )
+	if ( StructureT::s_MetaStruct != NULL )
 	{
-		RemoveTypeFromRegistry( StructureT::s_Structure );
-		StructureT::s_Structure = NULL;
+		RemoveTypeFromRegistry( StructureT::s_MetaStruct );
+		StructureT::s_MetaStruct = NULL;
 	}
 }
 
@@ -190,7 +190,7 @@ template< class StructureT >
 Helium::Reflect::MetaStructRegistrar< StructureT, void >::MetaStructRegistrar(const char* name)
 	: MetaTypeRegistrar( name )
 {
-	HELIUM_ASSERT( StructureT::s_Structure == NULL );
+	HELIUM_ASSERT( StructureT::s_MetaStruct == NULL );
 	MetaTypeRegistrar::AddToList( RegistrarTypes::MetaStruct, this );
 }
 
@@ -204,18 +204,18 @@ Helium::Reflect::MetaStructRegistrar< StructureT, void >::~MetaStructRegistrar()
 template< class StructureT >
 void Helium::Reflect::MetaStructRegistrar< StructureT, void >::Register()
 {
-	if ( StructureT::s_Structure == NULL )
+	if ( StructureT::s_MetaStruct == NULL )
 	{
-		AddTypeToRegistry( StructureT::CreateStructure() );
+		AddTypeToRegistry( StructureT::CreateMetaStruct() );
 	}
 }
 
 template< class StructureT >
 void Helium::Reflect::MetaStructRegistrar< StructureT, void >::Unregister()
 {
-	if ( StructureT::s_Structure != NULL )
+	if ( StructureT::s_MetaStruct != NULL )
 	{
-		RemoveTypeFromRegistry( StructureT::s_Structure );
-		StructureT::s_Structure = NULL;
+		RemoveTypeFromRegistry( StructureT::s_MetaStruct );
+		StructureT::s_MetaStruct = NULL;
 	}
 }

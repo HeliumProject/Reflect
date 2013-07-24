@@ -14,25 +14,25 @@ namespace Helium
 		//  your derived struct type can use the memory this takes due to C/C++ standard
 		//  'Empty Base Optimization'
 		//
-		struct HELIUM_REFLECT_API EnumerationBase
+		struct HELIUM_REFLECT_API Enum
 		{
-		};
-
-		class HELIUM_REFLECT_API EnumerationElement
-		{
-		public:
-			EnumerationElement();
-			EnumerationElement( uint32_t value, const std::string& name, const std::string& helpText = TXT( "FIXME: SET THE HELP TEXT FOR THIS ENUMERATION ELEMENT" ) );
-
-			uint32_t        m_Value;    // the value of the object
-			std::string     m_Name;     // the name of the object
-			std::string     m_HelpText; // the help text for the object
 		};
 
 		class HELIUM_REFLECT_API MetaEnum : public MetaType
 		{
 		public:
 			REFLECT_META_DERIVED( MetaIds::MetaEnum, MetaEnum, MetaType );
+
+			class HELIUM_REFLECT_API Element
+			{
+			public:
+				Element();
+				Element( uint32_t value, const std::string& name, const std::string& helpText = TXT( "FIXME: SET THE HELP TEXT FOR THIS ENUMERATION ELEMENT" ) );
+
+				uint32_t        m_Value;    // the value of the object
+				std::string     m_Name;     // the name of the object
+				std::string     m_HelpText; // the help text for the object
+			};
 
 			MetaEnum();
 			~MetaEnum();
@@ -55,7 +55,7 @@ namespace Helium
 			inline static bool IsFlagSet(uint32_t value, uint32_t flag);
 			inline static void SetFlags(uint32_t& value, uint32_t flags);
 
-			DynamicArray< EnumerationElement > m_Elements;
+			DynamicArray< MetaEnum::Element > m_Elements;
 			bool                               m_IsBitfield;
 
 		private:
@@ -76,7 +76,7 @@ namespace Helium
 }
 
 // declares type checking functions
-#define _REFLECT_DECLARE_ENUMERATION( ENUMERATION ) \
+#define _REFLECT_DECLARE_ENUM( ENUMERATION ) \
 public: \
 Enum m_Value; \
 ENUMERATION() : m_Value() {} \
@@ -88,7 +88,7 @@ static const Helium::Reflect::MetaEnum* s_Enumeration; \
 static Helium::Reflect::MetaEnumRegistrar< ENUMERATION > s_Registrar;
 
 // defines the static type info vars
-#define _REFLECT_DEFINE_ENUMERATION( ENUMERATION ) \
+#define _REFLECT_DEFINE_ENUM( ENUMERATION ) \
 const Helium::Reflect::MetaEnum* ENUMERATION::CreateEnumeration() \
 { \
 	HELIUM_ASSERT( s_Enumeration == NULL ); \
@@ -99,11 +99,11 @@ const Helium::Reflect::MetaEnum* ENUMERATION::s_Enumeration = NULL; \
 Helium::Reflect::MetaEnumRegistrar< ENUMERATION > ENUMERATION::s_Registrar( TXT( #ENUMERATION ) );
 
 // declares an enumeration
-#define REFLECT_DECLARE_ENUMERATION( ENUMERATION ) \
-	_REFLECT_DECLARE_ENUMERATION( ENUMERATION )
+#define REFLECT_DECLARE_ENUM( ENUMERATION ) \
+	_REFLECT_DECLARE_ENUM( ENUMERATION )
 
 // defines an enumeration
-#define REFLECT_DEFINE_ENUMERATION( ENUMERATION ) \
-	_REFLECT_DEFINE_ENUMERATION( ENUMERATION )
+#define REFLECT_DEFINE_ENUM( ENUMERATION ) \
+	_REFLECT_DEFINE_ENUM( ENUMERATION )
 
 #include "Reflect/MetaEnum.inl"

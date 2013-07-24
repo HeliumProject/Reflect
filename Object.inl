@@ -5,7 +5,7 @@ void Helium::Reflect::Object::FieldChanged( FieldT* fieldAddress ) const
     uintptr_t fieldOffset = ((uintptr_t)fieldAddress - (uintptr_t)this);
 
     // find the field in our reflection information
-    const Reflect::Field* field = GetClass()->FindFieldByOffset( fieldOffset );
+    const Reflect::Field* field = GetMetaClass()->FindFieldByOffset( fieldOffset );
 
     // your field address probably doesn't point to the field in this instance,
     //  or your field is not exposed to Reflect, add it in your MetaStruct function
@@ -22,7 +22,7 @@ void Helium::Reflect::Object::ChangeField( FieldT ObjectT::* pointerToMember, co
     this->*pointerToMember = newValue;
 
     // find the field in our reflection information
-    const Reflect::Field* field = GetClass()->FindField( pointerToMember );
+    const Reflect::Field* field = GetMetaClass()->FindField( pointerToMember );
 
     // your field is not exposed to Reflect, add it in your MetaStruct function
     HELIUM_ASSERT( field );
@@ -65,7 +65,7 @@ inline DerivedT* Helium::Reflect::AssertCast( Reflect::Object* base )
 {
     if ( base != NULL )
     {
-        HELIUM_ASSERT( base->IsClass( GetClass<DerivedT>() ) );
+        HELIUM_ASSERT( base->IsA( GetMetaClass<DerivedT>() ) );
     }
 
     return static_cast< DerivedT* >( base );
@@ -76,7 +76,7 @@ inline const DerivedT* Helium::Reflect::AssertCast(const Reflect::Object* base)
 {
     if ( base != NULL )
     {
-        HELIUM_ASSERT( base->IsClass( GetClass<DerivedT>() ) );
+        HELIUM_ASSERT( base->IsA( GetMetaClass<DerivedT>() ) );
     }
 
     return static_cast< const DerivedT* >( base );
@@ -89,9 +89,9 @@ inline const DerivedT* Helium::Reflect::AssertCast(const Reflect::Object* base)
 template<class DerivedT>
 inline DerivedT* Helium::Reflect::ThrowCast(Reflect::Object* base)
 {
-    if ( base != NULL && !base->IsClass( GetClass<DerivedT>() ) )
+    if ( base != NULL && !base->IsA( GetMetaClass<DerivedT>() ) )
     {
-        throw CastException ( TXT( "Object of type '%s' cannot be cast to type '%s'" ), base->GetClass()->m_Name, GetClass<DerivedT>()->m_Name );
+        throw CastException ( TXT( "Object of type '%s' cannot be cast to type '%s'" ), base->GetMetaClass()->m_Name, GetMetaClass<DerivedT>()->m_Name );
     }
 
     return static_cast< DerivedT* >( base );
@@ -100,9 +100,9 @@ inline DerivedT* Helium::Reflect::ThrowCast(Reflect::Object* base)
 template<class DerivedT>
 inline const DerivedT* Helium::Reflect::ThrowCast(const Reflect::Object* base)
 {
-    if ( base != NULL && !base->IsClass( GetClass<DerivedT>() ) )
+    if ( base != NULL && !base->IsA( GetMetaClass<DerivedT>() ) )
     {
-        throw CastException ( TXT( "Object of type '%s' cannot be cast to type '%s'" ), base->GetClass()->m_Name, GetClass<DerivedT>()->m_Name );
+        throw CastException ( TXT( "Object of type '%s' cannot be cast to type '%s'" ), base->GetMetaClass()->m_Name, GetMetaClass<DerivedT>()->m_Name );
     }
 
     return static_cast< const DerivedT* >( base );
@@ -115,7 +115,7 @@ inline const DerivedT* Helium::Reflect::ThrowCast(const Reflect::Object* base)
 template<class DerivedT>
 inline DerivedT* Helium::Reflect::SafeCast(Reflect::Object* base)
 {
-    if ( base != NULL && base->IsClass( GetClass<DerivedT>() ) )
+    if ( base != NULL && base->IsA( GetMetaClass<DerivedT>() ) )
     {
         return static_cast< DerivedT* >( base );
     }
@@ -128,7 +128,7 @@ inline DerivedT* Helium::Reflect::SafeCast(Reflect::Object* base)
 template<class DerivedT>
 inline const DerivedT* Helium::Reflect::SafeCast(const Reflect::Object* base)
 {
-    if ( base != NULL && base->IsClass( GetClass<DerivedT>() ) )
+    if ( base != NULL && base->IsA( GetMetaClass<DerivedT>() ) )
     {
         return static_cast< const DerivedT* >( base );
     }
@@ -141,7 +141,7 @@ inline const DerivedT* Helium::Reflect::SafeCast(const Reflect::Object* base)
 template< class T >
 bool Helium::Reflect::ObjectResolver::Resolve( const Name& identity, StrongPtr< T >& object )
 {
-	const MetaClass* pointerClass = Reflect::GetClass< T >();
+	const MetaClass* pointerClass = Reflect::GetMetaClass< T >();
 	return this->Resolve( identity, reinterpret_cast< ObjectPtr& >( object ), pointerClass );
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Reflect/Translators.h"
+#include "Reflect/TranslateBuiltin.h"
 
 namespace Helium
 {
@@ -177,4 +177,4 @@ namespace Helium
 	}
 }
 
-#include "Reflect/StandardLibrarySupport.inl"
+#include "Reflect/TranslateStandardLibrary.inl"

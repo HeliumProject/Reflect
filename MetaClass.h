@@ -69,4 +69,76 @@ namespace Helium
 	}
 }
 
+// declares creator for constructable types
+#define _REFLECT_DECLARE_CREATOR( OBJECT ) \
+public: \
+static Helium::Reflect::Object* CreateObject() { return new OBJECT; }
+
+// declares type checking functions
+#define _REFLECT_DECLARE_CLASS( OBJECT, BASE ) \
+public: \
+typedef BASE Base; \
+typedef OBJECT This; \
+virtual const Helium::Reflect::MetaClass* GetMetaClass() const HELIUM_OVERRIDE; \
+static const Helium::Reflect::MetaClass* CreateMetaClass(); \
+static const Helium::Reflect::MetaClass* s_MetaClass;
+
+#define _REFLECT_DECLARE_CLASS_REGISTRAR( OBJECT, BASE ) \
+static Helium::Reflect::MetaClassRegistrar< OBJECT, BASE > s_Registrar;
+
+// defines the static type info vars
+#define _REFLECT_DEFINE_CLASS( OBJECT, CREATOR ) \
+const Helium::Reflect::MetaClass* OBJECT::GetMetaClass() const \
+{ \
+	return s_MetaClass; \
+} \
+\
+const Helium::Reflect::MetaClass* OBJECT::CreateMetaClass() \
+{ \
+	HELIUM_ASSERT( s_MetaClass == NULL ); \
+	HELIUM_ASSERT( OBJECT::Base::s_MetaClass != NULL ); \
+	Helium::Reflect::MetaClass::Create< OBJECT >( s_MetaClass, TXT( #OBJECT ), OBJECT::Base::s_MetaClass->m_Name, CREATOR); \
+	return s_MetaClass; \
+} \
+const Helium::Reflect::MetaClass* OBJECT::s_MetaClass = NULL;
+
+#define _REFLECT_DEFINE_CLASS_REGISTRAR( OBJECT, CREATOR ) \
+Helium::Reflect::MetaClassRegistrar< OBJECT, OBJECT::Base > OBJECT::s_Registrar( TXT( #OBJECT ) );
+
+// declares an abstract object (an object that either A: cannot be instantiated or B: is never actually serialized)
+#define REFLECT_DECLARE_ABSTRACT_NO_REGISTRAR( OBJECT, BASE ) \
+	_REFLECT_DECLARE_CLASS( OBJECT, BASE )
+
+#define REFLECT_DECLARE_ABSTRACT( OBJECT, BASE ) \
+	REFLECT_DECLARE_ABSTRACT_NO_REGISTRAR( OBJECT, BASE ) \
+	_REFLECT_DECLARE_CLASS_REGISTRAR( OBJECT, BASE )
+
+// defines the abstract object class
+#define REFLECT_DEFINE_ABSTRACT_NO_REGISTRAR( OBJECT ) \
+	_REFLECT_DEFINE_CLASS( OBJECT, NULL )
+
+// defines the abstract object class
+#define REFLECT_DEFINE_ABSTRACT( OBJECT ) \
+	REFLECT_DEFINE_ABSTRACT_NO_REGISTRAR( OBJECT ) \
+	_REFLECT_DEFINE_CLASS_REGISTRAR( OBJECT, NULL )
+
+// declares a concrete object with creator
+#define REFLECT_DECLARE_CLASS_NO_REGISTRAR( OBJECT, BASE ) \
+	_REFLECT_DECLARE_CLASS( OBJECT, BASE ) \
+	_REFLECT_DECLARE_CREATOR( OBJECT )
+
+// declares a concrete object with creator
+#define REFLECT_DECLARE_CLASS( OBJECT, BASE ) \
+	REFLECT_DECLARE_CLASS_NO_REGISTRAR( OBJECT, BASE ) \
+	_REFLECT_DECLARE_CLASS_REGISTRAR( OBJECT, BASE )
+
+// defines a concrete object
+#define REFLECT_DEFINE_CLASS_NO_REGISTRAR( OBJECT ) \
+	_REFLECT_DEFINE_CLASS( OBJECT, &OBJECT::CreateObject )
+
+// defines a concrete object
+#define REFLECT_DEFINE_CLASS( OBJECT ) \
+	REFLECT_DEFINE_CLASS_NO_REGISTRAR( OBJECT ) \
+	_REFLECT_DEFINE_CLASS_REGISTRAR( OBJECT, &OBJECT::CreateObject )
+
 #include "Reflect/MetaClass.inl"

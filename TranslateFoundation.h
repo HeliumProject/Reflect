@@ -238,4 +238,4 @@ namespace Helium
 	}
 }
 
-#include "Reflect/FoundationSupport.inl"
+#include "Reflect/TranslateFoundation.inl"

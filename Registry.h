@@ -71,8 +71,8 @@ namespace Helium
             inline const MetaStruct* GetStructure( const char* name ) const;
 
             // class lookup
-            const MetaClass* GetClass( uint32_t crc ) const;
-            inline const MetaClass* GetClass( const char* name ) const;
+            const MetaClass* GetMetaClass( uint32_t crc ) const;
+            inline const MetaClass* GetMetaClass( const char* name ) const;
 
             // enumeration lookup
             const MetaEnum* GetEnumeration( uint32_t crc ) const;
@@ -87,17 +87,17 @@ namespace Helium
         //
 
         template<class T>
-        inline const MetaClass* GetClass()
+        inline const MetaClass* GetMetaClass()
         {
             T::s_Registrar.Register();
-            return T::s_Class;
+            return T::s_MetaClass;
         }
 
         template<class T>
         inline const MetaStruct* GetStructure()
         {
             T::s_Registrar.Register();
-            return T::s_Structure;
+            return T::s_MetaStruct;
         }
 
         template<class T>

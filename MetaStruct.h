@@ -16,7 +16,7 @@ namespace Helium
 	namespace Reflect
 	{
 		class MetaStruct;
-		typedef void (*PopulateCompositeFunc)( MetaStruct& );
+		typedef void (*PopulateMetaTypeFunc)( MetaStruct& );
 
 		namespace FieldFlags
 		{
@@ -64,7 +64,7 @@ namespace Helium
 		//  'Empty Base Optimization'
 		//
 
-		struct HELIUM_REFLECT_API StructureBase
+		struct HELIUM_REFLECT_API Struct
 		{
 		};
 
@@ -91,7 +91,7 @@ namespace Helium
 
 			// shared logic with class types
 			template< class StructureT >
-			static void Create( const char* name, const char* baseName, PopulateCompositeFunc populate, MetaStruct* info );
+			static void Create( const char* name, const char* baseName, PopulateMetaTypeFunc populate, MetaStruct* info );
 
 			// overloaded functions from MetaType
 			virtual void Register() const HELIUM_OVERRIDE;
@@ -166,7 +166,7 @@ namespace Helium
 			mutable const MetaStruct* m_FirstDerived; // head of the derived linked list, mutable since its populated by other objects
 			mutable const MetaStruct* m_NextSibling;  // next in the derived linked list, mutable since its populated by other objects
 			DynamicArray< Field >    m_Fields;       // fields in this composite
-			PopulateCompositeFunc    m_Populate;     // function to populate this structure
+			PopulateMetaTypeFunc    m_Populate;     // function to populate this structure
 			void*                    m_Default;      // default instance
 		};
 
@@ -195,55 +195,55 @@ namespace Helium
 }
 
 // declares type checking functions
-#define _REFLECT_DECLARE_BASE_STRUCTURE( STRUCTURE ) \
+#define _REFLECT_DECLARE_BASE_STRUCT( STRUCTURE ) \
 public: \
 typedef STRUCTURE This; \
-static const Helium::Reflect::MetaStruct* CreateStructure(); \
-static const Helium::Reflect::MetaStruct* s_Structure; \
+static const Helium::Reflect::MetaStruct* CreateMetaStruct(); \
+static const Helium::Reflect::MetaStruct* s_MetaStruct; \
 static Helium::Reflect::MetaStructRegistrar< STRUCTURE, void > s_Registrar;
 
-#define _REFLECT_DECLARE_DERIVED_STRUCTURE( STRUCTURE, BASE ) \
+#define _REFLECT_DECLARE_DERIVED_STRUCT( STRUCTURE, BASE ) \
 public: \
 typedef BASE Base; \
 typedef STRUCTURE This; \
-static const Helium::Reflect::MetaStruct* CreateStructure(); \
-static const Helium::Reflect::MetaStruct* s_Structure; \
+static const Helium::Reflect::MetaStruct* CreateMetaStruct(); \
+static const Helium::Reflect::MetaStruct* s_MetaStruct; \
 static Helium::Reflect::MetaStructRegistrar< STRUCTURE, BASE > s_Registrar;
 
 // defines the static type info vars
-#define _REFLECT_DEFINE_BASE_STRUCTURE( STRUCTURE ) \
-const Helium::Reflect::MetaStruct* STRUCTURE::CreateStructure() \
+#define _REFLECT_DEFINE_BASE_STRUCT( STRUCTURE ) \
+const Helium::Reflect::MetaStruct* STRUCTURE::CreateMetaStruct() \
 { \
-	HELIUM_ASSERT( s_Structure == NULL ); \
-	Helium::Reflect::MetaStruct::Create<STRUCTURE>( s_Structure, TXT( #STRUCTURE ), NULL ); \
-	return s_Structure; \
+	HELIUM_ASSERT( s_MetaStruct == NULL ); \
+	Helium::Reflect::MetaStruct::Create<STRUCTURE>( s_MetaStruct, TXT( #STRUCTURE ), NULL ); \
+	return s_MetaStruct; \
 } \
-const Helium::Reflect::MetaStruct* STRUCTURE::s_Structure = NULL; \
+const Helium::Reflect::MetaStruct* STRUCTURE::s_MetaStruct = NULL; \
 Helium::Reflect::MetaStructRegistrar< STRUCTURE, void > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
 
-#define _REFLECT_DEFINE_DERIVED_STRUCTURE( STRUCTURE ) \
-const Helium::Reflect::MetaStruct* STRUCTURE::CreateStructure() \
+#define _REFLECT_DEFINE_DERIVED_STRUCT( STRUCTURE ) \
+const Helium::Reflect::MetaStruct* STRUCTURE::CreateMetaStruct() \
 { \
-	HELIUM_ASSERT( s_Structure == NULL ); \
-	HELIUM_ASSERT( STRUCTURE::Base::s_Structure != NULL ); \
-	Helium::Reflect::MetaStruct::Create<STRUCTURE>( s_Structure, TXT( #STRUCTURE ), STRUCTURE::Base::s_Structure->m_Name ); \
-	return s_Structure; \
+	HELIUM_ASSERT( s_MetaStruct == NULL ); \
+	HELIUM_ASSERT( STRUCTURE::Base::s_MetaStruct != NULL ); \
+	Helium::Reflect::MetaStruct::Create<STRUCTURE>( s_MetaStruct, TXT( #STRUCTURE ), STRUCTURE::Base::s_MetaStruct->m_Name ); \
+	return s_MetaStruct; \
 } \
-const Helium::Reflect::MetaStruct* STRUCTURE::s_Structure = NULL; \
+const Helium::Reflect::MetaStruct* STRUCTURE::s_MetaStruct = NULL; \
 Helium::Reflect::MetaStructRegistrar< STRUCTURE, STRUCTURE::Base > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
 
 // declares a concrete object with creator
-#define REFLECT_DECLARE_BASE_STRUCTURE( STRUCTURE ) \
-	_REFLECT_DECLARE_BASE_STRUCTURE( STRUCTURE )
+#define REFLECT_DECLARE_BASE_STRUCT( STRUCTURE ) \
+	_REFLECT_DECLARE_BASE_STRUCT( STRUCTURE )
 
-#define REFLECT_DECLARE_DERIVED_STRUCTURE( STRUCTURE, BASE ) \
-	_REFLECT_DECLARE_DERIVED_STRUCTURE( STRUCTURE, BASE )
+#define REFLECT_DECLARE_DERIVED_STRUCT( STRUCTURE, BASE ) \
+	_REFLECT_DECLARE_DERIVED_STRUCT( STRUCTURE, BASE )
 
 // defines a concrete object
-#define REFLECT_DEFINE_BASE_STRUCTURE( STRUCTURE ) \
-	_REFLECT_DEFINE_BASE_STRUCTURE( STRUCTURE )
+#define REFLECT_DEFINE_BASE_STRUCT( STRUCTURE ) \
+	_REFLECT_DEFINE_BASE_STRUCT( STRUCTURE )
 
-#define REFLECT_DEFINE_DERIVED_STRUCTURE( STRUCTURE ) \
-	_REFLECT_DEFINE_DERIVED_STRUCTURE( STRUCTURE  )
+#define REFLECT_DEFINE_DERIVED_STRUCT( STRUCTURE ) \
+	_REFLECT_DEFINE_DERIVED_STRUCT( STRUCTURE  )
 
 #include "Reflect/MetaStruct.inl"

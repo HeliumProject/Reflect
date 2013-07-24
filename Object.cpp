@@ -33,7 +33,7 @@ struct ObjectRefCountSupport::StaticTranslator
 
 ObjectRefCountSupport::StaticTranslator* ObjectRefCountSupport::sm_pStaticTranslator = NULL;
 
-const MetaClass* Object::s_Class = NULL;
+const MetaClass* Object::s_MetaClass = NULL;
 MetaClassRegistrar< Object, void > Object::s_Registrar( TXT("Object") );
 
 /// Retrieve a reference count proxy from the global pool.
@@ -214,26 +214,26 @@ void Object::Destroy()
 	delete this;
 }
 
-const Reflect::MetaClass* Object::GetClass() const
+const Reflect::MetaClass* Object::GetMetaClass() const
 {
-	return Reflect::GetClass<Object>();
+	return Reflect::GetMetaClass<Object>();
 }
 
-bool Object::IsClass( const Reflect::MetaClass* type ) const
+bool Object::IsA( const Reflect::MetaClass* type ) const
 {
-	const MetaClass* thisType = GetClass();
+	const MetaClass* thisType = GetMetaClass();
 	HELIUM_ASSERT( thisType );
 	return thisType->IsType( type );
 }
 
-const Reflect::MetaClass* Object::CreateClass()
+const Reflect::MetaClass* Object::CreateMetaClass()
 {
-	HELIUM_ASSERT( s_Class == NULL );
-	MetaClass::Create<Object>( s_Class, TXT("Object"), NULL );
-	return s_Class;
+	HELIUM_ASSERT( s_MetaClass == NULL );
+	MetaClass::Create<Object>( s_MetaClass, TXT("Object"), NULL );
+	return s_MetaClass;
 }
 
-void Object::PopulateStructure( Reflect::MetaStruct& comp )
+void Object::PopulateMetaType( Reflect::MetaClass& comp )
 {
 
 }
@@ -261,7 +261,7 @@ void Object::PostDeserialize( const Reflect::Field* field )
 
 bool Object::Equals( Object* object )
 {
-	const MetaClass* type = GetClass();
+	const MetaClass* type = GetMetaClass();
 
 	return type->Equals( this, this, object, object );
 }
@@ -276,8 +276,8 @@ void Object::CopyTo( Object* object )
 
 		// This is the common base class type
 		const MetaClass* type = NULL; 
-		const MetaClass* thisType = this->GetClass();
-		const MetaClass* objectType = object->GetClass();
+		const MetaClass* thisType = this->GetMetaClass();
+		const MetaClass* objectType = object->GetMetaClass();
 
 		// Simplest case: the types are the same
 		if ( thisType == objectType )
@@ -291,7 +291,7 @@ void Object::CopyTo( Object* object )
 			Reflect::Registry* registry = Reflect::Registry::GetInstance();
 			for ( const MetaClass* base = thisType; base && !type; base = static_cast< const MetaClass* >( base->m_Base ) )
 			{
-				if ( object->IsClass( base ) )
+				if ( object->IsA( base ) )
 				{
 					// We found the match (which breaks out of this loop)
 					type = ReflectionCast<const MetaClass>( base );
@@ -312,12 +312,12 @@ void Object::CopyTo( Object* object )
 
 ObjectPtr Object::Clone()
 {
-	ObjectPtr clone = GetClass()->m_Creator();
+	ObjectPtr clone = GetMetaClass()->m_Creator();
 
 	PreSerialize( NULL );
 	clone->PreDeserialize( NULL );
 
-	const MetaClass* type = GetClass();
+	const MetaClass* type = GetMetaClass();
 	type->Copy( this, this, clone, clone );
 
 	clone->PostDeserialize( NULL );

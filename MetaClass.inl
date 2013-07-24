@@ -5,7 +5,7 @@ void Helium::Reflect::MetaClass::Create( MetaClass const*& pointer, const char* 
 	pointer = type;
 
 	// populate reflection information
-	MetaStruct::Create< ClassT >( name, baseName, &ClassT::PopulateStructure, type );
+	MetaStruct::Create< ClassT >( name, baseName, reinterpret_cast< PopulateMetaTypeFunc >( &ClassT::PopulateMetaType ), type );
 
 	// setup factory function
 	type->m_Creator = creator;
@@ -30,7 +30,7 @@ template< class ClassT, class BaseT >
 Helium::Reflect::MetaClassRegistrar< ClassT, BaseT >::MetaClassRegistrar(const char* name)
 	: MetaTypeRegistrar( name )
 {
-	HELIUM_ASSERT( ClassT::s_Class == NULL );
+	HELIUM_ASSERT( ClassT::s_MetaClass == NULL );
 	MetaTypeRegistrar::AddToList( RegistrarTypes::MetaClass, this );
 }
 
@@ -44,20 +44,20 @@ Helium::Reflect::MetaClassRegistrar< ClassT, BaseT >::~MetaClassRegistrar()
 template< class ClassT, class BaseT >
 void Helium::Reflect::MetaClassRegistrar< ClassT, BaseT >::Register()
 {
-	if ( ClassT::s_Class == NULL )
+	if ( ClassT::s_MetaClass == NULL )
 	{
 		BaseT::s_Registrar.Register();
-		AddTypeToRegistry( ClassT::CreateClass() );
+		AddTypeToRegistry( ClassT::CreateMetaClass() );
 	}
 }
 
 template< class ClassT, class BaseT >
 void Helium::Reflect::MetaClassRegistrar< ClassT, BaseT >::Unregister()
 {
-	if ( ClassT::s_Class != NULL )
+	if ( ClassT::s_MetaClass != NULL )
 	{
-		RemoveTypeFromRegistry( ClassT::s_Class );
-		ClassT::s_Class = NULL;
+		RemoveTypeFromRegistry( ClassT::s_MetaClass );
+		ClassT::s_MetaClass = NULL;
 	}
 }
 
@@ -65,7 +65,7 @@ template< class ClassT >
 Helium::Reflect::MetaClassRegistrar< ClassT, void >::MetaClassRegistrar(const char* name)
 	: MetaTypeRegistrar( name )
 {
-	HELIUM_ASSERT( ClassT::s_Class == NULL );
+	HELIUM_ASSERT( ClassT::s_MetaClass == NULL );
 	MetaTypeRegistrar::AddToList( RegistrarTypes::MetaClass, this );
 }
 
@@ -79,18 +79,18 @@ Helium::Reflect::MetaClassRegistrar< ClassT, void >::~MetaClassRegistrar()
 template< class ClassT >
 void Helium::Reflect::MetaClassRegistrar< ClassT, void >::Register()
 {
-	if ( ClassT::s_Class == NULL )
+	if ( ClassT::s_MetaClass == NULL )
 	{
-		AddTypeToRegistry( ClassT::CreateClass() );
+		AddTypeToRegistry( ClassT::CreateMetaClass() );
 	}
 }
 
 template< class ClassT >
 void Helium::Reflect::MetaClassRegistrar< ClassT, void >::Unregister()
 {
-	if ( ClassT::s_Class != NULL )
+	if ( ClassT::s_MetaClass != NULL )
 	{
-		RemoveTypeFromRegistry( ClassT::s_Class );
-		ClassT::s_Class = NULL;
+		RemoveTypeFromRegistry( ClassT::s_MetaClass );
+		ClassT::s_MetaClass = NULL;
 	}
 }

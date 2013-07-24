@@ -7,7 +7,7 @@ namespace Helium
 {
 	namespace Reflect
 	{
-		struct TestEnumeration : EnumerationBase
+		struct TestEnumeration : Enum
 		{
 			enum Enum
 			{
@@ -15,11 +15,11 @@ namespace Helium
 				ValueTwo,
 			};
 
-			REFLECT_DECLARE_ENUMERATION( TestEnumeration );
-			static void PopulateEnumeration( MetaEnum& info );
+			REFLECT_DECLARE_ENUM( TestEnumeration );
+			static void PopulateMetaType( MetaEnum& info );
 		};
 
-		struct TestStructure : StructureBase
+		struct TestStructure : Struct
 		{
 			uint8_t  m_Uint8;
 			uint16_t m_Uint16;
@@ -42,8 +42,8 @@ namespace Helium
 			Set<uint32_t> m_FoundationSetUint32;
 			Map<uint32_t, uint32_t> m_FoundationMapUint32;
 
-			REFLECT_DECLARE_BASE_STRUCTURE( TestStructure );
-			static void PopulateStructure( MetaStruct& comp );
+			REFLECT_DECLARE_BASE_STRUCT( TestStructure );
+			static void PopulateMetaType( MetaStruct& comp );
 		};
 
 		class TestObject : public Object
@@ -54,8 +54,8 @@ namespace Helium
 			TestEnumeration m_Enumeration;
 			TestEnumeration m_EnumerationArray[ 8 ];
 
-			REFLECT_DECLARE_OBJECT( TestObject, Object );
-			static void PopulateStructure( MetaStruct& comp );
+			REFLECT_DECLARE_CLASS( TestObject, Object );
+			static void PopulateMetaType( MetaClass& comp );
 		};
 
 		void RunTests();

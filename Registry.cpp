@@ -204,7 +204,7 @@ const MetaStruct* Registry::GetStructure( uint32_t crc ) const
     return ReflectionCast< const MetaStruct >( GetType( crc ) );
 }
 
-const MetaClass* Registry::GetClass( uint32_t crc ) const
+const MetaClass* Registry::GetMetaClass( uint32_t crc ) const
 {
     return ReflectionCast< const MetaClass >( GetType( crc ) );
 }

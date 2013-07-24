@@ -6,23 +6,23 @@ using namespace Reflect;
 
 #if !HELIUM_RELEASE
 
-struct EmptyBaseCheck : StructureBase
+struct EmptyBaseCheck : Struct
 {
 	uint32_t variable;
 };
 HELIUM_COMPILE_ASSERT( sizeof( EmptyBaseCheck ) == sizeof( uint32_t ) ); // check for empty-base optimization
 
-REFLECT_DEFINE_ENUMERATION( TestEnumeration );
+REFLECT_DEFINE_ENUM( TestEnumeration );
 
-void TestEnumeration::PopulateEnumeration( MetaEnum& info )
+void TestEnumeration::PopulateMetaType( MetaEnum& info )
 {
 	info.AddElement( ValueOne, TXT( "Value One" ) );
 	info.AddElement( ValueTwo, TXT( "Value Two" ) );
 }
 
-REFLECT_DEFINE_BASE_STRUCTURE( TestStructure );
+REFLECT_DEFINE_BASE_STRUCT( TestStructure );
 
-void TestStructure::PopulateStructure( Reflect::MetaStruct& comp )
+void TestStructure::PopulateMetaType( Reflect::MetaStruct& comp )
 {
 	comp.AddField( &TestStructure::m_Uint8,  "Unsigned 8-bit Integer" );
 	comp.AddField( &TestStructure::m_Uint16, "Unsigned 16-bit Integer" );
@@ -46,9 +46,9 @@ void TestStructure::PopulateStructure( Reflect::MetaStruct& comp )
 	comp.AddField( &TestStructure::m_FoundationMapUint32, "Map of Unsigned 32-bit Integers" );
 }
 
-REFLECT_DEFINE_OBJECT( TestObject );
+REFLECT_DEFINE_CLASS( TestObject );
 
-void TestObject::PopulateStructure( Reflect::MetaStruct& comp )
+void TestObject::PopulateMetaType( Reflect::MetaClass& comp )
 {
 	comp.AddField( &TestObject::m_Struct, "MetaStruct" );
 	comp.AddField( &TestObject::m_StructArray, "MetaStruct Array" );

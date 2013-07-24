@@ -7,7 +7,7 @@ void Helium::Reflect::MetaEnum::Create( MetaEnum const*& pointer, const char* na
 	type->m_Size = sizeof(T);
 	type->m_Name = name;
 
-	T::PopulateEnumeration( *type );
+	T::PopulateMetaType( *type );
 }
 
 bool Helium::Reflect::MetaEnum::IsFlagSet(uint32_t value, uint32_t flag)

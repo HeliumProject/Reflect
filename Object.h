@@ -16,191 +16,191 @@
 
 namespace Helium
 {
-    namespace Reflect
-    {
-        class Translator;
+	namespace Reflect
+	{
+		class Translator;
 
-        class Object;
+		class Object;
 		typedef Helium::StrongPtr<Object> ObjectPtr;
 		typedef Helium::StrongPtr<const Object> ConstObjectPtr;
 
 
-        //
-        // ObjectRefCountSupport provides the support interface for managing reference counting data
-        //
+		//
+		// ObjectRefCountSupport provides the support interface for managing reference counting data
+		//
 
-        class HELIUM_REFLECT_API ObjectRefCountSupport
-        {
-        public:
-            /// Base type of reference counted object.
-            typedef Object BaseType;
+		class HELIUM_REFLECT_API ObjectRefCountSupport
+		{
+		public:
+			/// Base type of reference counted object.
+			typedef Object BaseType;
 
-            /// @name Object Destruction Support
-            //@{
-            inline static void PreDestroy( Object* pObject );
-            inline static void Destroy( Object* pObject );
-            //@}
+			/// @name Object Destruction Support
+			//@{
+			inline static void PreDestroy( Object* pObject );
+			inline static void Destroy( Object* pObject );
+			//@}
 
-            /// @name Reference Count Proxy Allocation Interface
-            //@{
-            static RefCountProxy< Object >* Allocate();
-            static void Release( RefCountProxy< Object >* pProxy );
+			/// @name Reference Count Proxy Allocation Interface
+			//@{
+			static RefCountProxy< Object >* Allocate();
+			static void Release( RefCountProxy< Object >* pProxy );
 
-            static void Shutdown();
-            //@}
+			static void Shutdown();
+			//@}
 
 #if HELIUM_ENABLE_MEMORY_TRACKING
-            /// @name Active Proxy Iteration
-            //@{
-            static size_t GetActiveProxyCount();
-            static bool GetFirstActiveProxy( ConcurrentHashSet< RefCountProxy< Object >* >::ConstAccessor& rAccessor );
-            //@}
+			/// @name Active Proxy Iteration
+			//@{
+			static size_t GetActiveProxyCount();
+			static bool GetFirstActiveProxy( ConcurrentHashSet< RefCountProxy< Object >* >::ConstAccessor& rAccessor );
+			//@}
 #endif
 
-        private:
-            struct StaticTranslator;
+		private:
+			struct StaticTranslator;
 
-            /// Static proxy management data.
-            static StaticTranslator* sm_pStaticTranslator;
-        };
+			/// Static proxy management data.
+			static StaticTranslator* sm_pStaticTranslator;
+		};
 
-        //
-        // Event delegate to support getting notified if this object changes
-        //
+		//
+		// Event delegate to support getting notified if this object changes
+		//
 
-        struct ObjectChangeArgs
-        {
-            const Object* m_Object;
-            const Field* m_Field;
+		struct ObjectChangeArgs
+		{
+			const Object* m_Object;
+			const Field* m_Field;
 
-            ObjectChangeArgs( const Object* object, const Field* field = NULL )
-                : m_Object( object )
-                , m_Field( field )
-            {
-            }
-        };
-        typedef Helium::Signature< const ObjectChangeArgs&, Helium::AtomicRefCountBase > ObjectChangeSignature;
+			ObjectChangeArgs( const Object* object, const Field* field = NULL )
+				: m_Object( object )
+				, m_Field( field )
+			{
+			}
+		};
+		typedef Helium::Signature< const ObjectChangeArgs&, Helium::AtomicRefCountBase > ObjectChangeSignature;
 
-        //
-        // Object is the abstract base class of a serializable class
-        //
+		//
+		// Object is the abstract base class of a serializable class
+		//
 
-        class HELIUM_REFLECT_API Object HELIUM_ABSTRACT : NonCopyable
-        {
-        protected:
-            HELIUM_DECLARE_REF_COUNT( Object, ObjectRefCountSupport );
+		class HELIUM_REFLECT_API Object HELIUM_ABSTRACT : NonCopyable
+		{
+		protected:
+			HELIUM_DECLARE_REF_COUNT( Object, ObjectRefCountSupport );
 
-        protected:
-            Object();
+		protected:
+			Object();
 
-        public:
-            virtual ~Object();
+		public:
+			virtual ~Object();
 
-            //
-            // Memory
-            //
+			//
+			// Memory
+			//
 
-            void* operator new( size_t bytes );
-            void* operator new( size_t bytes, void* memory );
-            void operator delete( void* ptr, size_t bytes );
-            void operator delete( void* ptr, void* memory );
+			void* operator new( size_t bytes );
+			void* operator new( size_t bytes, void* memory );
+			void operator delete( void* ptr, size_t bytes );
+			void operator delete( void* ptr, void* memory );
 
-            virtual void PreDestroy();
-            virtual void Destroy();  // This should only be called by the reference counting system!
+			virtual void PreDestroy();
+			virtual void Destroy();  // This should only be called by the reference counting system!
 
-            //
-            // MetaType checking
-            //
+			//
+			// Type checking
+			//
 
-            // Reflection data
-            static const MetaClass* s_Class;
-            static MetaClassRegistrar< Object, void > s_Registrar;
+			// Reflection data
+			static const MetaClass* s_MetaClass;
+			static MetaClassRegistrar< Object, void > s_Registrar;
 
-            // Retrieves the reflection data for this instance
-            virtual const Reflect::MetaClass* GetClass() const;
+			// Retrieves the reflection data for this instance
+			virtual const Reflect::MetaClass* GetMetaClass() const;
 
-            // Deduces type membership for this instance
-            bool IsClass( const Reflect::MetaClass* type ) const;
+			// Deduces type membership for this instance
+			bool IsA( const Reflect::MetaClass* type ) const;
 
-            // Create class data block for this type
-            static const Reflect::MetaClass* CreateClass();
+			// Create class data block for this type
+			static const Reflect::MetaClass* CreateMetaClass();
 
-            // Enumerates member data (stub)
-            static void PopulateStructure( Reflect::MetaStruct& comp );
+			// Enumerates member data (stub)
+			static void PopulateMetaType( Reflect::MetaClass& comp );
 
-            //
-            // Persistence
-            //
+			//
+			// Persistence
+			//
 
-            // Callbacks are executed at the appropriate time by the archive and cloning APIs
-            virtual ObjectPtr           GetTemplate() const;
+			// Callbacks are executed at the appropriate time by the archive and cloning APIs
+			virtual ObjectPtr GetTemplate() const;
 
-            virtual void                PreSerialize( const Field* field );
-            virtual void                PostSerialize( const Field* field );
-            virtual void                PreDeserialize( const Field* field );
-            virtual void                PostDeserialize( const Field* field );
+			virtual void PreSerialize( const Field* field );
+			virtual void PostSerialize( const Field* field );
+			virtual void PreDeserialize( const Field* field );
+			virtual void PostDeserialize( const Field* field );
 
-            //
-            // Utilities
-            //
+			//
+			// Utilities
+			//
 
-            // Do comparison logic against other object, checks type and field data
-            virtual bool                Equals( Object* object );
+			// Do comparison logic against other object, checks type and field data
+			virtual bool Equals( Object* object );
 
-            // Copy this object's data into another object isntance
-            virtual void                CopyTo( Object* object );
+			// Copy this object's data into another object isntance
+			virtual void CopyTo( Object* object );
 
-            // Copy this object's data into a new instance
-            virtual ObjectPtr           Clone();
+			// Copy this object's data into a new instance
+			virtual ObjectPtr Clone();
 
-            //
-            // Notification
-            //
+			//
+			// Notification
+			//
 
-            // Event raised when an object is modified
-            mutable ObjectChangeSignature::Event e_Changed;
+			// Event raised when an object is modified
+			mutable ObjectChangeSignature::Event e_Changed;
 
-            // Raise the modification event manually, null field mean ambiguous/multiple changes
-            virtual void RaiseChanged( const Field* field = NULL ) const;
+			// Raise the modification event manually, null field mean ambiguous/multiple changes
+			virtual void RaiseChanged( const Field* field = NULL ) const;
 
-            // Notify a particular field was changed
-            template< class FieldT >
-            void FieldChanged( FieldT* fieldAddress ) const;
+			// Notify a particular field was changed
+			template< class FieldT >
+			void FieldChanged( FieldT* fieldAddress ) const;
 
-            // Modify and notify a field change
-            template< class ObjectT, class FieldT >
-            void ChangeField( FieldT ObjectT::* field, const FieldT& newValue );
-        };
+			// Modify and notify a field change
+			template< class ObjectT, class FieldT >
+			void ChangeField( FieldT ObjectT::* field, const FieldT& newValue );
+		};
 
-        //
-        // AssertCast type checks in debug and asserts if failure, does no type checking in release
-        //
+		//
+		// AssertCast type checks in debug and asserts if failure, does no type checking in release
+		//
 
-        template<class DerivedT>
-        inline DerivedT* AssertCast( Reflect::Object* base );
+		template<class DerivedT>
+		inline DerivedT* AssertCast( Reflect::Object* base );
 
-        template<class DerivedT>
-        inline const DerivedT* AssertCast(const Reflect::Object* base);
+		template<class DerivedT>
+		inline const DerivedT* AssertCast(const Reflect::Object* base);
 
-        //
-        // ThrowCast type checks and throws if failure
-        //
+		//
+		// ThrowCast type checks and throws if failure
+		//
 
-        template<class DerivedT>
-        inline DerivedT* ThrowCast(Reflect::Object* base);
+		template<class DerivedT>
+		inline DerivedT* ThrowCast(Reflect::Object* base);
 
-        template<class DerivedT>
-        inline const DerivedT* ThrowCast(const Reflect::Object* base);
+		template<class DerivedT>
+		inline const DerivedT* ThrowCast(const Reflect::Object* base);
 
-        //
-        // SafeCast always type checks and returns null if failure
-        //
+		//
+		// SafeCast always type checks and returns null if failure
+		//
 
-        template<class DerivedT>
-        inline DerivedT* SafeCast(Reflect::Object* base);
+		template<class DerivedT>
+		inline DerivedT* SafeCast(Reflect::Object* base);
 
-        template<class DerivedT>
-        inline const DerivedT* SafeCast(const Reflect::Object* base);
+		template<class DerivedT>
+		inline const DerivedT* SafeCast(const Reflect::Object* base);
 
 
 		//
@@ -248,77 +248,5 @@ namespace Helium
 		};
 	}
 }
-
-// declares creator for constructable types
-#define _REFLECT_DECLARE_CREATOR( OBJECT ) \
-public: \
-static Helium::Reflect::Object* CreateObject() { return new OBJECT; }
-
-// declares type checking functions
-#define _REFLECT_DECLARE_OBJECT( OBJECT, BASE ) \
-public: \
-typedef BASE Base; \
-typedef OBJECT This; \
-virtual const Helium::Reflect::MetaClass* GetClass() const HELIUM_OVERRIDE; \
-static const Helium::Reflect::MetaClass* CreateClass(); \
-static const Helium::Reflect::MetaClass* s_Class;
-
-#define _REFLECT_DECLARE_OBJECT_REGISTRAR( OBJECT, BASE ) \
-static Helium::Reflect::MetaClassRegistrar< OBJECT, BASE > s_Registrar;
-
-// defines the static type info vars
-#define _REFLECT_DEFINE_OBJECT( OBJECT, CREATOR ) \
-const Helium::Reflect::MetaClass* OBJECT::GetClass() const \
-{ \
-    return s_Class; \
-} \
-\
-const Helium::Reflect::MetaClass* OBJECT::CreateClass() \
-{ \
-    HELIUM_ASSERT( s_Class == NULL ); \
-    HELIUM_ASSERT( OBJECT::Base::s_Class != NULL ); \
-    Helium::Reflect::MetaClass::Create< OBJECT >( s_Class, TXT( #OBJECT ), OBJECT::Base::s_Class->m_Name, CREATOR); \
-    return s_Class; \
-} \
-const Helium::Reflect::MetaClass* OBJECT::s_Class = NULL;
-
-#define _REFLECT_DEFINE_OBJECT_REGISTRAR( OBJECT, CREATOR ) \
-Helium::Reflect::MetaClassRegistrar< OBJECT, OBJECT::Base > OBJECT::s_Registrar( TXT( #OBJECT ) );
-
-// declares an abstract object (an object that either A: cannot be instantiated or B: is never actually serialized)
-#define REFLECT_DECLARE_ABSTRACT_NO_REGISTRAR( OBJECT, BASE ) \
-    _REFLECT_DECLARE_OBJECT( OBJECT, BASE )
-
-#define REFLECT_DECLARE_ABSTRACT( OBJECT, BASE ) \
-    REFLECT_DECLARE_ABSTRACT_NO_REGISTRAR( OBJECT, BASE ) \
-    _REFLECT_DECLARE_OBJECT_REGISTRAR( OBJECT, BASE )
-
-// defines the abstract object class
-#define REFLECT_DEFINE_ABSTRACT_NO_REGISTRAR( OBJECT ) \
-    _REFLECT_DEFINE_OBJECT( OBJECT, NULL )
-
-// defines the abstract object class
-#define REFLECT_DEFINE_ABSTRACT( OBJECT ) \
-    REFLECT_DEFINE_ABSTRACT_NO_REGISTRAR( OBJECT ) \
-    _REFLECT_DEFINE_OBJECT_REGISTRAR( OBJECT, NULL )
-
-// declares a concrete object with creator
-#define REFLECT_DECLARE_OBJECT_NO_REGISTRAR( OBJECT, BASE ) \
-    _REFLECT_DECLARE_OBJECT( OBJECT, BASE ) \
-    _REFLECT_DECLARE_CREATOR( OBJECT )
-
-// declares a concrete object with creator
-#define REFLECT_DECLARE_OBJECT( OBJECT, BASE ) \
-    REFLECT_DECLARE_OBJECT_NO_REGISTRAR( OBJECT, BASE ) \
-    _REFLECT_DECLARE_OBJECT_REGISTRAR( OBJECT, BASE )
-
-// defines a concrete object
-#define REFLECT_DEFINE_OBJECT_NO_REGISTRAR( OBJECT ) \
-    _REFLECT_DEFINE_OBJECT( OBJECT, &OBJECT::CreateObject )
-
-// defines a concrete object
-#define REFLECT_DEFINE_OBJECT( OBJECT ) \
-    REFLECT_DEFINE_OBJECT_NO_REGISTRAR( OBJECT ) \
-    _REFLECT_DEFINE_OBJECT_REGISTRAR( OBJECT, &OBJECT::CreateObject )
 
 #include "Reflect/Object.inl"
