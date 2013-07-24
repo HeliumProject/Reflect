@@ -23,11 +23,11 @@ namespace Helium
 			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
 		};
 
-		inline const Type* DeduceKeyType( const String&, const String& )
+		inline const MetaType* DeduceKeyType( const String&, const String& )
 		{
 			return NULL;
 		}
-		inline const Type* DeduceValueType( const String&, const String& )
+		inline const MetaType* DeduceValueType( const String&, const String& )
 		{
 			return NULL;
 		}
@@ -50,11 +50,11 @@ namespace Helium
 			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
 		};
 
-		inline const Type* DeduceKeyType( const Name&, const Name& )
+		inline const MetaType* DeduceKeyType( const Name&, const Name& )
 		{
 			return NULL;
 		}
-		inline const Type* DeduceValueType( const Name&, const Name& )
+		inline const MetaType* DeduceValueType( const Name&, const Name& )
 		{
 			return NULL;
 		}
@@ -77,11 +77,11 @@ namespace Helium
 			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
 		};
 
-		inline const Type* DeduceKeyType( const FilePath&, const FilePath& )
+		inline const MetaType* DeduceKeyType( const FilePath&, const FilePath& )
 		{
 			return NULL;
 		}
-		inline const Type* DeduceValueType( const FilePath&, const FilePath& )
+		inline const MetaType* DeduceValueType( const FilePath&, const FilePath& )
 		{
 			return NULL;
 		}
@@ -127,12 +127,12 @@ namespace Helium
 		};
 		
 		template <class T>
-		inline const Type* DeduceKeyType( const DynamicArray<T>&, const DynamicArray<T>& )
+		inline const MetaType* DeduceKeyType( const DynamicArray<T>&, const DynamicArray<T>& )
 		{
 			return NULL;
 		}
 		template <class T>
-		inline const Type* DeduceValueType( const DynamicArray<T>&, const DynamicArray<T>& )
+		inline const MetaType* DeduceValueType( const DynamicArray<T>&, const DynamicArray<T>& )
 		{
 			return DeduceValueType<T>();
 		}
@@ -173,12 +173,12 @@ namespace Helium
 		};
 		
 		template <class T>
-		inline const Type* DeduceKeyType( const Set<T>&, const Set<T>& )
+		inline const MetaType* DeduceKeyType( const Set<T>&, const Set<T>& )
 		{
 			return NULL;
 		}
 		template <class T>
-		inline const Type* DeduceValueType( const Set<T>&, const Set<T>& )
+		inline const MetaType* DeduceValueType( const Set<T>&, const Set<T>& )
 		{
 			return DeduceValueType<T>();
 		}
@@ -221,12 +221,12 @@ namespace Helium
 		};
 		
 		template <class KeyT, class ValueT>
-		inline const Type* DeduceKeyType( const Map<KeyT, ValueT>&, const Map<KeyT, ValueT>& )
+		inline const MetaType* DeduceKeyType( const Map<KeyT, ValueT>&, const Map<KeyT, ValueT>& )
 		{
 			return DeduceValueType<KeyT>();
 		}
 		template <class KeyT, class ValueT>
-		inline const Type* DeduceValueType( const Map<KeyT, ValueT>&, const Map<KeyT, ValueT>& )
+		inline const MetaType* DeduceValueType( const Map<KeyT, ValueT>&, const Map<KeyT, ValueT>& )
 		{
 			return DeduceValueType<ValueT>();
 		}

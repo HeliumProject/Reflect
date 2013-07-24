@@ -81,9 +81,9 @@ void Reflect::Initialize()
     {
         g_Registry = new Registry();
 
-        TypeRegistrar::RegisterTypes( RegistrarTypes::Enumeration );
-        TypeRegistrar::RegisterTypes( RegistrarTypes::Structure );
-        TypeRegistrar::RegisterTypes( RegistrarTypes::Object );
+        MetaTypeRegistrar::RegisterTypes( RegistrarTypes::MetaEnum );
+        MetaTypeRegistrar::RegisterTypes( RegistrarTypes::MetaStruct );
+        MetaTypeRegistrar::RegisterTypes( RegistrarTypes::MetaClass );
     }
 
 #ifdef REFLECT_DEBUG_INIT_AND_CLEANUP
@@ -102,9 +102,9 @@ void Reflect::Cleanup()
 {
     if ( --g_InitCount == 0 )
     {
-        TypeRegistrar::UnregisterTypes( RegistrarTypes::Object );
-        TypeRegistrar::UnregisterTypes( RegistrarTypes::Structure );
-        TypeRegistrar::UnregisterTypes( RegistrarTypes::Enumeration );
+        MetaTypeRegistrar::UnregisterTypes( RegistrarTypes::MetaClass );
+        MetaTypeRegistrar::UnregisterTypes( RegistrarTypes::MetaStruct );
+        MetaTypeRegistrar::UnregisterTypes( RegistrarTypes::MetaEnum );
 
         delete g_Registry;
         g_Registry = NULL;
@@ -139,7 +139,7 @@ Registry* Registry::GetInstance()
     return g_Registry;
 }
 
-bool Registry::RegisterType(const Type* type)
+bool Registry::RegisterType(const MetaType* type)
 {
     HELIUM_ASSERT( IsMainThread() );
 
@@ -157,7 +157,7 @@ bool Registry::RegisterType(const Type* type)
     return true;
 }
 
-void Registry::UnregisterType(const Type* type)
+void Registry::UnregisterType(const MetaType* type)
 {
     HELIUM_ASSERT( IsMainThread() );
 
@@ -167,7 +167,7 @@ void Registry::UnregisterType(const Type* type)
     m_TypesByHash.Remove( crc );
 }
 
-void Registry::AliasType( const Type* type, const char* alias )
+void Registry::AliasType( const MetaType* type, const char* alias )
 {
     HELIUM_ASSERT( IsMainThread() );
 
@@ -175,7 +175,7 @@ void Registry::AliasType( const Type* type, const char* alias )
     m_TypesByHash.Insert( M_HashToType::ValueType( crc, type ) );
 }
 
-void Registry::UnaliasType( const Type* type, const char* alias )
+void Registry::UnaliasType( const MetaType* type, const char* alias )
 {
     HELIUM_ASSERT( IsMainThread() );
 
@@ -187,7 +187,7 @@ void Registry::UnaliasType( const Type* type, const char* alias )
     }
 }
 
-const Type* Registry::GetType( uint32_t crc ) const
+const MetaType* Registry::GetType( uint32_t crc ) const
 {
     M_HashToType::ConstIterator found = m_TypesByHash.Find( crc );
 
@@ -199,17 +199,17 @@ const Type* Registry::GetType( uint32_t crc ) const
     return NULL;
 }
 
-const Structure* Registry::GetStructure( uint32_t crc ) const
+const MetaStruct* Registry::GetStructure( uint32_t crc ) const
 {
-    return ReflectionCast< const Structure >( GetType( crc ) );
+    return ReflectionCast< const MetaStruct >( GetType( crc ) );
 }
 
-const Class* Registry::GetClass( uint32_t crc ) const
+const MetaClass* Registry::GetClass( uint32_t crc ) const
 {
-    return ReflectionCast< const Class >( GetType( crc ) );
+    return ReflectionCast< const MetaClass >( GetType( crc ) );
 }
 
-const Enumeration* Registry::GetEnumeration( uint32_t crc ) const
+const MetaEnum* Registry::GetEnumeration( uint32_t crc ) const
 {
-    return ReflectionCast< const Enumeration >( GetType( crc ) );
+    return ReflectionCast< const MetaEnum >( GetType( crc ) );
 }

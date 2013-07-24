@@ -5,7 +5,7 @@
 #include "Foundation/ObjectPool.h"
 
 #include "Reflect/Registry.h"
-#include "Reflect/Class.h"
+#include "Reflect/MetaClass.h"
 #include "Reflect/Registry.h"
 #include "Reflect/TranslatorDeduction.h"
 
@@ -33,8 +33,8 @@ struct ObjectRefCountSupport::StaticTranslator
 
 ObjectRefCountSupport::StaticTranslator* ObjectRefCountSupport::sm_pStaticTranslator = NULL;
 
-const Class* Object::s_Class = NULL;
-ObjectRegistrar< Object, void > Object::s_Registrar( TXT("Object") );
+const MetaClass* Object::s_Class = NULL;
+MetaClassRegistrar< Object, void > Object::s_Registrar( TXT("Object") );
 
 /// Retrieve a reference count proxy from the global pool.
 ///
@@ -214,26 +214,26 @@ void Object::Destroy()
 	delete this;
 }
 
-const Reflect::Class* Object::GetClass() const
+const Reflect::MetaClass* Object::GetClass() const
 {
 	return Reflect::GetClass<Object>();
 }
 
-bool Object::IsClass( const Reflect::Class* type ) const
+bool Object::IsClass( const Reflect::MetaClass* type ) const
 {
-	const Class* thisType = GetClass();
+	const MetaClass* thisType = GetClass();
 	HELIUM_ASSERT( thisType );
 	return thisType->IsType( type );
 }
 
-const Reflect::Class* Object::CreateClass()
+const Reflect::MetaClass* Object::CreateClass()
 {
 	HELIUM_ASSERT( s_Class == NULL );
-	Class::Create<Object>( s_Class, TXT("Object"), NULL );
+	MetaClass::Create<Object>( s_Class, TXT("Object"), NULL );
 	return s_Class;
 }
 
-void Object::PopulateStructure( Reflect::Structure& comp )
+void Object::PopulateStructure( Reflect::MetaStruct& comp )
 {
 
 }
@@ -261,7 +261,7 @@ void Object::PostDeserialize( const Reflect::Field* field )
 
 bool Object::Equals( Object* object )
 {
-	const Class* type = GetClass();
+	const MetaClass* type = GetClass();
 
 	return type->Equals( this, this, object, object );
 }
@@ -275,9 +275,9 @@ void Object::CopyTo( Object* object )
 		//
 
 		// This is the common base class type
-		const Class* type = NULL; 
-		const Class* thisType = this->GetClass();
-		const Class* objectType = object->GetClass();
+		const MetaClass* type = NULL; 
+		const MetaClass* thisType = this->GetClass();
+		const MetaClass* objectType = object->GetClass();
 
 		// Simplest case: the types are the same
 		if ( thisType == objectType )
@@ -289,12 +289,12 @@ void Object::CopyTo( Object* object )
 			// Types are not the same, we have to search...
 			// Iterate up inheritance of this, and look check to see if object HasType for each one
 			Reflect::Registry* registry = Reflect::Registry::GetInstance();
-			for ( const Class* base = thisType; base && !type; base = static_cast< const Class* >( base->m_Base ) )
+			for ( const MetaClass* base = thisType; base && !type; base = static_cast< const MetaClass* >( base->m_Base ) )
 			{
 				if ( object->IsClass( base ) )
 				{
 					// We found the match (which breaks out of this loop)
-					type = ReflectionCast<const Class>( base );
+					type = ReflectionCast<const MetaClass>( base );
 				}
 			}
 
@@ -317,7 +317,7 @@ ObjectPtr Object::Clone()
 	PreSerialize( NULL );
 	clone->PreDeserialize( NULL );
 
-	const Class* type = GetClass();
+	const MetaClass* type = GetClass();
 	type->Copy( this, this, clone, clone );
 
 	clone->PostDeserialize( NULL );
@@ -331,7 +331,7 @@ void Object::RaiseChanged( const Field* field ) const
 	e_Changed.Raise( ObjectChangeArgs( this, field ) );
 }
 
-bool DeferredResolver::Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass )
+bool DeferredResolver::Resolve( const Name& identity, ObjectPtr& pointer, const MetaClass* pointerClass )
 {
 	Entry entry;
 	entry.m_Pointer = &pointer;

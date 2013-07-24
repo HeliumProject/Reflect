@@ -1,17 +1,17 @@
 template< class ClassT >
-void Helium::Reflect::Class::Create( Class const*& pointer, const char* name, const char* baseName, CreateObjectFunc creator )
+void Helium::Reflect::MetaClass::Create( MetaClass const*& pointer, const char* name, const char* baseName, CreateObjectFunc creator )
 {
-	Class* type = Class::Create();
+	MetaClass* type = MetaClass::Create();
 	pointer = type;
 
 	// populate reflection information
-	Structure::Create< ClassT >( name, baseName, &ClassT::PopulateStructure, type );
+	MetaStruct::Create< ClassT >( name, baseName, &ClassT::PopulateStructure, type );
 
 	// setup factory function
 	type->m_Creator = creator;
 
 	// fetch a potential default instance from the composite
-	ClassT* instance = static_cast< ClassT* >( type->Structure::m_Default );
+	ClassT* instance = static_cast< ClassT* >( type->MetaStruct::m_Default );
 	if ( instance )
 	{
 		type->m_Default = instance;
@@ -21,28 +21,28 @@ void Helium::Reflect::Class::Create( Class const*& pointer, const char* name, co
 		// create the default instance
 		if ( pointer->m_Creator )
 		{
-			type->Structure::m_Default = type->m_Default = type->m_Creator();
+			type->MetaStruct::m_Default = type->m_Default = type->m_Creator();
 		}
 	}
 }
 
 template< class ClassT, class BaseT >
-Helium::Reflect::ObjectRegistrar< ClassT, BaseT >::ObjectRegistrar(const char* name)
-	: TypeRegistrar( name )
+Helium::Reflect::MetaClassRegistrar< ClassT, BaseT >::MetaClassRegistrar(const char* name)
+	: MetaTypeRegistrar( name )
 {
 	HELIUM_ASSERT( ClassT::s_Class == NULL );
-	TypeRegistrar::AddToList( RegistrarTypes::Object, this );
+	MetaTypeRegistrar::AddToList( RegistrarTypes::MetaClass, this );
 }
 
 template< class ClassT, class BaseT >
-Helium::Reflect::ObjectRegistrar< ClassT, BaseT >::~ObjectRegistrar()
+Helium::Reflect::MetaClassRegistrar< ClassT, BaseT >::~MetaClassRegistrar()
 {
 	Unregister();
-	TypeRegistrar::RemoveFromList( RegistrarTypes::Object, this );
+	MetaTypeRegistrar::RemoveFromList( RegistrarTypes::MetaClass, this );
 }
 
 template< class ClassT, class BaseT >
-void Helium::Reflect::ObjectRegistrar< ClassT, BaseT >::Register()
+void Helium::Reflect::MetaClassRegistrar< ClassT, BaseT >::Register()
 {
 	if ( ClassT::s_Class == NULL )
 	{
@@ -52,7 +52,7 @@ void Helium::Reflect::ObjectRegistrar< ClassT, BaseT >::Register()
 }
 
 template< class ClassT, class BaseT >
-void Helium::Reflect::ObjectRegistrar< ClassT, BaseT >::Unregister()
+void Helium::Reflect::MetaClassRegistrar< ClassT, BaseT >::Unregister()
 {
 	if ( ClassT::s_Class != NULL )
 	{
@@ -62,22 +62,22 @@ void Helium::Reflect::ObjectRegistrar< ClassT, BaseT >::Unregister()
 }
 
 template< class ClassT >
-Helium::Reflect::ObjectRegistrar< ClassT, void >::ObjectRegistrar(const char* name)
-	: TypeRegistrar( name )
+Helium::Reflect::MetaClassRegistrar< ClassT, void >::MetaClassRegistrar(const char* name)
+	: MetaTypeRegistrar( name )
 {
 	HELIUM_ASSERT( ClassT::s_Class == NULL );
-	TypeRegistrar::AddToList( RegistrarTypes::Object, this );
+	MetaTypeRegistrar::AddToList( RegistrarTypes::MetaClass, this );
 }
 
 template< class ClassT >
-Helium::Reflect::ObjectRegistrar< ClassT, void >::~ObjectRegistrar()
+Helium::Reflect::MetaClassRegistrar< ClassT, void >::~MetaClassRegistrar()
 {
 	Unregister();
-	TypeRegistrar::RemoveFromList( RegistrarTypes::Object, this );
+	MetaTypeRegistrar::RemoveFromList( RegistrarTypes::MetaClass, this );
 }
 
 template< class ClassT >
-void Helium::Reflect::ObjectRegistrar< ClassT, void >::Register()
+void Helium::Reflect::MetaClassRegistrar< ClassT, void >::Register()
 {
 	if ( ClassT::s_Class == NULL )
 	{
@@ -86,7 +86,7 @@ void Helium::Reflect::ObjectRegistrar< ClassT, void >::Register()
 }
 
 template< class ClassT >
-void Helium::Reflect::ObjectRegistrar< ClassT, void >::Unregister()
+void Helium::Reflect::MetaClassRegistrar< ClassT, void >::Unregister()
 {
 	if ( ClassT::s_Class != NULL )
 	{

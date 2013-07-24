@@ -1,15 +1,15 @@
 #include "ReflectPch.h"
-#include "Reflect/ReflectionInfo.h"
+#include "Reflect/Meta.h"
 
 using namespace Helium;
 using namespace Helium::Reflect;
 
-const char* ReflectionTypes::Strings[ ReflectionTypes::Count ] =
+const char* MetaIds::Strings[ MetaIds::Count ] =
 {
-	TXT("Type"),
-	TXT("Enumeration"),
-	TXT("Structure"),
-	TXT("Class"),
+	TXT("MetaType"),
+	TXT("MetaEnum"),
+	TXT("MetaStruct"),
+	TXT("MetaClass"),
 	TXT("Translator"),
 	TXT("ContainerTranslator"),
 	TXT("SetTranslator"),
@@ -17,14 +17,14 @@ const char* ReflectionTypes::Strings[ ReflectionTypes::Count ] =
 	TXT("AssociationTranslator")
 };
 
-HELIUM_COMPILE_ASSERT( sizeof( ReflectionTypes::Strings ) / sizeof( ReflectionTypes::Strings[0] ) == ReflectionTypes::Count );
+HELIUM_COMPILE_ASSERT( sizeof( MetaIds::Strings ) / sizeof( MetaIds::Strings[0] ) == MetaIds::Count );
 
-ReflectionInfo::ReflectionInfo()
+Meta::Meta()
 {
 
 }
 
-ReflectionInfo::~ReflectionInfo()
+Meta::~Meta()
 {
 
 }

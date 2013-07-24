@@ -8,24 +8,24 @@
 #include "Foundation/SmartPtr.h"
 
 #include "API.h"
-#include "ReflectionInfo.h"
+#include "Meta.h"
 
 namespace Helium
 {
     namespace Reflect
     {
         //
-        // Type, fully qualified type information
+        // MetaType, fully qualified type information
         //
 
-        class HELIUM_REFLECT_API Type HELIUM_ABSTRACT : public ReflectionInfo
+        class HELIUM_REFLECT_API MetaType HELIUM_ABSTRACT : public Meta
         {
         public:
-            REFLECTION_BASE( ReflectionTypes::Type, Type );
+            REFLECT_META_BASE( MetaIds::MetaType, MetaType );
 
         protected:
-            Type();
-            ~Type();
+            MetaType();
+            ~MetaType();
 
         public:
             mutable const void*             m_Tag;          // tag (client) data
@@ -40,36 +40,36 @@ namespace Helium
         {
             enum RegistrarType
             {
-                Enumeration,
-                Structure,
-                Object,
+                MetaEnum,
+                MetaStruct,
+                MetaClass,
                 Count,
             };
         }
         typedef RegistrarTypes::RegistrarType RegistrarType;
 
-        class HELIUM_REFLECT_API TypeRegistrar
+        class HELIUM_REFLECT_API MetaTypeRegistrar
         {
         public:
-            TypeRegistrar(const char* name);
+            MetaTypeRegistrar(const char* name);
 
             virtual void Register() = 0;
             virtual void Unregister() = 0;
 
-            static void AddToList( RegistrarType type, TypeRegistrar* registrar );
-            static void RemoveFromList( RegistrarType type, TypeRegistrar* registrar );
+            static void AddToList( RegistrarType type, MetaTypeRegistrar* registrar );
+            static void RemoveFromList( RegistrarType type, MetaTypeRegistrar* registrar );
 
             static void RegisterTypes( RegistrarType type );
             static void UnregisterTypes( RegistrarType type );
 
-            static void AddTypeToRegistry( const Type* type );
-            static void RemoveTypeFromRegistry( const Type* type );
+            static void AddTypeToRegistry( const MetaType* type );
+            static void RemoveTypeFromRegistry( const MetaType* type );
 
         private:
             const char*          m_Name;
-            TypeRegistrar*          m_Next;
-            static TypeRegistrar*   s_Head[ RegistrarTypes::Count ];
-            static TypeRegistrar*   s_Tail[ RegistrarTypes::Count ];
+            MetaTypeRegistrar*          m_Next;
+            static MetaTypeRegistrar*   s_Head[ RegistrarTypes::Count ];
+            static MetaTypeRegistrar*   s_Tail[ RegistrarTypes::Count ];
         };
     }
 }

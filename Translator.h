@@ -7,7 +7,7 @@
 #include "Foundation/Set.h"
 
 #include "Reflect/API.h"
-#include "Reflect/ReflectionInfo.h"
+#include "Reflect/Meta.h"
 
 namespace Helium
 {
@@ -77,17 +77,17 @@ namespace Helium
 
 		namespace CopyFlags
 		{
-			enum Type
+			enum MetaType
 			{
 				Notify    = 1 << 0, // emit changed events when copying data
 				Shallow   = 1 << 1, // copy references only
 			};
 		}
 
-		class HELIUM_REFLECT_API Translator : public ReflectionInfo
+		class HELIUM_REFLECT_API Translator : public Meta
 		{
 		public:
-			REFLECTION_TYPE( ReflectionTypes::Translator, Translator, ReflectionInfo );
+			REFLECT_META_DERIVED( MetaIds::Translator, Translator, Meta );
 
 			inline Translator( size_t size );
 
@@ -118,7 +118,7 @@ namespace Helium
 
 		namespace ScalarTypes
 		{
-			enum Type
+			enum MetaType
 			{
 				Boolean,
 				Unsigned8,
@@ -134,12 +134,12 @@ namespace Helium
 				String,
 			};
 		}
-		typedef ScalarTypes::Type ScalarType;
+		typedef ScalarTypes::MetaType ScalarType;
 
 		class HELIUM_REFLECT_API ScalarTranslator : public Translator
 		{
 		public:
-			REFLECTION_TYPE( ReflectionTypes::ScalarTranslator, ScalarTranslator, Translator );
+			REFLECT_META_DERIVED( MetaIds::ScalarTranslator, ScalarTranslator, Translator );
 
 			inline ScalarTranslator( size_t size, ScalarType type );
 
@@ -162,11 +162,11 @@ namespace Helium
 		class HELIUM_REFLECT_API StructureTranslator : public Translator
 		{
 		public:
-			REFLECTION_TYPE( ReflectionTypes::StructureTranslator, StructureTranslator, Translator );
+			REFLECT_META_DERIVED( MetaIds::StructureTranslator, StructureTranslator, Translator );
 
 			inline StructureTranslator( size_t size );
 
-			virtual const Structure* GetStructure() const = 0;
+			virtual const MetaStruct* GetStructure() const = 0;
 		};
 
 		//
@@ -176,7 +176,7 @@ namespace Helium
 		class HELIUM_REFLECT_API ContainerTranslator : public Translator
 		{
 		public:
-			REFLECTION_TYPE( ReflectionTypes::ContainerTranslator, ContainerTranslator, Translator );
+			REFLECT_META_DERIVED( MetaIds::ContainerTranslator, ContainerTranslator, Translator );
 
 			inline ContainerTranslator( size_t size );
 
@@ -191,7 +191,7 @@ namespace Helium
 		class HELIUM_REFLECT_API SetTranslator : public ContainerTranslator
 		{
 		public:
-			REFLECTION_TYPE( ReflectionTypes::SetTranslator, SetTranslator, ContainerTranslator );
+			REFLECT_META_DERIVED( MetaIds::SetTranslator, SetTranslator, ContainerTranslator );
 			
 			inline SetTranslator( size_t size );
 
@@ -211,7 +211,7 @@ namespace Helium
 		class HELIUM_REFLECT_API SequenceTranslator : public ContainerTranslator
 		{
 		public:
-			REFLECTION_TYPE( ReflectionTypes::SequenceTranslator, SequenceTranslator, ContainerTranslator );
+			REFLECT_META_DERIVED( MetaIds::SequenceTranslator, SequenceTranslator, ContainerTranslator );
 			
 			inline SequenceTranslator( size_t size );
 
@@ -235,7 +235,7 @@ namespace Helium
 		class HELIUM_REFLECT_API AssociationTranslator : public ContainerTranslator
 		{
 		public:
-			REFLECTION_TYPE( ReflectionTypes::AssociationTranslator, AssociationTranslator, ContainerTranslator );
+			REFLECT_META_DERIVED( MetaIds::AssociationTranslator, AssociationTranslator, ContainerTranslator );
 			
 			inline AssociationTranslator( size_t size );
 
@@ -250,17 +250,17 @@ namespace Helium
 		};
 
 		//
-		// Type and Translator deduction
+		// MetaType and Translator deduction
 		//  Function overloading semantics provide for easier selection of a type T than using only templates
 		//   The first parameter gets overloaded with different arument types for the compiler to select the appropriate function
 		//   The second parameter ensures the bare type in the template argument is available for further deduction
 		//
 
 		template< class T >
-		const Type* DeduceKeyType();
+		const MetaType* DeduceKeyType();
 
 		template< class T >
-		const Type* DeduceValueType();
+		const MetaType* DeduceValueType();
 
 		template< class T >
 		Translator* AllocateTranslator();

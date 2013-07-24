@@ -1,5 +1,5 @@
 #include "ReflectPch.h"
-#include "Type.h"
+#include "MetaType.h"
 
 #include "Platform/Locks.h"
 #include "Foundation/Log.h"
@@ -11,7 +11,7 @@ using namespace Helium::Reflect;
 
 Helium::Mutex g_TypeMutex;
 
-Type::Type()
+MetaType::MetaType()
 : m_Tag( NULL )
 , m_Name( NULL )
 , m_Size( 0 )
@@ -19,33 +19,33 @@ Type::Type()
 
 }
 
-Type::~Type()
+MetaType::~MetaType()
 {
 
 }
 
-void Type::Register() const
+void MetaType::Register() const
 {
-    const char* type = ReflectionTypes::Strings[ GetReflectionType() ];
+    const char* type = MetaIds::Strings[ GetReflectionType() ];
     Log::Debug( TXT( "Reflect %s: 0x%p, Size: %4d, Name: %s (0x%08x)\n" ), type, this, m_Size, m_Name, Crc32( m_Name ) );
 }
 
-void Type::Unregister() const
+void MetaType::Unregister() const
 {
 
 }
 
-TypeRegistrar* TypeRegistrar::s_Head[ RegistrarTypes::Count ] = { NULL, NULL, NULL };
-TypeRegistrar* TypeRegistrar::s_Tail[ RegistrarTypes::Count ] = { NULL, NULL, NULL };
+MetaTypeRegistrar* MetaTypeRegistrar::s_Head[ RegistrarTypes::Count ] = { NULL, NULL, NULL };
+MetaTypeRegistrar* MetaTypeRegistrar::s_Tail[ RegistrarTypes::Count ] = { NULL, NULL, NULL };
 
-TypeRegistrar::TypeRegistrar( const char* name )
+MetaTypeRegistrar::MetaTypeRegistrar( const char* name )
 : m_Name( name )
 , m_Next( NULL )
 {
 
 }
 
-void TypeRegistrar::AddToList( RegistrarType type, TypeRegistrar* registrar )
+void MetaTypeRegistrar::AddToList( RegistrarType type, MetaTypeRegistrar* registrar )
 {
     if ( s_Tail[ type ] )
     {
@@ -59,7 +59,7 @@ void TypeRegistrar::AddToList( RegistrarType type, TypeRegistrar* registrar )
     }
 }
 
-void TypeRegistrar::RemoveFromList( RegistrarType type, TypeRegistrar* registrar )
+void MetaTypeRegistrar::RemoveFromList( RegistrarType type, MetaTypeRegistrar* registrar )
 {
     if ( registrar == s_Head[ type ] )
     {
@@ -67,7 +67,7 @@ void TypeRegistrar::RemoveFromList( RegistrarType type, TypeRegistrar* registrar
     }
     else
     {
-        for ( TypeRegistrar *r = s_Head[ type ], *p = NULL; r; p = r, r = r->m_Next )
+        for ( MetaTypeRegistrar *r = s_Head[ type ], *p = NULL; r; p = r, r = r->m_Next )
         {
             if ( r == registrar )
             {
@@ -85,28 +85,28 @@ void TypeRegistrar::RemoveFromList( RegistrarType type, TypeRegistrar* registrar
     }
 }
 
-void TypeRegistrar::RegisterTypes( RegistrarType type )
+void MetaTypeRegistrar::RegisterTypes( RegistrarType type )
 {
-    for ( TypeRegistrar* r = s_Head[ type ]; r; r = r->m_Next )
+    for ( MetaTypeRegistrar* r = s_Head[ type ]; r; r = r->m_Next )
     {
         r->Register();
     }
 }
 
-void TypeRegistrar::UnregisterTypes( RegistrarType type )
+void MetaTypeRegistrar::UnregisterTypes( RegistrarType type )
 {
-    for ( TypeRegistrar* r = s_Head[ type ]; r; r = r->m_Next )
+    for ( MetaTypeRegistrar* r = s_Head[ type ]; r; r = r->m_Next )
     {
         r->Unregister();
     }
 }
 
-void TypeRegistrar::AddTypeToRegistry( const Type* type )
+void MetaTypeRegistrar::AddTypeToRegistry( const MetaType* type )
 {
     Reflect::Registry::GetInstance()->RegisterType( type );
 }
 
-void TypeRegistrar::RemoveTypeFromRegistry( const Type* type )
+void MetaTypeRegistrar::RemoveTypeFromRegistry( const MetaType* type )
 {
     Reflect::Registry::GetInstance()->UnregisterType( type );
 }

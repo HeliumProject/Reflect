@@ -10,14 +10,14 @@ namespace Helium
 	namespace Reflect
 	{
 		template< class T >
-		const Type* DeduceKeyType()
+		const MetaType* DeduceKeyType()
 		{
 			T t = T ();
 			return DeduceKeyType( t, t );
 		}
 
 		template< class T >
-		const Type* DeduceValueType()
+		const MetaType* DeduceValueType()
 		{
 			T t = T ();
 			return DeduceValueType( t, t );

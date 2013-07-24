@@ -7,7 +7,7 @@
 #include "Foundation/DynamicArray.h"
 #include "Foundation/Set.h"
 
-#include "Reflect/Type.h"
+#include "Reflect/MetaType.h"
 #include "Reflect/Registry.h"
 #include "Reflect/Translator.h"
 
@@ -15,12 +15,12 @@ namespace Helium
 {
 	namespace Reflect
 	{
-		class Structure;
-		typedef void (*PopulateCompositeFunc)( Structure& );
+		class MetaStruct;
+		typedef void (*PopulateCompositeFunc)( MetaStruct& );
 
 		namespace FieldFlags
 		{
-			enum Type
+			enum MetaType
 			{
 				Discard     = 1 << 0,       // disposable fields are not serialized
 				Force       = 1 << 1,       // forced fields are always serialized
@@ -45,15 +45,15 @@ namespace Helium
 			// determine if this field should be serialized
 			bool ShouldSerialize( void* address, Object* object, uint32_t index = 0 ) const;
 
-			const Structure* m_Structure;  // the type we are a field of
+			const MetaStruct* m_Structure;  // the type we are a field of
 			const char*   m_Name;       // name of this field
 			uint32_t         m_Size;       // the size of this field
 			uint32_t         m_Count;      // the static array size
 			uint32_t         m_Offset;     // the offset to the field
 			uint32_t         m_Flags;      // flags for special behavior
 			uint32_t         m_Index;      // the unique id of this field
-			const Type*      m_KeyType;    // the key type, if any, of the internal data
-			const Type*      m_ValueType;  // the value type, if any, of the internal data
+			const MetaType*      m_KeyType;    // the key type, if any, of the internal data
+			const MetaType*      m_ValueType;  // the value type, if any, of the internal data
 			Translator*      m_Translator; // interface to the data
 		};
 
@@ -69,38 +69,38 @@ namespace Helium
 		};
 
 		//
-		// Structure (C++ `struct` or `class`)
+		// MetaStruct (C++ `struct`)
 		//
 
-		class HELIUM_REFLECT_API Structure : public Type
+		class HELIUM_REFLECT_API MetaStruct : public MetaType
 		{
 		public:
-			REFLECTION_TYPE( ReflectionTypes::Structure, Structure, Type );
+			REFLECT_META_DERIVED( MetaIds::MetaStruct, MetaStruct, MetaType );
 
 		protected:
-			Structure();
-			~Structure();
+			MetaStruct();
+			~MetaStruct();
 
 		public:
 			// protect external allocation to keep inlined code in this dll
-			static Structure* Create();
+			static MetaStruct* Create();
 
 			// creator for structure types
 			template< class StructureT >
-			static void Create( Structure const*& pointer, const char* name, const char* baseName );
+			static void Create( MetaStruct const*& pointer, const char* name, const char* baseName );
 
 			// shared logic with class types
 			template< class StructureT >
-			static void Create( const char* name, const char* baseName, PopulateCompositeFunc populate, Structure* info );
+			static void Create( const char* name, const char* baseName, PopulateCompositeFunc populate, MetaStruct* info );
 
-			// overloaded functions from Type
+			// overloaded functions from MetaType
 			virtual void Register() const HELIUM_OVERRIDE;
 			virtual void Unregister() const HELIUM_OVERRIDE;
 
 			// inheritance hierarchy
-			bool IsType(const Structure* type) const;
-			void AddDerived( const Structure* derived ) const;
-			void RemoveDerived( const Structure* derived ) const;
+			bool IsType(const MetaStruct* type) const;
+			void AddDerived( const MetaStruct* derived ) const;
+			void RemoveDerived( const MetaStruct* derived ) const;
 
 			// Compare two composite instances of *this* type
 			bool Equals( void* compositeA, Object* objectA, void* compositeB, Object* objectB ) const;
@@ -141,15 +141,15 @@ namespace Helium
 
 			// deduce key type
 			template < class T >
-			static inline const Type* DeduceKeyType( std::false_type /*is_array*/ );
+			static inline const MetaType* DeduceKeyType( std::false_type /*is_array*/ );
 			template < class T >
-			static inline const Type* DeduceKeyType( std::true_type  /*is_array*/  );
+			static inline const MetaType* DeduceKeyType( std::true_type  /*is_array*/  );
 
 			// deduce value type
 			template < class T >
-			static inline const Type* DeduceValueType( std::false_type /*is_array*/ );
+			static inline const MetaType* DeduceValueType( std::false_type /*is_array*/ );
 			template < class T >
-			static inline const Type* DeduceValueType( std::true_type  /*is_array*/  );
+			static inline const MetaType* DeduceValueType( std::true_type  /*is_array*/  );
 
 			// create translator object
 			template < class T >
@@ -162,31 +162,31 @@ namespace Helium
 			inline Reflect::Field* AddField( FieldT StructureT::* field, const char* name, uint32_t flags = 0, Translator* translator = NULL );
 
 		public:
-			const Structure*         m_Base;         // the base type name
-			mutable const Structure* m_FirstDerived; // head of the derived linked list, mutable since its populated by other objects
-			mutable const Structure* m_NextSibling;  // next in the derived linked list, mutable since its populated by other objects
+			const MetaStruct*         m_Base;         // the base type name
+			mutable const MetaStruct* m_FirstDerived; // head of the derived linked list, mutable since its populated by other objects
+			mutable const MetaStruct* m_NextSibling;  // next in the derived linked list, mutable since its populated by other objects
 			DynamicArray< Field >    m_Fields;       // fields in this composite
 			PopulateCompositeFunc    m_Populate;     // function to populate this structure
 			void*                    m_Default;      // default instance
 		};
 
 		template< class ClassT, class BaseT >
-		class StructureRegistrar : public TypeRegistrar
+		class MetaStructRegistrar : public MetaTypeRegistrar
 		{
 		public:
-			StructureRegistrar(const char* name);
-			~StructureRegistrar();
+			MetaStructRegistrar(const char* name);
+			~MetaStructRegistrar();
 
 			virtual void Register();
 			virtual void Unregister();
 		};
 
 		template< class ClassT >
-		class StructureRegistrar< ClassT, void > : public TypeRegistrar
+		class MetaStructRegistrar< ClassT, void > : public MetaTypeRegistrar
 		{
 		public:
-			StructureRegistrar(const char* name);
-			~StructureRegistrar();
+			MetaStructRegistrar(const char* name);
+			~MetaStructRegistrar();
 
 			virtual void Register();
 			virtual void Unregister();
@@ -198,39 +198,39 @@ namespace Helium
 #define _REFLECT_DECLARE_BASE_STRUCTURE( STRUCTURE ) \
 public: \
 typedef STRUCTURE This; \
-static const Helium::Reflect::Structure* CreateStructure(); \
-static const Helium::Reflect::Structure* s_Structure; \
-static Helium::Reflect::StructureRegistrar< STRUCTURE, void > s_Registrar;
+static const Helium::Reflect::MetaStruct* CreateStructure(); \
+static const Helium::Reflect::MetaStruct* s_Structure; \
+static Helium::Reflect::MetaStructRegistrar< STRUCTURE, void > s_Registrar;
 
 #define _REFLECT_DECLARE_DERIVED_STRUCTURE( STRUCTURE, BASE ) \
 public: \
 typedef BASE Base; \
 typedef STRUCTURE This; \
-static const Helium::Reflect::Structure* CreateStructure(); \
-static const Helium::Reflect::Structure* s_Structure; \
-static Helium::Reflect::StructureRegistrar< STRUCTURE, BASE > s_Registrar;
+static const Helium::Reflect::MetaStruct* CreateStructure(); \
+static const Helium::Reflect::MetaStruct* s_Structure; \
+static Helium::Reflect::MetaStructRegistrar< STRUCTURE, BASE > s_Registrar;
 
 // defines the static type info vars
 #define _REFLECT_DEFINE_BASE_STRUCTURE( STRUCTURE ) \
-const Helium::Reflect::Structure* STRUCTURE::CreateStructure() \
+const Helium::Reflect::MetaStruct* STRUCTURE::CreateStructure() \
 { \
 	HELIUM_ASSERT( s_Structure == NULL ); \
-	Helium::Reflect::Structure::Create<STRUCTURE>( s_Structure, TXT( #STRUCTURE ), NULL ); \
+	Helium::Reflect::MetaStruct::Create<STRUCTURE>( s_Structure, TXT( #STRUCTURE ), NULL ); \
 	return s_Structure; \
 } \
-const Helium::Reflect::Structure* STRUCTURE::s_Structure = NULL; \
-Helium::Reflect::StructureRegistrar< STRUCTURE, void > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
+const Helium::Reflect::MetaStruct* STRUCTURE::s_Structure = NULL; \
+Helium::Reflect::MetaStructRegistrar< STRUCTURE, void > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
 
 #define _REFLECT_DEFINE_DERIVED_STRUCTURE( STRUCTURE ) \
-const Helium::Reflect::Structure* STRUCTURE::CreateStructure() \
+const Helium::Reflect::MetaStruct* STRUCTURE::CreateStructure() \
 { \
 	HELIUM_ASSERT( s_Structure == NULL ); \
 	HELIUM_ASSERT( STRUCTURE::Base::s_Structure != NULL ); \
-	Helium::Reflect::Structure::Create<STRUCTURE>( s_Structure, TXT( #STRUCTURE ), STRUCTURE::Base::s_Structure->m_Name ); \
+	Helium::Reflect::MetaStruct::Create<STRUCTURE>( s_Structure, TXT( #STRUCTURE ), STRUCTURE::Base::s_Structure->m_Name ); \
 	return s_Structure; \
 } \
-const Helium::Reflect::Structure* STRUCTURE::s_Structure = NULL; \
-Helium::Reflect::StructureRegistrar< STRUCTURE, STRUCTURE::Base > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
+const Helium::Reflect::MetaStruct* STRUCTURE::s_Structure = NULL; \
+Helium::Reflect::MetaStructRegistrar< STRUCTURE, STRUCTURE::Base > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
 
 // declares a concrete object with creator
 #define REFLECT_DECLARE_BASE_STRUCTURE( STRUCTURE ) \
@@ -246,4 +246,4 @@ Helium::Reflect::StructureRegistrar< STRUCTURE, STRUCTURE::Base > STRUCTURE::s_R
 #define REFLECT_DEFINE_DERIVED_STRUCTURE( STRUCTURE ) \
 	_REFLECT_DEFINE_DERIVED_STRUCTURE( STRUCTURE  )
 
-#include "Reflect/Structure.inl"
+#include "Reflect/MetaStruct.inl"

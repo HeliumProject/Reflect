@@ -1,7 +1,7 @@
 template< class T >
-void Helium::Reflect::Enumeration::Create( Enumeration const*& pointer, const char* name )
+void Helium::Reflect::MetaEnum::Create( MetaEnum const*& pointer, const char* name )
 {
-	Enumeration* type = new Enumeration();
+	MetaEnum* type = new MetaEnum();
 	pointer = type;
 
 	type->m_Size = sizeof(T);
@@ -10,33 +10,33 @@ void Helium::Reflect::Enumeration::Create( Enumeration const*& pointer, const ch
 	T::PopulateEnumeration( *type );
 }
 
-bool Helium::Reflect::Enumeration::IsFlagSet(uint32_t value, uint32_t flag)
+bool Helium::Reflect::MetaEnum::IsFlagSet(uint32_t value, uint32_t flag)
 {
 	return ((value & flag) == flag);
 }
 
-void Helium::Reflect::Enumeration::SetFlags(uint32_t& value, uint32_t flags)
+void Helium::Reflect::MetaEnum::SetFlags(uint32_t& value, uint32_t flags)
 {
 	value |= flags;
 }
 
 template< class EnumerationT >
-Helium::Reflect::EnumRegistrar< EnumerationT >::EnumRegistrar(const char* name)
-	: TypeRegistrar( name )
+Helium::Reflect::MetaEnumRegistrar< EnumerationT >::MetaEnumRegistrar(const char* name)
+	: MetaTypeRegistrar( name )
 {
 	HELIUM_ASSERT( EnumerationT::s_Enumeration == NULL );
-	TypeRegistrar::AddToList( RegistrarTypes::Enumeration, this );
+	MetaTypeRegistrar::AddToList( RegistrarTypes::MetaEnum, this );
 }
 
 template< class EnumerationT >
-Helium::Reflect::EnumRegistrar< EnumerationT >::~EnumRegistrar()
+Helium::Reflect::MetaEnumRegistrar< EnumerationT >::~MetaEnumRegistrar()
 {
 	Unregister();
-	TypeRegistrar::RemoveFromList( RegistrarTypes::Enumeration, this );
+	MetaTypeRegistrar::RemoveFromList( RegistrarTypes::MetaEnum, this );
 }
 
 template< class EnumerationT >
-void Helium::Reflect::EnumRegistrar< EnumerationT >::Register()
+void Helium::Reflect::MetaEnumRegistrar< EnumerationT >::Register()
 {
 	if( EnumerationT::s_Enumeration == NULL )
 	{
@@ -45,7 +45,7 @@ void Helium::Reflect::EnumRegistrar< EnumerationT >::Register()
 }
 
 template< class EnumerationT >
-void Helium::Reflect::EnumRegistrar< EnumerationT >::Unregister()
+void Helium::Reflect::MetaEnumRegistrar< EnumerationT >::Unregister()
 {
 	if( EnumerationT::s_Enumeration != NULL )
 	{

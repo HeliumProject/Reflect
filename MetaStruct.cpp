@@ -1,12 +1,12 @@
 #include "ReflectPch.h"
-#include "Reflect/Structure.h"
+#include "Reflect/MetaStruct.h"
 
 #include "Foundation/Log.h"
 
 #include "Reflect/Translator.h"
 #include "Reflect/Object.h"
 #include "Reflect/Registry.h"
-#include "Reflect/Enumeration.h"
+#include "Reflect/MetaEnum.h"
 #include "Reflect/TranslatorDeduction.h"
 
 using namespace Helium;
@@ -54,7 +54,7 @@ bool Field::ShouldSerialize( void* address, Object* object, uint32_t index ) con
 	return !IsDefaultValue( address, object, index );
 }
 
-Structure::Structure()
+MetaStruct::MetaStruct()
 	: m_Base( NULL )
 	, m_FirstDerived( NULL )
 	, m_NextSibling( NULL )
@@ -64,19 +64,19 @@ Structure::Structure()
 
 }
 
-Structure::~Structure()
+MetaStruct::~MetaStruct()
 {
 	delete static_cast< char* >( m_Default );
 }
 
-Structure* Structure::Create()
+MetaStruct* MetaStruct::Create()
 {
-	return new Structure();
+	return new MetaStruct();
 }
 
-void Structure::Register() const
+void MetaStruct::Register() const
 {
-	Type::Register();
+	MetaType::Register();
 
 	uint32_t computedSize = 0;
 	DynamicArray< Field >::ConstIterator itr = m_Fields.Begin();
@@ -93,14 +93,14 @@ void Structure::Register() const
 	}
 }
 
-void Structure::Unregister() const
+void MetaStruct::Unregister() const
 {
-	Type::Unregister();
+	MetaType::Unregister();
 }
 
-bool Structure::IsType(const Structure* type) const
+bool MetaStruct::IsType(const MetaStruct* type) const
 {
-	for ( const Structure* base = this; base; base = base->m_Base )
+	for ( const MetaStruct* base = this; base; base = base->m_Base )
 	{
 		if ( base == type )
 		{
@@ -111,7 +111,7 @@ bool Structure::IsType(const Structure* type) const
 	return false;
 }
 
-void Structure::AddDerived( const Structure* derived ) const
+void MetaStruct::AddDerived( const MetaStruct* derived ) const
 {
 	HELIUM_ASSERT( derived );
 
@@ -119,7 +119,7 @@ void Structure::AddDerived( const Structure* derived ) const
 	m_FirstDerived = derived;
 }
 
-void Structure::RemoveDerived( const Structure* derived ) const
+void MetaStruct::RemoveDerived( const MetaStruct* derived ) const
 {
 	HELIUM_ASSERT( derived );
 
@@ -129,7 +129,7 @@ void Structure::RemoveDerived( const Structure* derived ) const
 	}
 	else
 	{
-		for ( const Structure* sibling = m_FirstDerived; sibling; sibling = sibling->m_NextSibling )
+		for ( const MetaStruct* sibling = m_FirstDerived; sibling; sibling = sibling->m_NextSibling )
 		{
 			if ( sibling->m_NextSibling == derived )
 			{
@@ -142,7 +142,7 @@ void Structure::RemoveDerived( const Structure* derived ) const
 	derived->m_NextSibling = NULL;
 }
 
-bool Structure::Equals(void* compositeA, Object* objectA, void* compositeB, Object* objectB) const
+bool MetaStruct::Equals(void* compositeA, Object* objectA, void* compositeB, Object* objectB) const
 {
 	if (compositeA == compositeB)
 	{
@@ -154,7 +154,7 @@ bool Structure::Equals(void* compositeA, Object* objectA, void* compositeB, Obje
 		return false;
 	}
 
-	for ( const Structure* current = this; current != NULL; current = current->m_Base )
+	for ( const MetaStruct* current = this; current != NULL; current = current->m_Base )
 	{
 		DynamicArray< Field >::ConstIterator itr = current->m_Fields.Begin();
 		DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
@@ -174,11 +174,11 @@ bool Structure::Equals(void* compositeA, Object* objectA, void* compositeB, Obje
 	return true;
 }
 
-void Structure::Copy( void* compositeSource, Object* objectSource, void* compositeDestination, Object* objectDestination, bool shallowCopy ) const
+void MetaStruct::Copy( void* compositeSource, Object* objectSource, void* compositeDestination, Object* objectDestination, bool shallowCopy ) const
 {
 	if ( compositeSource != compositeDestination )
 	{
-		for ( const Structure* current = this; current != NULL; current = current->m_Base )
+		for ( const MetaStruct* current = this; current != NULL; current = current->m_Base )
 		{
 			DynamicArray< Field >::ConstIterator itr = current->m_Fields.Begin();
 			DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
@@ -197,9 +197,9 @@ void Structure::Copy( void* compositeSource, Object* objectSource, void* composi
 	}
 }
 
-const Field* Structure::FindFieldByName(uint32_t crc) const
+const Field* MetaStruct::FindFieldByName(uint32_t crc) const
 {
-	for ( const Structure* current = this; current != NULL; current = current->m_Base )
+	for ( const MetaStruct* current = this; current != NULL; current = current->m_Base )
 	{
 		DynamicArray< Field >::ConstIterator itr = current->m_Fields.Begin();
 		DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
@@ -215,9 +215,9 @@ const Field* Structure::FindFieldByName(uint32_t crc) const
 	return NULL;
 }
 
-const Field* Structure::FindFieldByIndex(uint32_t index) const
+const Field* MetaStruct::FindFieldByIndex(uint32_t index) const
 {
-	for ( const Structure* current = this; current != NULL; current = current->m_Base )
+	for ( const MetaStruct* current = this; current != NULL; current = current->m_Base )
 	{
 		if ( current->m_Fields.GetSize() && index >= current->m_Fields.GetFirst().m_Index && index <= current->m_Fields.GetFirst().m_Index )
 		{
@@ -228,10 +228,10 @@ const Field* Structure::FindFieldByIndex(uint32_t index) const
 	return NULL;
 }
 
-const Field* Structure::FindFieldByOffset(uint32_t offset) const
+const Field* MetaStruct::FindFieldByOffset(uint32_t offset) const
 {
 #pragma TODO("Implement binary search")
-	for ( const Structure* current = this; current != NULL; current = current->m_Base )
+	for ( const MetaStruct* current = this; current != NULL; current = current->m_Base )
 	{
 		if ( current->m_Fields.GetSize() && offset >= current->m_Fields.GetFirst().m_Offset && offset <= current->m_Fields.GetFirst().m_Offset )
 		{
@@ -250,11 +250,11 @@ const Field* Structure::FindFieldByOffset(uint32_t offset) const
 	return NULL;
 }
 
-uint32_t Structure::GetBaseFieldCount() const
+uint32_t MetaStruct::GetBaseFieldCount() const
 {
 	uint32_t count = 0;
 
-	for ( const Structure* base = m_Base; base; base = base->m_Base )
+	for ( const MetaStruct* base = m_Base; base; base = base->m_Base )
 	{
 		if ( m_Base->m_Fields.GetSize() )
 		{
@@ -266,7 +266,7 @@ uint32_t Structure::GetBaseFieldCount() const
 	return count;
 }
 
-Reflect::Field* Structure::AddField()
+Reflect::Field* MetaStruct::AddField()
 {
 	Field field;
 	field.m_Structure = this;

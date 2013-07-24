@@ -16,7 +16,7 @@ namespace Helium
 			};
 
 			REFLECT_DECLARE_ENUMERATION( TestEnumeration );
-			static void PopulateEnumeration( Enumeration& info );
+			static void PopulateEnumeration( MetaEnum& info );
 		};
 
 		struct TestStructure : StructureBase
@@ -43,7 +43,7 @@ namespace Helium
 			Map<uint32_t, uint32_t> m_FoundationMapUint32;
 
 			REFLECT_DECLARE_BASE_STRUCTURE( TestStructure );
-			static void PopulateStructure( Structure& comp );
+			static void PopulateStructure( MetaStruct& comp );
 		};
 
 		class TestObject : public Object
@@ -55,7 +55,7 @@ namespace Helium
 			TestEnumeration m_EnumerationArray[ 8 ];
 
 			REFLECT_DECLARE_OBJECT( TestObject, Object );
-			static void PopulateStructure( Structure& comp );
+			static void PopulateStructure( MetaStruct& comp );
 		};
 
 		void RunTests();

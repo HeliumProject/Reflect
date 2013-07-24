@@ -1,32 +1,32 @@
 #include "ReflectPch.h"
-#include "Class.h"
+#include "MetaClass.h"
 
 #include "Reflect/Object.h"
 
 using namespace Helium;
 using namespace Helium::Reflect;
 
-Class::Class()
+MetaClass::MetaClass()
 : m_Creator (NULL)
 {
 
 }
 
-Class::~Class()
+MetaClass::~MetaClass()
 {
 	// prevent base class from deleting our object
-	Structure::m_Default = NULL;
+	MetaStruct::m_Default = NULL;
 }
 
-Class* Class::Create()
+MetaClass* MetaClass::Create()
 {
-    return new Class();
+    return new MetaClass();
 }
 
 template<>
-void Class::Create< Object >( Class const*& pointer, const char* name, const char* baseName, CreateObjectFunc creator )
+void MetaClass::Create< Object >( MetaClass const*& pointer, const char* name, const char* baseName, CreateObjectFunc creator )
 {
-    Class* type = Class::Create();
+    MetaClass* type = MetaClass::Create();
     pointer = type;
 
     type->m_Size = sizeof( Object );

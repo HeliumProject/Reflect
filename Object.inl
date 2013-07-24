@@ -8,7 +8,7 @@ void Helium::Reflect::Object::FieldChanged( FieldT* fieldAddress ) const
     const Reflect::Field* field = GetClass()->FindFieldByOffset( fieldOffset );
 
     // your field address probably doesn't point to the field in this instance,
-    //  or your field is not exposed to Reflect, add it in your Structure function
+    //  or your field is not exposed to Reflect, add it in your MetaStruct function
     HELIUM_ASSERT( field );
 
     // notify listeners that this field changed
@@ -24,7 +24,7 @@ void Helium::Reflect::Object::ChangeField( FieldT ObjectT::* pointerToMember, co
     // find the field in our reflection information
     const Reflect::Field* field = GetClass()->FindField( pointerToMember );
 
-    // your field is not exposed to Reflect, add it in your Structure function
+    // your field is not exposed to Reflect, add it in your MetaStruct function
     HELIUM_ASSERT( field );
 
     // notify listeners that this field changed
@@ -141,7 +141,7 @@ inline const DerivedT* Helium::Reflect::SafeCast(const Reflect::Object* base)
 template< class T >
 bool Helium::Reflect::ObjectResolver::Resolve( const Name& identity, StrongPtr< T >& object )
 {
-	const Class* pointerClass = Reflect::GetClass< T >();
+	const MetaClass* pointerClass = Reflect::GetClass< T >();
 	return this->Resolve( identity, reinterpret_cast< ObjectPtr& >( object ), pointerClass );
 }
 

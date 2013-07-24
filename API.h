@@ -34,10 +34,10 @@ namespace Helium
 {
 	namespace Reflect
 	{
-		class Type;
-		class Structure;
-		class Class;
-		class Enumeration;
+		class MetaType;
+		class MetaStruct;
+		class MetaClass;
+		class MetaEnum;
 		class Translator;
 		class Object;
 	}

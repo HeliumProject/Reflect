@@ -7,7 +7,7 @@
 #include "Foundation/FilePath.h"
 #include "Foundation/SmartPtr.h"
 
-#include "Reflect/ReflectionInfo.h"
+#include "Reflect/Meta.h"
 
 namespace Helium
 {
@@ -18,7 +18,7 @@ namespace Helium
         typedef void (*DestroyedFunc)(Object* object);
 
         // Registry containers
-        typedef SortedMap< uint32_t, Helium::SmartPtr< Type > > M_HashToType;
+        typedef SortedMap< uint32_t, Helium::SmartPtr< MetaType > > M_HashToType;
 
         // Profile interface
 #ifdef PROFILE_ACCUMULATION
@@ -55,28 +55,28 @@ namespace Helium
             bool IsInitThread();
 
             // register type with registry with type id only
-            bool RegisterType( const Type* type );
-            void UnregisterType( const Type* type );
+            bool RegisterType( const MetaType* type );
+            void UnregisterType( const MetaType* type );
 
             // give a type an alias (for legacy considerations)
-            void AliasType( const Type* type, const char* alias );
-            void UnaliasType( const Type* type, const char* alias );
+            void AliasType( const MetaType* type, const char* alias );
+            void UnaliasType( const MetaType* type, const char* alias );
 
             // type lookup
-            const Type* GetType( uint32_t crc ) const;
-            inline const Type* GetType( const char* name ) const;
+            const MetaType* GetType( uint32_t crc ) const;
+            inline const MetaType* GetType( const char* name ) const;
             
             // structure lookup
-            const Structure* GetStructure( uint32_t crc ) const;
-            inline const Structure* GetStructure( const char* name ) const;
+            const MetaStruct* GetStructure( uint32_t crc ) const;
+            inline const MetaStruct* GetStructure( const char* name ) const;
 
             // class lookup
-            const Class* GetClass( uint32_t crc ) const;
-            inline const Class* GetClass( const char* name ) const;
+            const MetaClass* GetClass( uint32_t crc ) const;
+            inline const MetaClass* GetClass( const char* name ) const;
 
             // enumeration lookup
-            const Enumeration* GetEnumeration( uint32_t crc ) const;
-            inline const Enumeration* GetEnumeration( const char* name ) const;
+            const MetaEnum* GetEnumeration( uint32_t crc ) const;
+            inline const MetaEnum* GetEnumeration( const char* name ) const;
 
         private:
             M_HashToType        m_TypesByHash;
@@ -87,21 +87,21 @@ namespace Helium
         //
 
         template<class T>
-        inline const Class* GetClass()
+        inline const MetaClass* GetClass()
         {
             T::s_Registrar.Register();
             return T::s_Class;
         }
 
         template<class T>
-        inline const Structure* GetStructure()
+        inline const MetaStruct* GetStructure()
         {
             T::s_Registrar.Register();
             return T::s_Structure;
         }
 
         template<class T>
-        inline const Enumeration* GetEnumeration()
+        inline const MetaEnum* GetEnumeration()
         {
             T::s_Registrar.Register();
             return T::s_Enumeration;

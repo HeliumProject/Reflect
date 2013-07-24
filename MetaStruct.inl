@@ -1,17 +1,17 @@
 template< class StructureT >
-void Helium::Reflect::Structure::Create( Structure const*& pointer, const char* name, const char* baseName )
+void Helium::Reflect::MetaStruct::Create( MetaStruct const*& pointer, const char* name, const char* baseName )
 {
-	Structure* type = Structure::Create();
+	MetaStruct* type = MetaStruct::Create();
 	pointer = type;
 
 	// populate reflection information
-	Structure::Create< StructureT >( name, baseName, &StructureT::PopulateStructure, type );
+	MetaStruct::Create< StructureT >( name, baseName, &StructureT::PopulateStructure, type );
 
 	type->m_Default = new StructureT;
 }
 
 template< class StructureT >
-void Helium::Reflect::Structure::Create( const char* name, const char* baseName, PopulateCompositeFunc populate, Structure* info )
+void Helium::Reflect::MetaStruct::Create( const char* name, const char* baseName, PopulateCompositeFunc populate, MetaStruct* info )
 {
 	// the size
 	info->m_Size = sizeof( StructureT );
@@ -35,7 +35,7 @@ void Helium::Reflect::Structure::Create( const char* name, const char* baseName,
 	//  so check each base class to see if this is really a base class enumerate function
 	bool baseAccept = false;
 	{
-		const Reflect::Structure* base = info->m_Base;
+		const Reflect::MetaStruct* base = info->m_Base;
 		while ( !baseAccept && base )
 		{
 			if (base)
@@ -66,74 +66,74 @@ void Helium::Reflect::Structure::Create( const char* name, const char* baseName,
 }
 
 template< class StructureT, typename FieldT >
-const Helium::Reflect::Field* Helium::Reflect::Structure::FindField( FieldT StructureT::* pointerToMember ) const
+const Helium::Reflect::Field* Helium::Reflect::MetaStruct::FindField( FieldT StructureT::* pointerToMember ) const
 {
-	return FindFieldByOffset( Reflect::Structure::GetOffset<StructureT, FieldT>( pointerToMember ) );
+	return FindFieldByOffset( Reflect::MetaStruct::GetOffset<StructureT, FieldT>( pointerToMember ) );
 }
 
 template < class StructureT, class FieldT >
-uint32_t Helium::Reflect::Structure::GetOffset( FieldT StructureT::* field )
+uint32_t Helium::Reflect::MetaStruct::GetOffset( FieldT StructureT::* field )
 {
 	return (uint32_t) (uintptr_t) &( ((StructureT*)NULL)->*field); 
 }
 
 template < class T, size_t N >
-uint32_t Helium::Reflect::Structure::GetArrayCount( T (&/* array */)[N] )
+uint32_t Helium::Reflect::MetaStruct::GetArrayCount( T (&/* array */)[N] )
 {
 	return N;
 }
 
 template < class T >
-uint32_t Helium::Reflect::Structure::GetCount( std::false_type /* is_array */ )
+uint32_t Helium::Reflect::MetaStruct::GetCount( std::false_type /* is_array */ )
 {
 	return 1;
 }
 
 template < class T >
-uint32_t Helium::Reflect::Structure::GetCount( std::true_type /* is_array */ )
+uint32_t Helium::Reflect::MetaStruct::GetCount( std::true_type /* is_array */ )
 {
 	T temp;
 	return GetArrayCount( temp );
 }
 
 template < class T >
-const Helium::Reflect::Type* Helium::Reflect::Structure::DeduceKeyType( std::false_type /* is_array */ )
+const Helium::Reflect::MetaType* Helium::Reflect::MetaStruct::DeduceKeyType( std::false_type /* is_array */ )
 {
 	return Reflect::DeduceKeyType< T >();
 }
 
 template < class T >
-const Helium::Reflect::Type* Helium::Reflect::Structure::DeduceKeyType( std::true_type /* is_array */ )
+const Helium::Reflect::MetaType* Helium::Reflect::MetaStruct::DeduceKeyType( std::true_type /* is_array */ )
 {
 	return Reflect::DeduceKeyType< typename std::remove_extent< T >::type >();
 }
 
 template < class T >
-const Helium::Reflect::Type* Helium::Reflect::Structure::DeduceValueType( std::false_type /* is_array */ )
+const Helium::Reflect::MetaType* Helium::Reflect::MetaStruct::DeduceValueType( std::false_type /* is_array */ )
 {
 	return Reflect::DeduceValueType< T >();
 }
 
 template < class T >
-const Helium::Reflect::Type* Helium::Reflect::Structure::DeduceValueType( std::true_type /* is_array */ )
+const Helium::Reflect::MetaType* Helium::Reflect::MetaStruct::DeduceValueType( std::true_type /* is_array */ )
 {
 	return Reflect::DeduceValueType< typename std::remove_extent< T >::type >();
 }
 
 template < class T >
-Helium::Reflect::Translator* Helium::Reflect::Structure::AllocateTranslator( std::false_type /* is_array */ )
+Helium::Reflect::Translator* Helium::Reflect::MetaStruct::AllocateTranslator( std::false_type /* is_array */ )
 {
 	return Reflect::AllocateTranslator< T >();
 }
 
 template < class T >
-Helium::Reflect::Translator* Helium::Reflect::Structure::AllocateTranslator( std::true_type /* is_array */ )
+Helium::Reflect::Translator* Helium::Reflect::MetaStruct::AllocateTranslator( std::true_type /* is_array */ )
 {
 	return Reflect::AllocateTranslator< typename std::remove_extent< T >::type >();
 }
 
 template < class StructureT, class FieldT >
-Helium::Reflect::Field* Helium::Reflect::Structure::AddField( FieldT StructureT::* field, const char* name, uint32_t flags, Translator* translator )
+Helium::Reflect::Field* Helium::Reflect::MetaStruct::AddField( FieldT StructureT::* field, const char* name, uint32_t flags, Translator* translator )
 {
 	Field* f = AddField();
 	f->m_Name = name;
@@ -148,26 +148,26 @@ Helium::Reflect::Field* Helium::Reflect::Structure::AddField( FieldT StructureT:
 }
 
 //
-// StructureRegistrar
+// MetaStructRegistrar
 //
 
 template< class StructureT, class BaseT >
-Helium::Reflect::StructureRegistrar< StructureT, BaseT >::StructureRegistrar(const char* name)
-	: TypeRegistrar( name )
+Helium::Reflect::MetaStructRegistrar< StructureT, BaseT >::MetaStructRegistrar(const char* name)
+	: MetaTypeRegistrar( name )
 {
 	HELIUM_ASSERT( StructureT::s_Structure == NULL );
-	TypeRegistrar::AddToList( RegistrarTypes::Structure, this );
+	MetaTypeRegistrar::AddToList( RegistrarTypes::MetaStruct, this );
 }
 
 template< class StructureT, class BaseT >
-Helium::Reflect::StructureRegistrar< StructureT, BaseT >::~StructureRegistrar()
+Helium::Reflect::MetaStructRegistrar< StructureT, BaseT >::~MetaStructRegistrar()
 {
 	Unregister();
-	TypeRegistrar::RemoveFromList( RegistrarTypes::Structure, this );
+	MetaTypeRegistrar::RemoveFromList( RegistrarTypes::MetaStruct, this );
 }
 
 template< class StructureT, class BaseT >
-void Helium::Reflect::StructureRegistrar< StructureT, BaseT >::Register()
+void Helium::Reflect::MetaStructRegistrar< StructureT, BaseT >::Register()
 {
 	if ( StructureT::s_Structure == NULL )
 	{
@@ -177,7 +177,7 @@ void Helium::Reflect::StructureRegistrar< StructureT, BaseT >::Register()
 }
 
 template< class StructureT, class BaseT >
-void Helium::Reflect::StructureRegistrar< StructureT, BaseT >::Unregister()
+void Helium::Reflect::MetaStructRegistrar< StructureT, BaseT >::Unregister()
 {
 	if ( StructureT::s_Structure != NULL )
 	{
@@ -187,22 +187,22 @@ void Helium::Reflect::StructureRegistrar< StructureT, BaseT >::Unregister()
 }
 
 template< class StructureT >
-Helium::Reflect::StructureRegistrar< StructureT, void >::StructureRegistrar(const char* name)
-	: TypeRegistrar( name )
+Helium::Reflect::MetaStructRegistrar< StructureT, void >::MetaStructRegistrar(const char* name)
+	: MetaTypeRegistrar( name )
 {
 	HELIUM_ASSERT( StructureT::s_Structure == NULL );
-	TypeRegistrar::AddToList( RegistrarTypes::Structure, this );
+	MetaTypeRegistrar::AddToList( RegistrarTypes::MetaStruct, this );
 }
 
 template< class StructureT >
-Helium::Reflect::StructureRegistrar< StructureT, void >::~StructureRegistrar()
+Helium::Reflect::MetaStructRegistrar< StructureT, void >::~MetaStructRegistrar()
 {
 	Unregister();
-	TypeRegistrar::RemoveFromList( RegistrarTypes::Structure, this );
+	MetaTypeRegistrar::RemoveFromList( RegistrarTypes::MetaStruct, this );
 }
 
 template< class StructureT >
-void Helium::Reflect::StructureRegistrar< StructureT, void >::Register()
+void Helium::Reflect::MetaStructRegistrar< StructureT, void >::Register()
 {
 	if ( StructureT::s_Structure == NULL )
 	{
@@ -211,7 +211,7 @@ void Helium::Reflect::StructureRegistrar< StructureT, void >::Register()
 }
 
 template< class StructureT >
-void Helium::Reflect::StructureRegistrar< StructureT, void >::Unregister()
+void Helium::Reflect::MetaStructRegistrar< StructureT, void >::Unregister()
 {
 	if ( StructureT::s_Structure != NULL )
 	{

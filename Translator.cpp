@@ -2,7 +2,7 @@
 #include "Translator.h"
 
 #include "Reflect/Object.h"
-#include "Reflect/Structure.h"
+#include "Reflect/MetaStruct.h"
 
 using namespace Helium;
 using namespace Helium::Reflect;

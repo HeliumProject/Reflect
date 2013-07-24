@@ -2,7 +2,7 @@
 
 #include "Foundation/DynamicArray.h"
 
-#include "Reflect/Type.h"
+#include "Reflect/MetaType.h"
 
 namespace Helium
 {
@@ -29,16 +29,16 @@ namespace Helium
 			std::string     m_HelpText; // the help text for the object
 		};
 
-		class HELIUM_REFLECT_API Enumeration : public Type
+		class HELIUM_REFLECT_API MetaEnum : public MetaType
 		{
 		public:
-			REFLECTION_TYPE( ReflectionTypes::Enumeration, Enumeration, Type );
+			REFLECT_META_DERIVED( MetaIds::MetaEnum, MetaEnum, MetaType );
 
-			Enumeration();
-			~Enumeration();
+			MetaEnum();
+			~MetaEnum();
 
 			template<class T>
-			static void Create( Enumeration const*& pointer, const char* name );
+			static void Create( MetaEnum const*& pointer, const char* name );
 
 			virtual void Register() const HELIUM_OVERRIDE;
 			virtual void Unregister() const HELIUM_OVERRIDE;
@@ -63,11 +63,11 @@ namespace Helium
 		};
 
 		template< class EnumT >
-		class EnumRegistrar : public TypeRegistrar
+		class MetaEnumRegistrar : public MetaTypeRegistrar
 		{
 		public:
-			EnumRegistrar(const char* name);
-			~EnumRegistrar();
+			MetaEnumRegistrar(const char* name);
+			~MetaEnumRegistrar();
 
 			virtual void Register();
 			virtual void Unregister();
@@ -83,20 +83,20 @@ ENUMERATION() : m_Value() {} \
 ENUMERATION( const ENUMERATION& e ) : m_Value( e.m_Value ) {} \
 ENUMERATION( const Enum& e ) : m_Value( e ) {} \
 operator const Enum&() const { return m_Value; } \
-static const Helium::Reflect::Enumeration* CreateEnumeration(); \
-static const Helium::Reflect::Enumeration* s_Enumeration; \
-static Helium::Reflect::EnumRegistrar< ENUMERATION > s_Registrar;
+static const Helium::Reflect::MetaEnum* CreateEnumeration(); \
+static const Helium::Reflect::MetaEnum* s_Enumeration; \
+static Helium::Reflect::MetaEnumRegistrar< ENUMERATION > s_Registrar;
 
 // defines the static type info vars
 #define _REFLECT_DEFINE_ENUMERATION( ENUMERATION ) \
-const Helium::Reflect::Enumeration* ENUMERATION::CreateEnumeration() \
+const Helium::Reflect::MetaEnum* ENUMERATION::CreateEnumeration() \
 { \
 	HELIUM_ASSERT( s_Enumeration == NULL ); \
-	Reflect::Enumeration::Create< ENUMERATION >( s_Enumeration, TXT( #ENUMERATION ) ); \
+	Reflect::MetaEnum::Create< ENUMERATION >( s_Enumeration, TXT( #ENUMERATION ) ); \
 	return s_Enumeration; \
 } \
-const Helium::Reflect::Enumeration* ENUMERATION::s_Enumeration = NULL; \
-Helium::Reflect::EnumRegistrar< ENUMERATION > ENUMERATION::s_Registrar( TXT( #ENUMERATION ) );
+const Helium::Reflect::MetaEnum* ENUMERATION::s_Enumeration = NULL; \
+Helium::Reflect::MetaEnumRegistrar< ENUMERATION > ENUMERATION::s_Registrar( TXT( #ENUMERATION ) );
 
 // declares an enumeration
 #define REFLECT_DECLARE_ENUMERATION( ENUMERATION ) \
@@ -106,4 +106,4 @@ Helium::Reflect::EnumRegistrar< ENUMERATION > ENUMERATION::s_Registrar( TXT( #EN
 #define REFLECT_DEFINE_ENUMERATION( ENUMERATION ) \
 	_REFLECT_DEFINE_ENUMERATION( ENUMERATION )
 
-#include "Reflect/Enumeration.inl"
+#include "Reflect/MetaEnum.inl"

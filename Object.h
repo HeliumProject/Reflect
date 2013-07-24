@@ -12,7 +12,7 @@
 
 #include "Reflect/API.h"
 #include "Reflect/Exceptions.h"
-#include "Reflect/Class.h"
+#include "Reflect/MetaClass.h"
 
 namespace Helium
 {
@@ -109,24 +109,24 @@ namespace Helium
             virtual void Destroy();  // This should only be called by the reference counting system!
 
             //
-            // Type checking
+            // MetaType checking
             //
 
             // Reflection data
-            static const Class* s_Class;
-            static ObjectRegistrar< Object, void > s_Registrar;
+            static const MetaClass* s_Class;
+            static MetaClassRegistrar< Object, void > s_Registrar;
 
             // Retrieves the reflection data for this instance
-            virtual const Reflect::Class* GetClass() const;
+            virtual const Reflect::MetaClass* GetClass() const;
 
             // Deduces type membership for this instance
-            bool IsClass( const Reflect::Class* type ) const;
+            bool IsClass( const Reflect::MetaClass* type ) const;
 
             // Create class data block for this type
-            static const Reflect::Class* CreateClass();
+            static const Reflect::MetaClass* CreateClass();
 
             // Enumerates member data (stub)
-            static void PopulateStructure( Reflect::Structure& comp );
+            static void PopulateStructure( Reflect::MetaStruct& comp );
 
             //
             // Persistence
@@ -220,7 +220,7 @@ namespace Helium
 		class HELIUM_REFLECT_API ObjectResolver
 		{
 		public:
-			virtual bool Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass ) = 0;
+			virtual bool Resolve( const Name& identity, ObjectPtr& pointer, const MetaClass* pointerClass ) = 0;
 
 			// helper to extract the class of the pointer
 			template< class T > bool Resolve( const Name& identity, StrongPtr< T >& object );
@@ -233,7 +233,7 @@ namespace Helium
 		class HELIUM_REFLECT_API DeferredResolver : public ObjectResolver
 		{
 		public:
-			virtual bool Resolve( const Name& identity, ObjectPtr& pointer, const Class* pointerClass ) HELIUM_OVERRIDE;
+			virtual bool Resolve( const Name& identity, ObjectPtr& pointer, const MetaClass* pointerClass ) HELIUM_OVERRIDE;
 
 		protected:
 			struct Entry
@@ -241,7 +241,7 @@ namespace Helium
 				inline Entry();
 
 				ObjectPtr*	 m_Pointer;
-				const Class* m_PointerClass;
+				const MetaClass* m_PointerClass;
 				Name         m_Identity;
 			};
 			DynamicArray< Entry > m_Entries;
@@ -259,31 +259,31 @@ static Helium::Reflect::Object* CreateObject() { return new OBJECT; }
 public: \
 typedef BASE Base; \
 typedef OBJECT This; \
-virtual const Helium::Reflect::Class* GetClass() const HELIUM_OVERRIDE; \
-static const Helium::Reflect::Class* CreateClass(); \
-static const Helium::Reflect::Class* s_Class;
+virtual const Helium::Reflect::MetaClass* GetClass() const HELIUM_OVERRIDE; \
+static const Helium::Reflect::MetaClass* CreateClass(); \
+static const Helium::Reflect::MetaClass* s_Class;
 
 #define _REFLECT_DECLARE_OBJECT_REGISTRAR( OBJECT, BASE ) \
-static Helium::Reflect::ObjectRegistrar< OBJECT, BASE > s_Registrar;
+static Helium::Reflect::MetaClassRegistrar< OBJECT, BASE > s_Registrar;
 
 // defines the static type info vars
 #define _REFLECT_DEFINE_OBJECT( OBJECT, CREATOR ) \
-const Helium::Reflect::Class* OBJECT::GetClass() const \
+const Helium::Reflect::MetaClass* OBJECT::GetClass() const \
 { \
     return s_Class; \
 } \
 \
-const Helium::Reflect::Class* OBJECT::CreateClass() \
+const Helium::Reflect::MetaClass* OBJECT::CreateClass() \
 { \
     HELIUM_ASSERT( s_Class == NULL ); \
     HELIUM_ASSERT( OBJECT::Base::s_Class != NULL ); \
-    Helium::Reflect::Class::Create< OBJECT >( s_Class, TXT( #OBJECT ), OBJECT::Base::s_Class->m_Name, CREATOR); \
+    Helium::Reflect::MetaClass::Create< OBJECT >( s_Class, TXT( #OBJECT ), OBJECT::Base::s_Class->m_Name, CREATOR); \
     return s_Class; \
 } \
-const Helium::Reflect::Class* OBJECT::s_Class = NULL;
+const Helium::Reflect::MetaClass* OBJECT::s_Class = NULL;
 
 #define _REFLECT_DEFINE_OBJECT_REGISTRAR( OBJECT, CREATOR ) \
-Helium::Reflect::ObjectRegistrar< OBJECT, OBJECT::Base > OBJECT::s_Registrar( TXT( #OBJECT ) );
+Helium::Reflect::MetaClassRegistrar< OBJECT, OBJECT::Base > OBJECT::s_Registrar( TXT( #OBJECT ) );
 
 // declares an abstract object (an object that either A: cannot be instantiated or B: is never actually serialized)
 #define REFLECT_DECLARE_ABSTRACT_NO_REGISTRAR( OBJECT, BASE ) \

@@ -14,7 +14,7 @@ HELIUM_COMPILE_ASSERT( sizeof( EmptyBaseCheck ) == sizeof( uint32_t ) ); // chec
 
 REFLECT_DEFINE_ENUMERATION( TestEnumeration );
 
-void TestEnumeration::PopulateEnumeration( Enumeration& info )
+void TestEnumeration::PopulateEnumeration( MetaEnum& info )
 {
 	info.AddElement( ValueOne, TXT( "Value One" ) );
 	info.AddElement( ValueTwo, TXT( "Value Two" ) );
@@ -22,7 +22,7 @@ void TestEnumeration::PopulateEnumeration( Enumeration& info )
 
 REFLECT_DEFINE_BASE_STRUCTURE( TestStructure );
 
-void TestStructure::PopulateStructure( Reflect::Structure& comp )
+void TestStructure::PopulateStructure( Reflect::MetaStruct& comp )
 {
 	comp.AddField( &TestStructure::m_Uint8,  "Unsigned 8-bit Integer" );
 	comp.AddField( &TestStructure::m_Uint16, "Unsigned 16-bit Integer" );
@@ -48,13 +48,13 @@ void TestStructure::PopulateStructure( Reflect::Structure& comp )
 
 REFLECT_DEFINE_OBJECT( TestObject );
 
-void TestObject::PopulateStructure( Reflect::Structure& comp )
+void TestObject::PopulateStructure( Reflect::MetaStruct& comp )
 {
-	comp.AddField( &TestObject::m_Struct, "Structure" );
-	comp.AddField( &TestObject::m_StructArray, "Structure Array" );
+	comp.AddField( &TestObject::m_Struct, "MetaStruct" );
+	comp.AddField( &TestObject::m_StructArray, "MetaStruct Array" );
 
-	comp.AddField( &TestObject::m_Enumeration, "Enumeration" );
-	comp.AddField( &TestObject::m_EnumerationArray, "Enumeration Array" );
+	comp.AddField( &TestObject::m_Enumeration, "MetaEnum" );
+	comp.AddField( &TestObject::m_EnumerationArray, "MetaEnum Array" );
 }
 
 void Reflect::RunTests()

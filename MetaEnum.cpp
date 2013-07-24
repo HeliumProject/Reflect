@@ -1,5 +1,5 @@
 #include "ReflectPch.h"
-#include "Enumeration.h"
+#include "MetaEnum.h"
 
 #include "Foundation/Log.h"
 #include "Foundation/String.h"
@@ -25,20 +25,20 @@ EnumerationElement::EnumerationElement( uint32_t value, const std::string& name,
 
 }
 
-Enumeration::Enumeration()
+MetaEnum::MetaEnum()
 	: m_IsBitfield( true )
 {
 
 }
 
-Enumeration::~Enumeration()
+MetaEnum::~MetaEnum()
 {
 
 }
 
-void Enumeration::Register() const
+void MetaEnum::Register() const
 {
-	Type::Register();
+	MetaType::Register();
 
 	uint32_t computedSize = 0;
 	DynamicArray< EnumerationElement >::ConstIterator itr = m_Elements.Begin();
@@ -49,12 +49,12 @@ void Enumeration::Register() const
 	}
 }
 
-void Enumeration::Unregister() const
+void MetaEnum::Unregister() const
 {
-	Type::Unregister();
+	MetaType::Unregister();
 }
 
-void Enumeration::AddElement( uint32_t value, const std::string& name, const std::string& helpText )
+void MetaEnum::AddElement( uint32_t value, const std::string& name, const std::string& helpText )
 {
 	EnumerationElement element ( value, name, helpText );
 
@@ -67,7 +67,7 @@ void Enumeration::AddElement( uint32_t value, const std::string& name, const std
 	}
 }
 
-bool Enumeration::IsValid(uint32_t value) const
+bool MetaEnum::IsValid(uint32_t value) const
 {
 	DynamicArray< EnumerationElement >::ConstIterator itr = m_Elements.Begin();
 	DynamicArray< EnumerationElement >::ConstIterator end = m_Elements.End();
@@ -82,7 +82,7 @@ bool Enumeration::IsValid(uint32_t value) const
 	return false;
 }
 
-bool Enumeration::GetValue(const std::string& str, uint32_t& value) const
+bool MetaEnum::GetValue(const std::string& str, uint32_t& value) const
 {
 	if ( m_IsBitfield )
 	{
@@ -107,7 +107,7 @@ bool Enumeration::GetValue(const std::string& str, uint32_t& value) const
 	}
 }
 
-bool Enumeration::GetString(const uint32_t value, std::string& str) const
+bool MetaEnum::GetString(const uint32_t value, std::string& str) const
 {
 	if ( m_IsBitfield )
 	{
@@ -158,7 +158,7 @@ bool Enumeration::GetString(const uint32_t value, std::string& str) const
 	}
 }
 
-bool Enumeration::GetSingleValue(const std::string& str, uint32_t& value) const
+bool MetaEnum::GetSingleValue(const std::string& str, uint32_t& value) const
 {
 	DynamicArray< EnumerationElement >::ConstIterator itr = m_Elements.Begin();
 	DynamicArray< EnumerationElement >::ConstIterator end = m_Elements.End();
@@ -174,7 +174,7 @@ bool Enumeration::GetSingleValue(const std::string& str, uint32_t& value) const
 	return false;
 }
 
-bool Enumeration::GetBitfieldValue(const std::vector< std::string >& strs, uint32_t& value) const
+bool MetaEnum::GetBitfieldValue(const std::vector< std::string >& strs, uint32_t& value) const
 {
 	value = 0;
 
@@ -197,7 +197,7 @@ bool Enumeration::GetBitfieldValue(const std::vector< std::string >& strs, uint3
 	return value == 0 || !strs.empty();
 }
 
-bool Enumeration::GetBitfieldStrings(const uint32_t value, std::vector< std::string >& strs) const
+bool MetaEnum::GetBitfieldStrings(const uint32_t value, std::vector< std::string >& strs) const
 {
 	HELIUM_ASSERT( m_IsBitfield );
 	if ( m_IsBitfield )
