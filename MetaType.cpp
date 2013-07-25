@@ -26,7 +26,7 @@ MetaType::~MetaType()
 
 void MetaType::Register() const
 {
-    const char* type = MetaIds::Strings[ GetReflectionType() ];
+    const char* type = MetaIds::Strings[ GetMetaId() ];
     Log::Debug( TXT( "Reflect %s: 0x%p, Size: %4d, Name: %s (0x%08x)\n" ), type, this, m_Size, m_Name, Crc32( m_Name ) );
 }
 

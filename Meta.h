@@ -15,16 +15,16 @@
 
 #define REFLECT_META_BASE(__Id, __Type) \
 	typedef __Type This; \
-	const static int s_MetaId = __Id; \
-	virtual int GetReflectionType() const { return __Id; } \
-	virtual bool HasReflectionType(int id) const { return __Id == id; }
+	const static Helium::Reflect::MetaId s_MetaId = __Id; \
+	virtual Helium::Reflect::MetaId GetMetaId() const { return __Id; } \
+	virtual bool IsA(Helium::Reflect::MetaId id) const { return __Id == id; }
 
 #define REFLECT_META_DERIVED(__Id, __Type, __Base) \
 	typedef __Type This; \
 	typedef __Base Base; \
-	const static int s_MetaId = __Id; \
-	virtual int GetReflectionType() const HELIUM_OVERRIDE { return __Id; } \
-	virtual bool HasReflectionType(int id) const HELIUM_OVERRIDE { return __Id == id || Base::HasReflectionType(id); }
+	const static Helium::Reflect::MetaId s_MetaId = __Id; \
+	virtual Helium::Reflect::MetaId GetMetaId() const HELIUM_OVERRIDE { return __Id; } \
+	virtual bool IsA(Helium::Reflect::MetaId id) const HELIUM_OVERRIDE { return __Id == id || Base::IsA(id); }
 
 namespace Helium
 {
@@ -100,13 +100,13 @@ namespace Helium
 		template<typename T>
 		T* ReflectionCast(Meta* info)
 		{
-			return (info && info->HasReflectionType( T::s_MetaId )) ? static_cast<T*>(info) : NULL;
+			return (info && info->IsA( T::s_MetaId )) ? static_cast<T*>(info) : NULL;
 		}
 
 		template<typename T>
 		const T* ReflectionCast(const Meta* info)
 		{
-			return (info && info->HasReflectionType( T::s_MetaId )) ? static_cast<const T*>(info) : NULL;
+			return (info && info->IsA( T::s_MetaId )) ? static_cast<const T*>(info) : NULL;
 		}
 	}
 }
