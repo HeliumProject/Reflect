@@ -67,16 +67,16 @@ namespace Helium
             inline const MetaType* GetType( const char* name ) const;
             
             // structure lookup
-            const MetaStruct* GetStructure( uint32_t crc ) const;
-            inline const MetaStruct* GetStructure( const char* name ) const;
+            const MetaStruct* GetMetaStruct( uint32_t crc ) const;
+            inline const MetaStruct* GetMetaStruct( const char* name ) const;
 
             // class lookup
             const MetaClass* GetMetaClass( uint32_t crc ) const;
             inline const MetaClass* GetMetaClass( const char* name ) const;
 
             // enumeration lookup
-            const MetaEnum* GetEnumeration( uint32_t crc ) const;
-            inline const MetaEnum* GetEnumeration( const char* name ) const;
+            const MetaEnum* GetMetaEnum( uint32_t crc ) const;
+            inline const MetaEnum* GetMetaEnum( const char* name ) const;
 
         private:
             M_HashToType        m_TypesByHash;
@@ -94,14 +94,14 @@ namespace Helium
         }
 
         template<class T>
-        inline const MetaStruct* GetStructure()
+        inline const MetaStruct* GetMetaStruct()
         {
             T::s_Registrar.Register();
             return T::s_MetaStruct;
         }
 
         template<class T>
-        inline const MetaEnum* GetEnumeration()
+        inline const MetaEnum* GetMetaEnum()
         {
             T::s_Registrar.Register();
             return T::s_Enumeration;

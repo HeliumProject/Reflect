@@ -4,10 +4,10 @@ const Helium::Reflect::MetaType* Helium::Reflect::Registry::GetType( const char*
     return GetType( crc );
 }
 
-const Helium::Reflect::MetaStruct* Helium::Reflect::Registry::GetStructure( const char* name ) const
+const Helium::Reflect::MetaStruct* Helium::Reflect::Registry::GetMetaStruct( const char* name ) const
 {
     uint32_t crc = Crc32( name );
-    return GetStructure( crc );
+    return GetMetaStruct( crc );
 }
 
 const Helium::Reflect::MetaClass* Helium::Reflect::Registry::GetMetaClass( const char* name ) const
@@ -16,8 +16,8 @@ const Helium::Reflect::MetaClass* Helium::Reflect::Registry::GetMetaClass( const
     return GetMetaClass( crc );
 }
 
-const Helium::Reflect::MetaEnum* Helium::Reflect::Registry::GetEnumeration( const char* name ) const
+const Helium::Reflect::MetaEnum* Helium::Reflect::Registry::GetMetaEnum( const char* name ) const
 {
     uint32_t crc = Crc32( name );
-    return GetEnumeration( crc );
+    return GetMetaEnum( crc );
 }

@@ -96,7 +96,7 @@ namespace Helium
 			virtual void Destruct( Pointer pointer ) HELIUM_OVERRIDE;
 			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) HELIUM_OVERRIDE;
 			virtual bool Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
-			virtual const MetaStruct* GetStructure() const HELIUM_OVERRIDE;
+			virtual const MetaStruct* GetMetaStruct() const HELIUM_OVERRIDE;
 		};
 
 		template< class T >
@@ -107,7 +107,7 @@ namespace Helium
 		template< class T >
 		const MetaType* DeduceValueType( const Struct&, const T& )
 		{
-			return Reflect::GetStructure< T >();
+			return Reflect::GetMetaStruct< T >();
 		}
 		template< class T >
 		Translator* AllocateTranslator( const Struct&, const T& )
@@ -176,7 +176,7 @@ namespace Helium
 		template< class T >
 		const MetaType* DeduceValueType( const Enum&, const T& )
 		{
-			return Reflect::GetEnumeration< T >();
+			return Reflect::GetMetaEnum< T >();
 		}
 		template< class T >
 		Translator* AllocateTranslator( const Enum&, const T& )

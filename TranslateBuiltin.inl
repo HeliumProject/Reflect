@@ -108,7 +108,7 @@ void Helium::Reflect::SimpleStructureTranslator<T>::Destruct( Pointer pointer )
 template< class T >
 void Helium::Reflect::SimpleStructureTranslator<T>::Copy( Pointer src, Pointer dest, uint32_t flags )
 {
-	const MetaStruct* structure = Reflect::GetStructure< T >();
+	const MetaStruct* structure = Reflect::GetMetaStruct< T >();
 	structure->Copy( src.m_Address, src.m_Object, dest.m_Address, dest.m_Object );
 	dest.RaiseChanged( flags & CopyFlags::Notify ); 
 }
@@ -116,15 +116,15 @@ void Helium::Reflect::SimpleStructureTranslator<T>::Copy( Pointer src, Pointer d
 template< class T >
 bool Helium::Reflect::SimpleStructureTranslator<T>::Equals( Pointer a, Pointer b )
 {
-	const MetaStruct* structure = Reflect::GetStructure< T >();
+	const MetaStruct* structure = Reflect::GetMetaStruct< T >();
 	return structure->Equals( a.m_Address, a.m_Object, b.m_Address, b.m_Object );
 
 }
 
 template< class T >
-const Helium::Reflect::MetaStruct* Helium::Reflect::SimpleStructureTranslator<T>::GetStructure() const
+const Helium::Reflect::MetaStruct* Helium::Reflect::SimpleStructureTranslator<T>::GetMetaStruct() const
 {
-	return Reflect::GetStructure< T >();
+	return Reflect::GetMetaStruct< T >();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -238,7 +238,7 @@ bool Helium::Reflect::EnumerationTranslator<T>::Equals( Pointer a, Pointer b )
 template< class T >
 void Helium::Reflect::EnumerationTranslator<T>::Print( Pointer pointer, String& string, ObjectIdentifier* identifier)
 {
-	const MetaEnum* enumeration = GetEnumeration< T >();
+	const MetaEnum* enumeration = GetMetaEnum< T >();
 
 	uint32_t value = 0;
 	value = static_cast< uint32_t >( pointer.As< T >() );
@@ -252,7 +252,7 @@ void Helium::Reflect::EnumerationTranslator<T>::Print( Pointer pointer, String& 
 template< class T >
 void Helium::Reflect::EnumerationTranslator<T>::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
 {
-	const MetaEnum* enumeration = GetEnumeration< T >();
+	const MetaEnum* enumeration = GetMetaEnum< T >();
 	std::string str = string.GetData();
 
 	uint32_t value = 0;

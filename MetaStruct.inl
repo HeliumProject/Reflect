@@ -22,7 +22,7 @@ void Helium::Reflect::MetaStruct::Create( const char* name, const char* baseName
 	// lookup base class
 	if ( baseName )
 	{
-		info->m_Base = Reflect::Registry::GetInstance()->GetStructure( baseName );
+		info->m_Base = Reflect::Registry::GetInstance()->GetMetaStruct( baseName );
 
 		// if you hit this break your base class is not registered yet!
 		HELIUM_ASSERT( info->m_Base );

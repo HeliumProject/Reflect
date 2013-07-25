@@ -199,7 +199,7 @@ const MetaType* Registry::GetType( uint32_t crc ) const
     return NULL;
 }
 
-const MetaStruct* Registry::GetStructure( uint32_t crc ) const
+const MetaStruct* Registry::GetMetaStruct( uint32_t crc ) const
 {
     return ReflectionCast< const MetaStruct >( GetType( crc ) );
 }
@@ -209,7 +209,7 @@ const MetaClass* Registry::GetMetaClass( uint32_t crc ) const
     return ReflectionCast< const MetaClass >( GetType( crc ) );
 }
 
-const MetaEnum* Registry::GetEnumeration( uint32_t crc ) const
+const MetaEnum* Registry::GetMetaEnum( uint32_t crc ) const
 {
     return ReflectionCast< const MetaEnum >( GetType( crc ) );
 }

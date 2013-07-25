@@ -166,7 +166,7 @@ namespace Helium
 
 			inline StructureTranslator( size_t size );
 
-			virtual const MetaStruct* GetStructure() const = 0;
+			virtual const MetaStruct* GetMetaStruct() const = 0;
 		};
 
 		//
