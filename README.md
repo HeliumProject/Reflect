@@ -44,49 +44,69 @@ Usage
 -----
 
 ```C++
+//
+// Enum
+//
+
 struct TestEnumeration : Enum
 {
 	enum Enum
 	{
-	ValueOne,
-	ValueTwo,
+		ValueOne,
+		ValueTwo,
 	};
 
 	REFLECT_DECLARE_ENUM( TestEnumeration );
 	static void PopulateMetaType( MetaEnum& info );
 };
 
+REFLECT_DEFINE_ENUM( TestEnumeration );
+
+void TestEnumeration::PopulateMetaType( MetaEnum& info )
+{
+	info.AddElement( ValueOne, TXT( "Value One" ) );
+	info.AddElement( ValueTwo, TXT( "Value Two" ) );
+}
+
+//
+// Struct (aggregated inside containers or objects)
+//
+
 struct TestStructure : Struct
 {
-	uint8_t m_Uint8;
-	uint16_t m_Uint16;
-	uint32_t m_Uint32;
-	uint64_t m_Uint64;
+	uint32_t                     m_Uint32;
 
-	int8_t m_Int8;
-	int16_t m_Int16;
-	int32_t m_Int32;
-	int64_t m_Int64;
-
-	float32_t m_Float32;
-	float64_t m_Float64;
-
-	std::vector<uint32_t> m_StdVectorUint32;
-	std::set<uint32_t> m_StdSetUint32;
+	std::vector<uint32_t>        m_StdVectorUint32;
 	std::map<uint32_t, uint32_t> m_StdMapUint32;
 
-	DynamicArray<uint32_t> m_FoundationDynamicArrayUint32;
-	Set<uint32_t> m_FoundationSetUint32;
-	Map<uint32_t, uint32_t> m_FoundationMapUint32;
+	DynamicArray<uint32_t>       m_FoundationDynamicArrayUint32;
+	Map<uint32_t, uint32_t>      m_FoundationMapUint32;
 
 	REFLECT_DECLARE_BASE_STRUCT( TestStructure );
 	static void PopulateMetaType( MetaStruct& comp );
 };
 
+REFLECT_DEFINE_BASE_STRUCT( TestStructure );
+
+void TestStructure::PopulateMetaType( Reflect::MetaStruct& comp )
+{
+	comp.AddField( &TestStructure::m_Int32, "Signed 32-bit Integer" );
+
+	comp.AddField( &TestStructure::m_StdVectorUint32, "std::vector of Signed 32-bit Integers" );
+	comp.AddField( &TestStructure::m_StdMapUint32, "std::map of Unsigned 32-bit Integers" );
+
+	comp.AddField( &TestStructure::m_FoundationDynamicArrayUint32, "Dynamic Array of Signed 32-bit Integers" );
+	comp.AddField( &TestStructure::m_FoundationMapUint32, "Map of Unsigned 32-bit Integers" );
+}
+
+//
+// Object (heap allocated, type-checked, reference-counted)
+//
+
 class TestObject : public Object
 {
-	TestStructure m_Struct;
-	TestStructure m_StructArray[ 8 ];
+	TestStructure   m_Struct;
+	TestStructure   m_StructArray[ 8 ];
 
 	TestEnumeration m_Enumeration;
 	TestEnumeration m_EnumerationArray[ 8 ];
@@ -94,6 +114,18 @@ class TestObject : public Object
 	REFLECT_DECLARE_CLASS( TestObject, Object );
 	static void PopulateMetaType( MetaClass& comp );
 };
+
+REFLECT_DEFINE_CLASS( TestObject );
+
+void TestObject::PopulateMetaType( Reflect::MetaClass& comp )
+{
+	comp.AddField( &TestObject::m_Struct, "MetaStruct" );
+	comp.AddField( &TestObject::m_StructArray, "MetaStruct Array" );
+
+	comp.AddField( &TestObject::m_Enumeration, "MetaEnum" );
+	comp.AddField( &TestObject::m_EnumerationArray, "MetaEnum Array" );
+}
+
 ```
 
 Style
