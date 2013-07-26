@@ -7,6 +7,19 @@ At the time of this writing the big ticket automations that build on Reflect are
 ** [MessagePack][http://msgpack.org/]
 * user interface generation ([Inspect][https://github.com/HeliumProject/Inspect]).
 
+History
+=======
+
+Reflect was initially implemented at Insomniac circa 2004, and has continuously evolved.  It was originally a way to just store offset data about memeber variables to simplify parsing mechanics from XML, but has grown to encompass:
+* Reference counting (replacement for intrusive_ptr<>)
+* Type validation with asserting and throwing casting functions (replacement for dynamic_cast<>)
+* Pointers to other objects, container classes, C-style arrays, and aggregate structures (and nesting of them within each other)
+* Type agnostic container introspection and modification (without instantiating template code of the container)
+
+Reference
+---------
+http://www.lavasandwich.org/2011/02/01/behind-the-mirror/
+
 Design
 ======
 
