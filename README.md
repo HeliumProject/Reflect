@@ -20,9 +20,7 @@ Reflect was initially implemented at Insomniac circa 2004, and has continuously 
 * Pointers to other objects, container classes, C-style arrays, and aggregate structures (and nesting of them within each other)
 * Type agnostic container introspection and modification (without instantiating template code of the container)
 
-Reference
----------
-http://www.lavasandwich.org/2011/02/01/behind-the-mirror/
+For reference, there is some more historical detail in [this article written by Geoff Evans in late 2010 for Game Developer Magazine](http://www.lavasandwich.org/2011/02/01/behind-the-mirror/)
 
 Design
 ======
