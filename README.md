@@ -22,7 +22,7 @@ user interface generation using [Inspect](https://github.com/HeliumProject/Inspe
 History
 =======
 
-Reflect was initially implemented at Insomniac circa 2004, and has continuously evolved.  It was originally a way to just store offset data about memeber variables to simplify parsing mechanics from XML, but has grown to encompass:
+Reflect was initially implemented at Insomniac circa 2004, and has continuously evolved.  It was originally a way to just store offset data about member variables to simplify parsing mechanics from XML, but has grown to encompass:
 * Reference counting (replacement for intrusive_ptr<>)
 * Type validation with asserting and throwing casting functions (replacement for dynamic_cast<>)
 * Pointers to other objects, container classes, C-style arrays, and aggregate structures (and nesting of them within each other)
