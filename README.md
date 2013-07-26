@@ -48,82 +48,68 @@ Usage
 // Enum
 //
 
-struct TestEnumeration : Enum
+struct HeroType : Helium::Reflect::Enum
 {
 	enum Enum
 	{
-		ValueOne,
-		ValueTwo,
+		Alien,
+		Mutant,
+		God,
 	};
 
-	REFLECT_DECLARE_ENUM( TestEnumeration );
+	REFLECT_DECLARE_ENUM( HeroType );
 	static void PopulateMetaType( MetaEnum& info );
 };
 
-REFLECT_DEFINE_ENUM( TestEnumeration );
+REFLECT_DEFINE_ENUM( HeroType );
 
-void TestEnumeration::PopulateMetaType( MetaEnum& info )
+void HeroType::PopulateMetaType( MetaEnum& info )
 {
-	info.AddElement( ValueOne, TXT( "Value One" ) );
-	info.AddElement( ValueTwo, TXT( "Value Two" ) );
+	info.AddElement( Alien, "alien" );
+	info.AddElement( Mutant, "mutant" );
+	info.AddElement( God, "god" );
 }
 
 //
 // Struct (aggregated inside containers or objects)
 //
 
-struct TestStructure : Struct
+struct Hero : Helium::Reflect::Struct
 {
-	uint32_t                     m_Uint32;
+	Helium::String m_Name;
+	HeroType       m_HeroType;
+	uint32_t       m_HitPoints;
 
-	std::vector<uint32_t>        m_StdVectorUint32;
-	std::map<uint32_t, uint32_t> m_StdMapUint32;
-
-	DynamicArray<uint32_t>       m_FoundationDynamicArrayUint32;
-	Map<uint32_t, uint32_t>      m_FoundationMapUint32;
-
-	REFLECT_DECLARE_BASE_STRUCT( TestStructure );
+	REFLECT_DECLARE_BASE_STRUCT( Hero );
 	static void PopulateMetaType( MetaStruct& comp );
 };
 
-REFLECT_DEFINE_BASE_STRUCT( TestStructure );
+REFLECT_DEFINE_BASE_STRUCT( Hero );
 
-void TestStructure::PopulateMetaType( Reflect::MetaStruct& comp )
+void Hero::PopulateMetaType( Reflect::MetaStruct& comp )
 {
-	comp.AddField( &TestStructure::m_Int32, "Signed 32-bit Integer" );
-
-	comp.AddField( &TestStructure::m_StdVectorUint32, "std::vector of Signed 32-bit Integers" );
-	comp.AddField( &TestStructure::m_StdMapUint32, "std::map of Unsigned 32-bit Integers" );
-
-	comp.AddField( &TestStructure::m_FoundationDynamicArrayUint32, "Dynamic Array of Signed 32-bit Integers" );
-	comp.AddField( &TestStructure::m_FoundationMapUint32, "Map of Unsigned 32-bit Integers" );
+	comp.AddField( &Hero::m_Name, "name" );
+	comp.AddField( &Hero::m_HeroType, "type" );
+	comp.AddField( &Hero::m_HitPoints, "hp" );
 }
 
 //
 // Object (heap allocated, type-checked, reference-counted)
 //
 
-class TestObject : public Object
+class ComicUniverse : public Helium::Reflect::Object
 {
-	TestStructure   m_Struct;
-	TestStructure   m_StructArray[ 8 ];
+	Hero m_Heroes[ 8 ];
 
-	TestEnumeration m_Enumeration;
-	TestEnumeration m_EnumerationArray[ 8 ];
-
-	REFLECT_DECLARE_CLASS( TestObject, Object );
+	REFLECT_DECLARE_CLASS( ComicUniverse, Object );
 	static void PopulateMetaType( MetaClass& comp );
 };
 
-REFLECT_DEFINE_CLASS( TestObject );
+REFLECT_DEFINE_CLASS( ComicUniverse );
 
-void TestObject::PopulateMetaType( Reflect::MetaClass& comp )
+void ComicUniverse::PopulateMetaType( Reflect::MetaClass& comp )
 {
-	comp.AddField( &TestObject::m_Struct, "MetaStruct" );
-	comp.AddField( &TestObject::m_StructArray, "MetaStruct Array" );
-
-	comp.AddField( &TestObject::m_Enumeration, "MetaEnum" );
-	comp.AddField( &TestObject::m_EnumerationArray, "MetaEnum Array" );
+	comp.AddField( &ComicUniverse::m_Heroes, "heroes" );
 }
 
 ```
