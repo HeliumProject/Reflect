@@ -2,14 +2,7 @@
 
 Reflect is an implementation of C++ reflection (also known as introspection).  Reflection adds the ability for a C++ program to know about its own topology and coding factors.  This information can in turn be used to automate what would otherwise be rote programming tasks.  Removing human elements from rote programming tasks can lower the cost of adding new features to an application, and can reduce the number of moving parts that need modification by an engineer (which reduces the number of bugs that can be introduced by any given feature).
 
-At the time of this writing the big ticket automations that build on Reflect are:
-
-object persistence using [Persist](https://github.com/HeliumProject/Persist)
-* [BSON](http://bsonspec.org/)
-* [JSON](http://json.com/)
-* [MessagePack](http://msgpack.org/)
-
-user interface generation using [Inspect](https://github.com/HeliumProject/Inspect)
+At the time of this writing the big ticket automations that build on Reflect are object persistence using [Persist](https://github.com/HeliumProject/Persist) and user interface generation using [Inspect](https://github.com/HeliumProject/Inspect)
 
 History
 =======
