@@ -43,7 +43,58 @@ Reflect is '''not''' designed to support the entire complexity of data structure
 Usage
 -----
 
-A good place to start to learn how to instrument your code for reflection would be here: [Tests.h](https://github.com/HeliumProject/Reflect/blob/master/Tests.h), [Tests.cpp](https://github.com/HeliumProject/Reflect/blob/master/Tests.cpp).
+```C++
+struct TestEnumeration : Enum
+{
+	enum Enum
+	{
+	ValueOne,
+	ValueTwo,
+	};
+
+	REFLECT_DECLARE_ENUM( TestEnumeration );
+	static void PopulateMetaType( MetaEnum& info );
+};
+
+struct TestStructure : Struct
+{
+	uint8_t m_Uint8;
+	uint16_t m_Uint16;
+	uint32_t m_Uint32;
+	uint64_t m_Uint64;
+
+	int8_t m_Int8;
+	int16_t m_Int16;
+	int32_t m_Int32;
+	int64_t m_Int64;
+
+	float32_t m_Float32;
+	float64_t m_Float64;
+
+	std::vector<uint32_t> m_StdVectorUint32;
+	std::set<uint32_t> m_StdSetUint32;
+	std::map<uint32_t, uint32_t> m_StdMapUint32;
+
+	DynamicArray<uint32_t> m_FoundationDynamicArrayUint32;
+	Set<uint32_t> m_FoundationSetUint32;
+	Map<uint32_t, uint32_t> m_FoundationMapUint32;
+
+	REFLECT_DECLARE_BASE_STRUCT( TestStructure );
+	static void PopulateMetaType( MetaStruct& comp );
+};
+
+class TestObject : public Object
+{
+	TestStructure m_Struct;
+	TestStructure m_StructArray[ 8 ];
+
+	TestEnumeration m_Enumeration;
+	TestEnumeration m_EnumerationArray[ 8 ];
+
+	REFLECT_DECLARE_CLASS( TestObject, Object );
+	static void PopulateMetaType( MetaClass& comp );
+};
+```
 
 Style
 -----
@@ -65,7 +116,7 @@ Given these tradeoffs, many APIs just deal with 'class' types as the first-class
 Metadata
 --------
 
-Many metadata class has additional flags that can be populated to inform the behavior of automation, for example FieldFlags ([here](https://github.com/HeliumProject/Reflect/blob/master/Structure.h) can tell automation to deep copy or shallow copy pointer fields.
+Many metadata class has additional flags that can be populated to inform the behavior of automation, for example FieldFlags ([here](https://github.com/HeliumProject/Reflect/blob/master/MetaStruct.h) can tell automation to deep copy or shallow copy pointer fields.
 
 Beyond this Reflect allows for decoration of user metadata via a string-based property system (key-value pairs).  All of the metadata classes inherit from PropertyCollection ([here](https://github.com/HeliumProject/Reflect/blob/master/ReflectionInfo.h)), thus can easily be adorned with additional information in your enumeration function.
 
@@ -82,7 +133,7 @@ Types don't need to be manually registered, there are helper Reflect::Registrat 
 Translators
 -----------
 
-Reflect::Structure (and hence Reflect::Class) is basically an array of Reflect::Fields.  Field is a concrete class that contains the metadata for a member variable in a 'class' or 'struct' exposed to Reflect.  Field doesn't have the knowledge of how to transact with the field it describes.  All read and write work done to any given field is instead done by a Translator.  The Reflect Translator classes abstract type-specific operations on an instance of a field within an instance of a reflected type.
+Reflect::MetaStruct (and hence Reflect::MetaClass) is basically an array of Reflect::Fields.  Field is a concrete class that contains the metadata for a member variable in a 'class' or 'struct' exposed to Reflect.  Field doesn't have the knowledge of how to transact with the field it describes.  All read and write work done to any given field is instead done by a Translator.  The Reflect Translator classes abstract type-specific operations on an instance of a field within an instance of a reflected type.
 
 Every Field heap allocates a Translator instance when metadata is generated.  There is a Translator instance for every field of every type that remains allocated for the life of the metadata (and hence probably the life of your program).  Any time some code wants to interact with the data stored in a Field they use the Translator object allocated for that Field.  Allocating a separate Translator object for every Field was a thoughtful decision, and while it does create many heap allocations on startup, it avoids a lot of code complexity to share Translator instances between Fields (because identifying that any two fields are of exact synonomous type as well as having support for type-tracking all the different types of Translator classes create an enormous amount of complexity).
 
