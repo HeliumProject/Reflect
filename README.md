@@ -1,14 +1,6 @@
 <a href="http://heliumproject.org/">![Helium Game Engine](https://raw.github.com/HeliumProject/Helium/master/Data/Textures/Helium.png)</a>
-==========================================================================================================================================
 
-Location
-========
-git://github.com/HeliumProject/Helium.git
-
-Goals
-=====
-
-[Reflect](https://github.com/HeliumProject/Reflect) is an implementation of C++ reflection (also known as introspection).  Reflection adds the ability for a C++ program to know about its own topology and coding factors.  This information can in turn be used to automate what would otherwise be rote programming tasks.  Removing human elements from rote programming tasks can lower the cost of adding new features to an application, and can reduce the number of moving parts that need modification by an engineer (which reduces the number of bugs that can be introduced by any given feature).
+Reflect is an implementation of C++ reflection (also known as introspection).  Reflection adds the ability for a C++ program to know about its own topology and coding factors.  This information can in turn be used to automate what would otherwise be rote programming tasks.  Removing human elements from rote programming tasks can lower the cost of adding new features to an application, and can reduce the number of moving parts that need modification by an engineer (which reduces the number of bugs that can be introduced by any given feature).
 
 At the time of this writing the big ticket automations that build on Reflect are:
 
@@ -114,3 +106,7 @@ Translator classes also separate custom handling for different types of data:
 * TypeTranslator handles dealing with identifying types
 
 Since Translator classes are polymorphic they support read and write operations to containers without having to be coded to the exact type of the data stored in the container.  Put another way, you can interface with template instantiations from non-template type-agnostic code.
+
+Location
+========
+https://github.com/HeliumProject/Reflect
