@@ -1,13 +1,23 @@
+<a href="http://heliumproject.org/">![Helium Game Engine](https://raw.github.com/HeliumProject/Helium/master/Data/Textures/Helium.png)</a>
+==========================================================================================================================================
+
+Location
+========
+git://github.com/HeliumProject/Helium.git
+
+Goals
+=====
+
 [Reflect](https://github.com/HeliumProject/Reflect) is an implementation of C++ reflection (also known as introspection).  Reflection adds the ability for a C++ program to know about its own topology and coding factors.  This information can in turn be used to automate what would otherwise be rote programming tasks.  Removing human elements from rote programming tasks can lower the cost of adding new features to an application, and can reduce the number of moving parts that need modification by an engineer (which reduces the number of bugs that can be introduced by any given feature).
 
 At the time of this writing the big ticket automations that build on Reflect are:
 
-object persistence using [Persist][https://github.com/HeliumProject/Persist])
-* [BSON][http://bsonspec.org/]
-* [JSON][http://json.com/]
-* [MessagePack][http://msgpack.org/]
+object persistence using [Persist](https://github.com/HeliumProject/Persist)
+* [BSON](http://bsonspec.org/)
+* [JSON](http://json.com/)
+* [MessagePack](http://msgpack.org/)
 
-user interface generation using [Inspect][https://github.com/HeliumProject/Inspect]
+user interface generation using [Inspect](https://github.com/HeliumProject/Inspect)
 
 History
 =======
@@ -50,7 +60,7 @@ Reflect is '''not''' designed to support the entire complexity of data structure
 Usage
 -----
 
-A good place to start to learn how to instrument your code for reflection would be here: [Tests.h][https://github.com/HeliumProject/Reflect/blob/master/Tests.h], [Tests.cpp][https://github.com/HeliumProject/Reflect/blob/master/Tests.cpp].
+A good place to start to learn how to instrument your code for reflection would be here: [Tests.h](https://github.com/HeliumProject/Reflect/blob/master/Tests.h), [Tests.cpp](https://github.com/HeliumProject/Reflect/blob/master/Tests.cpp).
 
 Style
 -----
@@ -72,9 +82,9 @@ Given these tradeoffs, many APIs just deal with 'class' types as the first-class
 Metadata
 --------
 
-Many metadata class has additional flags that can be populated to inform the behavior of automation, for example FieldFlags ([here][https://github.com/HeliumProject/Reflect/blob/master/Structure.h]) can tell automation to deep copy or shallow copy pointer fields.
+Many metadata class has additional flags that can be populated to inform the behavior of automation, for example FieldFlags ([here](https://github.com/HeliumProject/Reflect/blob/master/Structure.h) can tell automation to deep copy or shallow copy pointer fields.
 
-Beyond this Reflect allows for decoration of user metadata via a string-based property system (key-value pairs).  All of the metadata classes inherit from PropertyCollection ([here][https://github.com/HeliumProject/Reflect/blob/master/ReflectionInfo.h]), thus can easily be adorned with additional information in your enumeration function.
+Beyond this Reflect allows for decoration of user metadata via a string-based property system (key-value pairs).  All of the metadata classes inherit from PropertyCollection ([here](https://github.com/HeliumProject/Reflect/blob/master/ReflectionInfo.h)), thus can easily be adorned with additional information in your enumeration function.
 
 Implementation
 ==============
