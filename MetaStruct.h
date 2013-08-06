@@ -45,16 +45,16 @@ namespace Helium
 			// determine if this field should be serialized
 			bool ShouldSerialize( void* address, Object* object, uint32_t index = 0 ) const;
 
-			const MetaStruct* m_Structure;  // the type we are a field of
-			const char*   m_Name;       // name of this field
-			uint32_t         m_Size;       // the size of this field
-			uint32_t         m_Count;      // the static array size
-			uint32_t         m_Offset;     // the offset to the field
-			uint32_t         m_Flags;      // flags for special behavior
-			uint32_t         m_Index;      // the unique id of this field
-			const MetaType*      m_KeyType;    // the key type, if any, of the internal data
-			const MetaType*      m_ValueType;  // the value type, if any, of the internal data
-			Translator*      m_Translator; // interface to the data
+			const MetaStruct*      m_Structure;  // the type we are a field of
+			const char*            m_Name;       // name of this field
+			uint32_t               m_Size;       // the size of this field
+			uint32_t               m_Count;      // the static array size
+			uint32_t               m_Offset;     // the offset to the field
+			uint32_t               m_Flags;      // flags for special behavior
+			uint32_t               m_Index;      // the unique id of this field
+			const MetaType*        m_KeyType;    // the key type, if any, of the internal data
+			const MetaType*        m_ValueType;  // the value type, if any, of the internal data
+			SmartPtr< Translator > m_Translator; // interface to the data
 		};
 
 		//
@@ -165,9 +165,9 @@ namespace Helium
 			const MetaStruct*         m_Base;         // the base type name
 			mutable const MetaStruct* m_FirstDerived; // head of the derived linked list, mutable since its populated by other objects
 			mutable const MetaStruct* m_NextSibling;  // next in the derived linked list, mutable since its populated by other objects
-			DynamicArray< Field >    m_Fields;       // fields in this composite
-			PopulateMetaTypeFunc    m_Populate;     // function to populate this structure
-			void*                    m_Default;      // default instance
+			DynamicArray< Field >     m_Fields;       // fields in this composite
+			PopulateMetaTypeFunc      m_Populate;     // function to populate this structure
+			void*                     m_Default;      // default instance
 		};
 
 		template< class ClassT, class BaseT >
