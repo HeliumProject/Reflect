@@ -75,7 +75,7 @@ namespace Helium
 		class HELIUM_REFLECT_API MetaStruct : public MetaType
 		{
 		public:
-			REFLECT_META_DERIVED( MetaIds::MetaStruct, MetaStruct, MetaType );
+			HELIUM_META_DERIVED( MetaIds::MetaStruct, MetaStruct, MetaType );
 
 		protected:
 			MetaStruct();
@@ -233,17 +233,17 @@ const Helium::Reflect::MetaStruct* STRUCTURE::s_MetaStruct = NULL; \
 Helium::Reflect::MetaStructRegistrar< STRUCTURE, STRUCTURE::Base > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
 
 // declares a concrete object with creator
-#define REFLECT_DECLARE_BASE_STRUCT( STRUCTURE ) \
+#define HELIUM_DECLARE_BASE_STRUCT( STRUCTURE ) \
 	_REFLECT_DECLARE_BASE_STRUCT( STRUCTURE )
 
-#define REFLECT_DECLARE_DERIVED_STRUCT( STRUCTURE, BASE ) \
+#define HELIUM_DECLARE_DERIVED_STRUCT( STRUCTURE, BASE ) \
 	_REFLECT_DECLARE_DERIVED_STRUCT( STRUCTURE, BASE )
 
 // defines a concrete object
-#define REFLECT_DEFINE_BASE_STRUCT( STRUCTURE ) \
+#define HELIUM_DEFINE_BASE_STRUCT( STRUCTURE ) \
 	_REFLECT_DEFINE_BASE_STRUCT( STRUCTURE )
 
-#define REFLECT_DEFINE_DERIVED_STRUCT( STRUCTURE ) \
+#define HELIUM_DEFINE_DERIVED_STRUCT( STRUCTURE ) \
 	_REFLECT_DEFINE_DERIVED_STRUCT( STRUCTURE  )
 
 #include "Reflect/MetaStruct.inl"

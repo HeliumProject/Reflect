@@ -15,7 +15,7 @@ namespace Helium
 				ValueTwo,
 			};
 
-			REFLECT_DECLARE_ENUM( TestEnumeration );
+			HELIUM_DECLARE_ENUM( TestEnumeration );
 			static void PopulateMetaType( MetaEnum& info );
 		};
 
@@ -42,7 +42,7 @@ namespace Helium
 			Set<uint32_t> m_FoundationSetUint32;
 			Map<uint32_t, uint32_t> m_FoundationMapUint32;
 
-			REFLECT_DECLARE_BASE_STRUCT( TestStructure );
+			HELIUM_DECLARE_BASE_STRUCT( TestStructure );
 			static void PopulateMetaType( MetaStruct& comp );
 		};
 
@@ -54,7 +54,7 @@ namespace Helium
 			TestEnumeration m_Enumeration;
 			TestEnumeration m_EnumerationArray[ 8 ];
 
-			REFLECT_DECLARE_CLASS( TestObject, Object );
+			HELIUM_DECLARE_CLASS( TestObject, Object );
 			static void PopulateMetaType( MetaClass& comp );
 		};
 

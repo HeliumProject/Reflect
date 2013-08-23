@@ -21,7 +21,7 @@ namespace Helium
 		class HELIUM_REFLECT_API MetaEnum : public MetaType
 		{
 		public:
-			REFLECT_META_DERIVED( MetaIds::MetaEnum, MetaEnum, MetaType );
+			HELIUM_META_DERIVED( MetaIds::MetaEnum, MetaEnum, MetaType );
 
 			class HELIUM_REFLECT_API Element
 			{
@@ -99,11 +99,11 @@ const Helium::Reflect::MetaEnum* ENUMERATION::s_Enumeration = NULL; \
 Helium::Reflect::MetaEnumRegistrar< ENUMERATION > ENUMERATION::s_Registrar( TXT( #ENUMERATION ) );
 
 // declares an enumeration
-#define REFLECT_DECLARE_ENUM( ENUMERATION ) \
+#define HELIUM_DECLARE_ENUM( ENUMERATION ) \
 	_REFLECT_DECLARE_ENUM( ENUMERATION )
 
 // defines an enumeration
-#define REFLECT_DEFINE_ENUM( ENUMERATION ) \
+#define HELIUM_DEFINE_ENUM( ENUMERATION ) \
 	_REFLECT_DEFINE_ENUM( ENUMERATION )
 
 #include "Reflect/MetaEnum.inl"

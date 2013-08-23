@@ -57,11 +57,11 @@ struct HeroType : Helium::Reflect::Enum
 		God,
 	};
 
-	REFLECT_DECLARE_ENUM( HeroType );
+	HELIUM_DECLARE_ENUM( HeroType );
 	static void PopulateMetaType( MetaEnum& info );
 };
 
-REFLECT_DEFINE_ENUM( HeroType );
+HELIUM_DEFINE_ENUM( HeroType );
 
 void HeroType::PopulateMetaType( MetaEnum& info )
 {
@@ -80,11 +80,11 @@ struct Hero : Helium::Reflect::Struct
 	HeroType       m_HeroType;
 	uint32_t       m_HitPoints;
 
-	REFLECT_DECLARE_BASE_STRUCT( Hero );
+	HELIUM_DECLARE_BASE_STRUCT( Hero );
 	static void PopulateMetaType( MetaStruct& comp );
 };
 
-REFLECT_DEFINE_BASE_STRUCT( Hero );
+HELIUM_DEFINE_BASE_STRUCT( Hero );
 
 void Hero::PopulateMetaType( Reflect::MetaStruct& comp )
 {
@@ -101,11 +101,11 @@ class ComicUniverse : public Helium::Reflect::Object
 {
 	Hero m_Heroes[ 8 ];
 
-	REFLECT_DECLARE_CLASS( ComicUniverse, Object );
+	HELIUM_DECLARE_CLASS( ComicUniverse, Object );
 	static void PopulateMetaType( MetaClass& comp );
 };
 
-REFLECT_DEFINE_CLASS( ComicUniverse );
+HELIUM_DEFINE_CLASS( ComicUniverse );
 
 void ComicUniverse::PopulateMetaType( Reflect::MetaClass& comp )
 {

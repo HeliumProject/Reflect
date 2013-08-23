@@ -10,7 +10,7 @@
 #include "Reflect/TranslatorDeduction.h"
 
 // Prints the callstack for every init and cleanup call
-// #define REFLECT_DEBUG_INIT_AND_CLEANUP
+// #define HELIUM_DEBUG_INIT_AND_CLEANUP
 
 using namespace Helium;
 using namespace Helium::Reflect;
@@ -86,7 +86,7 @@ void Reflect::Initialize()
         MetaTypeRegistrar::RegisterTypes( RegistrarTypes::MetaClass );
     }
 
-#ifdef REFLECT_DEBUG_INIT_AND_CLEANUP
+#ifdef HELIUM_DEBUG_INIT_AND_CLEANUP
     std::vector<uintptr_t> trace;
     Helium::GetStackTrace( trace );
 
@@ -110,7 +110,7 @@ void Reflect::Cleanup()
         g_Registry = NULL;
     }
 
-#ifdef REFLECT_DEBUG_INIT_AND_CLEANUP
+#ifdef HELIUM_DEBUG_INIT_AND_CLEANUP
     std::vector<uintptr_t> trace;
     Helium::GetStackTrace( trace );
 

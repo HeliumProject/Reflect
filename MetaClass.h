@@ -20,7 +20,7 @@ namespace Helium
 		class HELIUM_REFLECT_API MetaClass : public MetaStruct
 		{
 		public:
-			REFLECT_META_DERIVED( MetaIds::MetaClass, MetaClass, MetaStruct );
+			HELIUM_META_DERIVED( MetaIds::MetaClass, MetaClass, MetaStruct );
 
 		protected:
 			MetaClass();
@@ -106,39 +106,39 @@ const Helium::Reflect::MetaClass* OBJECT::s_MetaClass = NULL;
 Helium::Reflect::MetaClassRegistrar< OBJECT, OBJECT::Base > OBJECT::s_Registrar( TXT( #OBJECT ) );
 
 // declares an abstract object (an object that either A: cannot be instantiated or B: is never actually serialized)
-#define REFLECT_DECLARE_ABSTRACT_NO_REGISTRAR( OBJECT, BASE ) \
+#define HELIUM_DECLARE_ABSTRACT_NO_REGISTRAR( OBJECT, BASE ) \
 	_REFLECT_DECLARE_CLASS( OBJECT, BASE )
 
-#define REFLECT_DECLARE_ABSTRACT( OBJECT, BASE ) \
-	REFLECT_DECLARE_ABSTRACT_NO_REGISTRAR( OBJECT, BASE ) \
+#define HELIUM_DECLARE_ABSTRACT( OBJECT, BASE ) \
+	HELIUM_DECLARE_ABSTRACT_NO_REGISTRAR( OBJECT, BASE ) \
 	_REFLECT_DECLARE_CLASS_REGISTRAR( OBJECT, BASE )
 
 // defines the abstract object class
-#define REFLECT_DEFINE_ABSTRACT_NO_REGISTRAR( OBJECT ) \
+#define HELIUM_DEFINE_ABSTRACT_NO_REGISTRAR( OBJECT ) \
 	_REFLECT_DEFINE_CLASS( OBJECT, NULL )
 
 // defines the abstract object class
-#define REFLECT_DEFINE_ABSTRACT( OBJECT ) \
-	REFLECT_DEFINE_ABSTRACT_NO_REGISTRAR( OBJECT ) \
+#define HELIUM_DEFINE_ABSTRACT( OBJECT ) \
+	HELIUM_DEFINE_ABSTRACT_NO_REGISTRAR( OBJECT ) \
 	_REFLECT_DEFINE_CLASS_REGISTRAR( OBJECT, NULL )
 
 // declares a concrete object with creator
-#define REFLECT_DECLARE_CLASS_NO_REGISTRAR( OBJECT, BASE ) \
+#define HELIUM_DECLARE_CLASS_NO_REGISTRAR( OBJECT, BASE ) \
 	_REFLECT_DECLARE_CLASS( OBJECT, BASE ) \
 	_REFLECT_DECLARE_CREATOR( OBJECT )
 
 // declares a concrete object with creator
-#define REFLECT_DECLARE_CLASS( OBJECT, BASE ) \
-	REFLECT_DECLARE_CLASS_NO_REGISTRAR( OBJECT, BASE ) \
+#define HELIUM_DECLARE_CLASS( OBJECT, BASE ) \
+	HELIUM_DECLARE_CLASS_NO_REGISTRAR( OBJECT, BASE ) \
 	_REFLECT_DECLARE_CLASS_REGISTRAR( OBJECT, BASE )
 
 // defines a concrete object
-#define REFLECT_DEFINE_CLASS_NO_REGISTRAR( OBJECT ) \
+#define HELIUM_DEFINE_CLASS_NO_REGISTRAR( OBJECT ) \
 	_REFLECT_DEFINE_CLASS( OBJECT, &OBJECT::CreateObject )
 
 // defines a concrete object
-#define REFLECT_DEFINE_CLASS( OBJECT ) \
-	REFLECT_DEFINE_CLASS_NO_REGISTRAR( OBJECT ) \
+#define HELIUM_DEFINE_CLASS( OBJECT ) \
+	HELIUM_DEFINE_CLASS_NO_REGISTRAR( OBJECT ) \
 	_REFLECT_DEFINE_CLASS_REGISTRAR( OBJECT, &OBJECT::CreateObject )
 
 #include "Reflect/MetaClass.inl"

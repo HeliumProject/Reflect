@@ -21,7 +21,7 @@ namespace Helium
         class HELIUM_REFLECT_API MetaType HELIUM_ABSTRACT : public Meta
         {
         public:
-            REFLECT_META_BASE( MetaIds::MetaType, MetaType );
+            HELIUM_META_BASE( MetaIds::MetaType, MetaType );
 
         protected:
             MetaType();

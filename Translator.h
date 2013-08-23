@@ -87,7 +87,7 @@ namespace Helium
 		class HELIUM_REFLECT_API Translator : public Meta
 		{
 		public:
-			REFLECT_META_DERIVED( MetaIds::Translator, Translator, Meta );
+			HELIUM_META_DERIVED( MetaIds::Translator, Translator, Meta );
 
 			inline Translator( size_t size );
 
@@ -139,7 +139,7 @@ namespace Helium
 		class HELIUM_REFLECT_API ScalarTranslator : public Translator
 		{
 		public:
-			REFLECT_META_DERIVED( MetaIds::ScalarTranslator, ScalarTranslator, Translator );
+			HELIUM_META_DERIVED( MetaIds::ScalarTranslator, ScalarTranslator, Translator );
 
 			inline ScalarTranslator( size_t size, ScalarType type );
 
@@ -162,7 +162,7 @@ namespace Helium
 		class HELIUM_REFLECT_API StructureTranslator : public Translator
 		{
 		public:
-			REFLECT_META_DERIVED( MetaIds::StructureTranslator, StructureTranslator, Translator );
+			HELIUM_META_DERIVED( MetaIds::StructureTranslator, StructureTranslator, Translator );
 
 			inline StructureTranslator( size_t size );
 
@@ -176,7 +176,7 @@ namespace Helium
 		class HELIUM_REFLECT_API ContainerTranslator : public Translator
 		{
 		public:
-			REFLECT_META_DERIVED( MetaIds::ContainerTranslator, ContainerTranslator, Translator );
+			HELIUM_META_DERIVED( MetaIds::ContainerTranslator, ContainerTranslator, Translator );
 
 			inline ContainerTranslator( size_t size );
 
@@ -191,7 +191,7 @@ namespace Helium
 		class HELIUM_REFLECT_API SetTranslator : public ContainerTranslator
 		{
 		public:
-			REFLECT_META_DERIVED( MetaIds::SetTranslator, SetTranslator, ContainerTranslator );
+			HELIUM_META_DERIVED( MetaIds::SetTranslator, SetTranslator, ContainerTranslator );
 			
 			inline SetTranslator( size_t size );
 
@@ -211,7 +211,7 @@ namespace Helium
 		class HELIUM_REFLECT_API SequenceTranslator : public ContainerTranslator
 		{
 		public:
-			REFLECT_META_DERIVED( MetaIds::SequenceTranslator, SequenceTranslator, ContainerTranslator );
+			HELIUM_META_DERIVED( MetaIds::SequenceTranslator, SequenceTranslator, ContainerTranslator );
 			
 			inline SequenceTranslator( size_t size );
 
@@ -235,7 +235,7 @@ namespace Helium
 		class HELIUM_REFLECT_API AssociationTranslator : public ContainerTranslator
 		{
 		public:
-			REFLECT_META_DERIVED( MetaIds::AssociationTranslator, AssociationTranslator, ContainerTranslator );
+			HELIUM_META_DERIVED( MetaIds::AssociationTranslator, AssociationTranslator, ContainerTranslator );
 			
 			inline AssociationTranslator( size_t size );
 

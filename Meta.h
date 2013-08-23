@@ -13,13 +13,13 @@
 //  its reflecting upon, so define a simple type checking system just for the reflection classes
 //
 
-#define REFLECT_META_BASE(__Id, __Type) \
+#define HELIUM_META_BASE(__Id, __Type) \
 	typedef __Type This; \
 	const static Helium::Reflect::MetaId s_MetaId = __Id; \
 	virtual Helium::Reflect::MetaId GetMetaId() const { return __Id; } \
 	virtual bool IsA(Helium::Reflect::MetaId id) const { return __Id == id; }
 
-#define REFLECT_META_DERIVED(__Id, __Type, __Base) \
+#define HELIUM_META_DERIVED(__Id, __Type, __Base) \
 	typedef __Type This; \
 	typedef __Base Base; \
 	const static Helium::Reflect::MetaId s_MetaId = __Id; \
@@ -91,7 +91,7 @@ namespace Helium
 		class HELIUM_REFLECT_API Meta : public Helium::AtomicRefCountBase< Meta >, public PropertyCollection
 		{
 		public:
-			REFLECT_META_BASE( MetaIds::Invalid, Meta );
+			HELIUM_META_BASE( MetaIds::Invalid, Meta );
 
 			Meta();
 			virtual ~Meta();

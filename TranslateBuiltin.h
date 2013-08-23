@@ -121,7 +121,7 @@ namespace Helium
 		class PointerTranslator : public ScalarTranslator
 		{
 		public:
-			REFLECT_META_DERIVED( MetaIds::PointerTranslator, PointerTranslator, ScalarTranslator );
+			HELIUM_META_DERIVED( MetaIds::PointerTranslator, PointerTranslator, ScalarTranslator );
 
 			inline PointerTranslator();
 			virtual void Construct( Pointer pointer ) HELIUM_OVERRIDE;
@@ -157,7 +157,7 @@ namespace Helium
 		class EnumerationTranslator : public ScalarTranslator
 		{
 		public:
-			REFLECT_META_DERIVED( MetaIds::EnumerationTranslator, EnumerationTranslator, ScalarTranslator );
+			HELIUM_META_DERIVED( MetaIds::EnumerationTranslator, EnumerationTranslator, ScalarTranslator );
 
 			inline EnumerationTranslator();
 			virtual void Construct( Pointer pointer ) HELIUM_OVERRIDE;
@@ -189,7 +189,7 @@ namespace Helium
 		class HELIUM_REFLECT_API TypeTranslator : public ScalarTranslator
 		{
 		public:
-			REFLECT_META_DERIVED( MetaIds::TypeTranslator, TypeTranslator, ScalarTranslator );
+			HELIUM_META_DERIVED( MetaIds::TypeTranslator, TypeTranslator, ScalarTranslator );
 
 			TypeTranslator();
 			virtual void Construct( Pointer pointer ) HELIUM_OVERRIDE;

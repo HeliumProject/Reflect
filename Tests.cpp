@@ -12,7 +12,7 @@ struct EmptyBaseCheck : Struct
 };
 HELIUM_COMPILE_ASSERT( sizeof( EmptyBaseCheck ) == sizeof( uint32_t ) ); // check for empty-base optimization
 
-REFLECT_DEFINE_ENUM( TestEnumeration );
+HELIUM_DEFINE_ENUM( TestEnumeration );
 
 void TestEnumeration::PopulateMetaType( MetaEnum& info )
 {
@@ -20,7 +20,7 @@ void TestEnumeration::PopulateMetaType( MetaEnum& info )
 	info.AddElement( ValueTwo, TXT( "Value Two" ) );
 }
 
-REFLECT_DEFINE_BASE_STRUCT( TestStructure );
+HELIUM_DEFINE_BASE_STRUCT( TestStructure );
 
 void TestStructure::PopulateMetaType( Reflect::MetaStruct& comp )
 {
@@ -46,7 +46,7 @@ void TestStructure::PopulateMetaType( Reflect::MetaStruct& comp )
 	comp.AddField( &TestStructure::m_FoundationMapUint32, "Map of Unsigned 32-bit Integers" );
 }
 
-REFLECT_DEFINE_CLASS( TestObject );
+HELIUM_DEFINE_CLASS( TestObject );
 
 void TestObject::PopulateMetaType( Reflect::MetaClass& comp )
 {
