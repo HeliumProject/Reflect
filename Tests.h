@@ -7,7 +7,7 @@ namespace Helium
 {
 	namespace Reflect
 	{
-		struct TestEnumeration : Enum
+		struct HELIUM_REFLECT_API TestEnumeration : Enum
 		{
 			enum Enum
 			{
@@ -19,7 +19,7 @@ namespace Helium
 			static void PopulateMetaType( MetaEnum& info );
 		};
 
-		struct TestStructure : Struct
+		struct HELIUM_REFLECT_API TestStructure : Struct
 		{
 			uint8_t  m_Uint8;
 			uint16_t m_Uint16;
@@ -42,23 +42,29 @@ namespace Helium
 			Set<uint32_t> m_FoundationSetUint32;
 			Map<uint32_t, uint32_t> m_FoundationMapUint32;
 
+			TestStructure();
+
 			HELIUM_DECLARE_BASE_STRUCT( TestStructure );
 			static void PopulateMetaType( MetaStruct& comp );
 		};
 
-		class TestObject : public Object
+		class HELIUM_REFLECT_API TestObject : public Object
 		{
+		public:
 			TestStructure m_Struct;
 			TestStructure m_StructArray[ 8 ];
 
 			TestEnumeration m_Enumeration;
 			TestEnumeration m_EnumerationArray[ 8 ];
 
+			TestObject();
+			void TestFunction( TestStructure& args );
+
 			HELIUM_DECLARE_CLASS( TestObject, Object );
 			static void PopulateMetaType( MetaClass& comp );
 		};
 
-		void RunTests();
+		HELIUM_REFLECT_API void RunTests();
 	}
 }
 

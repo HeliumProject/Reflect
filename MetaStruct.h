@@ -58,6 +58,23 @@ namespace Helium
 		};
 
 		//
+		// Method (member function of a composite)
+		//
+
+		class HELIUM_REFLECT_API Method : public PropertyCollection
+		{
+		public:
+			typedef SmartPtr< Delegate< void* >::DelegateImpl > DelegateImplPtr;
+
+			Method();
+
+			const MetaStruct*      m_Structure;    // the type we are a field of
+			const char*            m_Name;         // name of this field
+			SmartPtr< Translator > m_Translator;   // the argument type
+			DelegateImplPtr        m_Delegate;     // the delegate to invoke the call
+		};
+
+		//
 		// Empty struct just for type deduction purposes (for stand alone structs, not Object classes)
 		//  don't worry though, even though this class is non-zero in size on its own,
 		//  your derived struct type can use the memory this takes due to C/C++ standard
@@ -121,7 +138,8 @@ namespace Helium
 			uint32_t GetBaseFieldCount() const;
 
 			// concrete field population functions, called from template functions below with deducted data
-			Reflect::Field* AddField();
+			Reflect::Field* AllocateField();
+			Reflect::Method* AllocateMethod();
 
 			// compute the offset from the 'this' pointer for the specified pointer-to-member
 			template < class StructureT, class FieldT >
@@ -159,13 +177,18 @@ namespace Helium
 
 			// deduce and allocate the appropriate translator object and append field data to the composite
 			template < class StructureT, class FieldT >
-			inline Reflect::Field* AddField( FieldT StructureT::* field, const char* name, uint32_t flags = 0, Translator* translator = NULL );
+			Reflect::Field* AddField( FieldT StructureT::* field, const char* name, uint32_t flags = 0, Translator* translator = NULL );
+
+			// append method data to the composite
+			template < class StructureT, class ArgumentT >
+			Reflect::Method* AddMethod( void (StructureT::*method)( ArgumentT& ), const char* name );
 
 		public:
 			const MetaStruct*         m_Base;         // the base type name
 			mutable const MetaStruct* m_FirstDerived; // head of the derived linked list, mutable since its populated by other objects
 			mutable const MetaStruct* m_NextSibling;  // next in the derived linked list, mutable since its populated by other objects
 			DynamicArray< Field >     m_Fields;       // fields in this composite
+			DynamicArray< Method >    m_Methods;      // methods in this composite
 			PopulateMetaTypeFunc      m_Populate;     // function to populate this structure
 			void*                     m_Default;      // default instance
 		};

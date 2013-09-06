@@ -1,10 +1,16 @@
 #include "ReflectPch.h"
 #include "Reflect/Tests.h"
 
+#if !HELIUM_RELEASE
+
+#include "Foundation/Log.h"
+
+HELIUM_DEFINE_ENUM( Helium::Reflect::TestEnumeration );
+HELIUM_DEFINE_BASE_STRUCT( Helium::Reflect::TestStructure );
+HELIUM_DEFINE_CLASS( Helium::Reflect::TestObject );
+
 using namespace Helium;
 using namespace Reflect;
-
-#if !HELIUM_RELEASE
 
 struct EmptyBaseCheck : Struct
 {
@@ -12,15 +18,25 @@ struct EmptyBaseCheck : Struct
 };
 HELIUM_COMPILE_ASSERT( sizeof( EmptyBaseCheck ) == sizeof( uint32_t ) ); // check for empty-base optimization
 
-HELIUM_DEFINE_ENUM( TestEnumeration );
-
 void TestEnumeration::PopulateMetaType( MetaEnum& info )
 {
 	info.AddElement( ValueOne, TXT( "Value One" ) );
 	info.AddElement( ValueTwo, TXT( "Value Two" ) );
 }
 
-HELIUM_DEFINE_BASE_STRUCT( TestStructure );
+TestStructure::TestStructure()
+	: m_Uint8( 0 )
+	, m_Uint16( 0 )
+	, m_Uint32( 0 )
+	, m_Uint64( 0 )
+	, m_Int8( 0 )
+	, m_Int16( 0 )
+	, m_Int32( 0 )
+	, m_Int64( 0 )
+	, m_Float32( 0 )
+	, m_Float64( 0 )
+{
+}
 
 void TestStructure::PopulateMetaType( Reflect::MetaStruct& comp )
 {
@@ -46,8 +62,6 @@ void TestStructure::PopulateMetaType( Reflect::MetaStruct& comp )
 	comp.AddField( &TestStructure::m_FoundationMapUint32, "Map of Unsigned 32-bit Integers" );
 }
 
-HELIUM_DEFINE_CLASS( TestObject );
-
 void TestObject::PopulateMetaType( Reflect::MetaClass& comp )
 {
 	comp.AddField( &TestObject::m_Struct, "MetaStruct" );
@@ -55,11 +69,44 @@ void TestObject::PopulateMetaType( Reflect::MetaClass& comp )
 
 	comp.AddField( &TestObject::m_Enumeration, "MetaEnum" );
 	comp.AddField( &TestObject::m_EnumerationArray, "MetaEnum Array" );
+
+	comp.AddMethod( &TestObject::TestFunction, "Test Function" );
+}
+
+TestObject::TestObject()
+{
+}
+
+void TestObject::TestFunction( TestStructure& args )
+{
+	// verify vtable is intact
+	HELIUM_ASSERT( this->GetMetaClass() == Reflect::GetMetaClass< This >() );
+
+	// verify argument is intact
+	TestStructure* const def = static_cast<TestStructure* const>( GetMetaStruct< TestStructure >()->m_Default );
+	HELIUM_ASSERT( def->m_Uint8 == args.m_Uint8 );
+	HELIUM_ASSERT( def->m_Uint16 == args.m_Uint16 );
+	HELIUM_ASSERT( def->m_Uint32 == args.m_Uint32 );
+	HELIUM_ASSERT( def->m_Uint64 == args.m_Uint64 );
+
+	HELIUM_ASSERT( def->m_Int8 == args.m_Int8 );
+	HELIUM_ASSERT( def->m_Int16 == args.m_Int16 );
+	HELIUM_ASSERT( def->m_Int32 == args.m_Int32 );
+	HELIUM_ASSERT( def->m_Int64 == args.m_Int64 );
+
+	HELIUM_ASSERT( def->m_Float32 == args.m_Float32 );
+	HELIUM_ASSERT( def->m_Float64 == args.m_Float64 );
 }
 
 void Reflect::RunTests()
 {
-	StrongPtr< TestObject > object = new TestObject ();
+	StrongPtr< Object > object = new TestObject ();
+
+	const Reflect::Method& m = object->GetMetaClass()->m_Methods.GetFirst();
+	void* args = alloca(m.m_Translator->m_Size);
+	m.m_Translator->Construct( args );
+	static_cast< Invokable* >( m.m_Delegate )->Invoke( args, object.Ptr() );
+	m.m_Translator->Destruct( args );
 }
 
 #endif

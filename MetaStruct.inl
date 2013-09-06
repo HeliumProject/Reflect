@@ -135,7 +135,7 @@ Helium::Reflect::Translator* Helium::Reflect::MetaStruct::AllocateTranslator( st
 template < class StructureT, class FieldT >
 Helium::Reflect::Field* Helium::Reflect::MetaStruct::AddField( FieldT StructureT::* field, const char* name, uint32_t flags, Translator* translator )
 {
-	Field* f = AddField();
+	Field* f = AllocateField();
 	f->m_Name = name;
 	f->m_Size = sizeof(FieldT);
 	f->m_Count = GetCount< FieldT >( std::is_array< FieldT >() );
@@ -145,6 +145,34 @@ Helium::Reflect::Field* Helium::Reflect::MetaStruct::AddField( FieldT StructureT
 	f->m_ValueType = DeduceValueType<FieldT>( std::is_array< FieldT >() );
 	f->m_Translator = translator ? translator : AllocateTranslator<FieldT>( std::is_array< FieldT >() );
 	return f;
+}
+
+namespace Helium
+{
+	namespace Reflect
+	{
+		template< class ArgumentT >
+		void _ConstructArgument( void* address )
+		{
+			new ( static_cast<ArgumentT*>( address ) ) ArgumentT;
+		}
+
+		template< class ArgumentT >
+		void _DestructArgument( void* address )
+		{
+			( static_cast<ArgumentT*>( address ) )->~ArgumentT();
+		}
+	}
+}
+
+template < class StructureT, class ArgumentT >
+Helium::Reflect::Method* Helium::Reflect::MetaStruct::AddMethod( void (StructureT::*method)( ArgumentT& ), const char* name )
+{
+	Method* m = AllocateMethod();
+	m->m_Name = name;
+	m->m_Translator = Reflect::AllocateTranslator< ArgumentT >();
+	m->m_Delegate = reinterpret_cast< Delegate< void* >::DelegateImpl* >( new Delegate< ArgumentT& >::Method< StructureT >( NULL, method ) );
+	return m;
 }
 
 //

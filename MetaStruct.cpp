@@ -29,6 +29,13 @@ Field::Field()
 
 }
 
+Method::Method()
+: m_Structure( NULL )
+, m_Name( NULL )
+{
+
+}
+
 bool Field::IsDefaultValue( void* address, Object* object, uint32_t index ) const
 {
 	Pointer value ( this, address, object, index );
@@ -266,11 +273,19 @@ uint32_t MetaStruct::GetBaseFieldCount() const
 	return count;
 }
 
-Reflect::Field* MetaStruct::AddField()
+Reflect::Field* MetaStruct::AllocateField()
 {
 	Field field;
 	field.m_Structure = this;
 	field.m_Index = GetBaseFieldCount() + (uint32_t)m_Fields.GetSize();
 	m_Fields.Add( field );
 	return &m_Fields.GetLast();
+}
+
+Reflect::Method* MetaStruct::AllocateMethod()
+{
+	Method method;
+	method.m_Structure = this;
+	m_Methods.Add( method );
+	return &m_Methods.GetLast();
 }
