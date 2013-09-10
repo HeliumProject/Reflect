@@ -171,7 +171,9 @@ Helium::Reflect::Method* Helium::Reflect::MetaStruct::AddMethod( void (Structure
 	Method* m = AllocateMethod();
 	m->m_Name = name;
 	m->m_Translator = Reflect::AllocateTranslator< ArgumentT >();
-	m->m_Delegate = reinterpret_cast< Delegate< void* >::DelegateImpl* >( new Delegate< ArgumentT& >::Method< StructureT >( NULL, method ) );
+	typedef typename Delegate< void* >::DelegateImpl VoidDelegateT;
+	typedef typename Delegate< ArgumentT& >::template Method< StructureT > DelegateMethodT;
+	m->m_Delegate = reinterpret_cast< VoidDelegateT* >( new DelegateMethodT( NULL, method ) );
 	return m;
 }
 
