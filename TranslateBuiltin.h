@@ -20,6 +20,8 @@ namespace Helium
 		class SimpleScalarTranslator : public ScalarTranslator
 		{
 		public:
+			HELIUM_META_DERIVED( MetaIds::SimpleTranslator, SimpleScalarTranslator, ScalarTranslator );
+
 			inline SimpleScalarTranslator();
 			virtual void Construct( Pointer pointer ) HELIUM_OVERRIDE;
 			virtual void Destruct( Pointer pointer ) HELIUM_OVERRIDE;
