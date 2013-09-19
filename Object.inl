@@ -144,10 +144,3 @@ bool Helium::Reflect::ObjectResolver::Resolve( const Name& identity, StrongPtr< 
 	const MetaClass* pointerClass = Reflect::GetMetaClass< T >();
 	return this->Resolve( identity, reinterpret_cast< ObjectPtr& >( object ), pointerClass );
 }
-
-Helium::Reflect::DeferredResolver::Entry::Entry()
-	: m_Pointer( NULL )
-	, m_PointerClass( NULL )
-{
-
-}

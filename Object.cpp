@@ -330,14 +330,3 @@ void Object::RaiseChanged( const Field* field ) const
 {
 	e_Changed.Raise( ObjectChangeArgs( this, field ) );
 }
-
-bool DeferredResolver::Resolve( const Name& identity, ObjectPtr& pointer, const MetaClass* pointerClass )
-{
-	Entry entry;
-	entry.m_Pointer = &pointer;
-	entry.m_PointerClass = pointerClass;
-	entry.m_Identity = identity;
-	m_Entries.Add( entry );
-
-	return true;
-}

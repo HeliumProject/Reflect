@@ -225,27 +225,6 @@ namespace Helium
 			// helper to extract the class of the pointer
 			template< class T > bool Resolve( const Name& identity, StrongPtr< T >& object );
 		};
-
-		//
-		// Resolver class that defers resolution until a later time (after the objects have been loaded)
-		//
-
-		class HELIUM_REFLECT_API DeferredResolver : public ObjectResolver
-		{
-		public:
-			virtual bool Resolve( const Name& identity, ObjectPtr& pointer, const MetaClass* pointerClass ) HELIUM_OVERRIDE;
-
-		protected:
-			struct Entry
-			{
-				inline Entry();
-
-				ObjectPtr*	 m_Pointer;
-				const MetaClass* m_PointerClass;
-				Name         m_Identity;
-			};
-			DynamicArray< Entry > m_Entries;
-		};
 	}
 }
 
