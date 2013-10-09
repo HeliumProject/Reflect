@@ -141,7 +141,7 @@ Registry* Registry::GetInstance()
 
 bool Registry::RegisterType(const MetaType* type)
 {
-    HELIUM_ASSERT( IsMainThread() );
+    HELIUM_ASSERT( Thread::IsMain() );
 
     uint32_t crc = Crc32( type->m_Name );
 	Pair< M_HashToType::Iterator, bool > result = m_TypesByHash.Insert( M_HashToType::ValueType( crc, type ) );
@@ -159,7 +159,7 @@ bool Registry::RegisterType(const MetaType* type)
 
 void Registry::UnregisterType(const MetaType* type)
 {
-    HELIUM_ASSERT( IsMainThread() );
+    HELIUM_ASSERT( Thread::IsMain() );
 
     type->Unregister();
 
@@ -169,7 +169,7 @@ void Registry::UnregisterType(const MetaType* type)
 
 void Registry::AliasType( const MetaType* type, const char* alias )
 {
-    HELIUM_ASSERT( IsMainThread() );
+    HELIUM_ASSERT( Thread::IsMain() );
 
     uint32_t crc = Crc32( alias );
     m_TypesByHash.Insert( M_HashToType::ValueType( crc, type ) );
@@ -177,7 +177,7 @@ void Registry::AliasType( const MetaType* type, const char* alias )
 
 void Registry::UnaliasType( const MetaType* type, const char* alias )
 {
-    HELIUM_ASSERT( IsMainThread() );
+    HELIUM_ASSERT( Thread::IsMain() );
 
     uint32_t crc = Crc32( alias );
     M_HashToType::Iterator found = m_TypesByHash.Find( crc );
