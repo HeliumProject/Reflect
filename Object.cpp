@@ -201,7 +201,7 @@ void Object::operator delete( void* /*ptr*/, void* /*memory*/ )
 /// Perform any necessary work immediately prior to destroying this object.
 ///
 /// Note that the parent-class implementation should always be chained last.
-void Object::PreDestroy()
+void Object::RefCountPreDestroy()
 {
 }
 
@@ -209,9 +209,15 @@ void Object::PreDestroy()
 ///
 /// This should only be called by the reference counting system once the last strong reference to this object has
 /// been cleared.  It should never be called manually.
-void Object::Destroy()
+void Object::RefCountDestroy()
 {
 	delete this;
+}
+
+void Object::RefCountSwapProxies( Object *pOtherObject )
+{
+	m_refCountProxyContainer.Swap( &pOtherObject->m_refCountProxyContainer );
+	m_refCountProxyContainer.Get( this )->Swap( pOtherObject->m_refCountProxyContainer.Get( pOtherObject ) );
 }
 
 const Reflect::MetaClass* Object::GetMetaClass() const

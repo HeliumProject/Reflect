@@ -30,7 +30,7 @@ void Helium::Reflect::Object::ChangeField( FieldT ObjectT::* pointerToMember, co
     // notify listeners that this field changed
     RaiseChanged( field );
 }
-            
+
 /// Perform any pre-destruction work before clearing the last strong reference to an object and destroying the
 /// object.
 ///
@@ -41,7 +41,7 @@ void Helium::Reflect::ObjectRefCountSupport::PreDestroy( Object* pObject )
 {
     HELIUM_ASSERT( pObject );
 
-    pObject->PreDestroy();
+    pObject->RefCountPreDestroy();
 }
 
 /// Destroy an object after the final strong reference to it has been cleared.
@@ -53,7 +53,7 @@ void Helium::Reflect::ObjectRefCountSupport::Destroy( Object* pObject )
 {
     HELIUM_ASSERT( pObject );
 
-    pObject->Destroy();
+    pObject->RefCountDestroy();
 }
 
 //

@@ -105,14 +105,9 @@ namespace Helium
 			void operator delete( void* ptr, size_t bytes );
 			void operator delete( void* ptr, void* memory );
 
-			virtual void PreDestroy();
-			virtual void Destroy();  // This should only be called by the reference counting system!
-
-			void SwapRefCountProxies( Object *pOtherObject)
-			{
-				m_refCountProxyContainer.Swap( &pOtherObject->m_refCountProxyContainer );
-				m_refCountProxyContainer.Get( this )->Swap( pOtherObject->m_refCountProxyContainer.Get( pOtherObject ) );
-			}
+			virtual void RefCountPreDestroy();
+			virtual void RefCountDestroy();  // This should only be called by the reference counting system!
+			virtual void RefCountSwapProxies( Object *pOtherObject );
 
 			//
 			// Type checking

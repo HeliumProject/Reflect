@@ -14,8 +14,14 @@ MetaClass::MetaClass()
 
 MetaClass::~MetaClass()
 {
-	// prevent base class from deleting our object
-	MetaStruct::m_Default = NULL;
+	if ( MetaClass::m_Default )
+	{
+		// an referencers of the default instance should use weak references!
+		HELIUM_ASSERT( ( MetaClass::m_Default.GetProxy()->GetRefCounts() & 0xffff ) == 1 );
+
+		// prevent base class from (double) deleting our default instance
+		MetaStruct::m_Default = NULL;
+	}
 }
 
 MetaClass* MetaClass::Create()
