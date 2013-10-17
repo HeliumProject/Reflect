@@ -1,3 +1,16 @@
+namespace Helium
+{
+	namespace Reflect
+	{
+		template< class T >
+		void _DeleteDefault( void* ptr )
+		{
+			T* typedPtr = static_cast< T* >( ptr );
+			delete typedPtr;
+		}
+	}
+}
+
 template< class StructureT >
 void Helium::Reflect::MetaStruct::Create( MetaStruct const*& pointer, const char* name, const char* baseName )
 {
@@ -8,6 +21,7 @@ void Helium::Reflect::MetaStruct::Create( MetaStruct const*& pointer, const char
 	MetaStruct::Create< StructureT >( name, baseName, &StructureT::PopulateMetaType, type );
 
 	type->m_Default = new StructureT;
+	type->m_DefaultDelete = &_DeleteDefault< StructureT >;
 }
 
 template< class StructureT >

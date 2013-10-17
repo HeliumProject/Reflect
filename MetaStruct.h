@@ -17,6 +17,7 @@ namespace Helium
 	{
 		class MetaStruct;
 		typedef void (*PopulateMetaTypeFunc)( MetaStruct& );
+		typedef void (*DefaultDeleteFunc)( void* );
 
 		namespace FieldFlags
 		{
@@ -191,6 +192,7 @@ namespace Helium
 			DynamicArray< Method >    m_Methods;      // methods in this composite
 			PopulateMetaTypeFunc      m_Populate;     // function to populate this structure
 			void*                     m_Default;      // default instance
+			DefaultDeleteFunc         m_DefaultDelete;// function to use to delete the default instance
 		};
 
 		template< class ClassT, class BaseT >

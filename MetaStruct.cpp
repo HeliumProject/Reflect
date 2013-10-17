@@ -67,13 +67,17 @@ MetaStruct::MetaStruct()
 	, m_NextSibling( NULL )
 	, m_Populate( NULL )
 	, m_Default( NULL )
+	, m_DefaultDelete( NULL )
 {
 
 }
 
 MetaStruct::~MetaStruct()
 {
-	delete static_cast< char* >( m_Default );
+	if ( m_Default && HELIUM_VERIFY( m_DefaultDelete ) )
+	{
+		m_DefaultDelete( m_Default );
+	}
 }
 
 MetaStruct* MetaStruct::Create()
