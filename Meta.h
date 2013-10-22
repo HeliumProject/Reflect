@@ -82,7 +82,7 @@ namespace Helium
 			template<class T>
 			inline bool GetProperty( const std::string& key, T& value ) const;
 
-			inline const std::string& GetProperty( const std::string& key ) const;
+			inline std::string GetProperty( const std::string& key ) const;
 		};
 
 		//

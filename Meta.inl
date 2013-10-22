@@ -57,7 +57,7 @@ namespace Helium
 	}
 }
 
-inline const std::string& Helium::Reflect::PropertyCollection::GetProperty( const std::string& key ) const
+inline std::string Helium::Reflect::PropertyCollection::GetProperty( const std::string& key ) const
 {
 	std::map< std::string, std::string >::const_iterator found = m_Properties.find( key );
 	if ( found != m_Properties.end() )
@@ -65,6 +65,5 @@ inline const std::string& Helium::Reflect::PropertyCollection::GetProperty( cons
 		return found->second;
 	}
 
-	static std::string empty;
-	return empty;
+	return std::string ();
 }
