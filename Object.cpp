@@ -246,7 +246,7 @@ void Object::PopulateMetaType( Reflect::MetaClass& comp )
 
 ObjectPtr Object::GetTemplate() const
 {
-	return ObjectPtr();
+	return this->GetMetaClass()->m_Default;
 }
 
 void Object::PreSerialize( const Reflect::Field* field )
