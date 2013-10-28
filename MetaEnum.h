@@ -56,7 +56,7 @@ namespace Helium
 			inline static void SetFlags(uint32_t& value, uint32_t flags);
 
 			DynamicArray< MetaEnum::Element > m_Elements;
-			bool                               m_IsBitfield;
+			bool                              m_IsBitfield;
 
 		private:
 			bool GetSingleValue(const std::string& str, uint32_t& value) const;
