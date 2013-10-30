@@ -216,7 +216,7 @@ const Field* MetaStruct::FindFieldByName(uint32_t crc) const
 		DynamicArray< Field >::ConstIterator end = current->m_Fields.End();
 		for ( ; itr != end; ++itr )
 		{
-			if ( Crc32( itr->m_Name ) == crc )
+			if ( itr->m_NameCrc == crc )
 			{
 				return &*itr;
 			}

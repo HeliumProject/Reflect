@@ -151,6 +151,7 @@ Helium::Reflect::Field* Helium::Reflect::MetaStruct::AddField( FieldT StructureT
 {
 	Field* f = AllocateField();
 	f->m_Name = name;
+	f->m_NameCrc = Crc32(name);
 	f->m_Size = sizeof(FieldT);
 	f->m_Count = GetCount< FieldT >( std::is_array< FieldT >() );
 	f->m_Offset = GetOffset(field);

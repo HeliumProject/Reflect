@@ -48,6 +48,7 @@ namespace Helium
 
 			const MetaStruct*      m_Structure;  // the type we are a field of
 			const char*            m_Name;       // name of this field
+			uint32_t               m_NameCrc;    // precompute the CRC of the name for efficiency
 			uint32_t               m_Size;       // the size of this field
 			uint32_t               m_Count;      // the static array size
 			uint32_t               m_Offset;     // the offset to the field
