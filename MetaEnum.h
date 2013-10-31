@@ -92,7 +92,7 @@ static Helium::Reflect::MetaEnumRegistrar< ENUMERATION > s_Registrar;
 const Helium::Reflect::MetaEnum* ENUMERATION::CreateEnumeration() \
 { \
 	HELIUM_ASSERT( s_Enumeration == NULL ); \
-	Reflect::MetaEnum::Create< ENUMERATION >( s_Enumeration, TXT( #ENUMERATION ) ); \
+	Helium::Reflect::MetaEnum::Create< ENUMERATION >( s_Enumeration, TXT( #ENUMERATION ) ); \
 	return s_Enumeration; \
 } \
 const Helium::Reflect::MetaEnum* ENUMERATION::s_Enumeration = NULL; \
