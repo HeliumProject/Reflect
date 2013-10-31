@@ -16,7 +16,7 @@ using namespace Helium::Reflect;
 struct ObjectRefCountSupport::StaticTranslator
 {
 	/// Number of proxy objects to allocate per block for the proxy pool.
-	static const size_t POOL_BLOCK_SIZE = 1024;
+	static const size_t POOL_BLOCK_SIZE = 1024 * 2048;
 
 	/// Proxy object pool.
 	ObjectPool< RefCountProxy< Object > > proxyPool;
