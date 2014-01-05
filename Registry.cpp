@@ -16,7 +16,7 @@ using namespace Helium;
 using namespace Helium::Reflect;
 
 // profile interface
-#ifdef PROFILE_ACCUMULATION
+#ifdef HELIUM_PROFILE_ACCUMULATION
 Profile::Accumulator Reflect::g_CloneAccum ( "Reflect Clone" );
 Profile::Accumulator Reflect::g_ParseAccum ( "Reflect Parse" );
 Profile::Accumulator Reflect::g_AuthorAccum ( "Reflect Author" );
