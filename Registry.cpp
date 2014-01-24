@@ -16,15 +16,15 @@ using namespace Helium;
 using namespace Helium::Reflect;
 
 // profile interface
-#ifdef HELIUM_PROFILE_ACCUMULATION
-Profile::Accumulator Reflect::g_CloneAccum ( "Reflect Clone" );
-Profile::Accumulator Reflect::g_ParseAccum ( "Reflect Parse" );
-Profile::Accumulator Reflect::g_AuthorAccum ( "Reflect Author" );
-Profile::Accumulator Reflect::g_ChecksumAccum ( "Reflect Checksum" );
-Profile::Accumulator Reflect::g_PreSerializeAccum ( "Reflect Serialize Pre-Process" );
-Profile::Accumulator Reflect::g_PostSerializeAccum ( "Reflect Serialize Post-Process" );
-Profile::Accumulator Reflect::g_PreDeserializeAccum ( "Reflect Deserialize Pre-Process" );
-Profile::Accumulator Reflect::g_PostDeserializeAccum ( "Reflect Deserialize Post-Process" );
+#if HELIUM_PROFILE_ENABLE
+Profile::Sink Reflect::g_CloneSink ( "Reflect Clone" );
+Profile::Sink Reflect::g_ParseSink ( "Reflect Parse" );
+Profile::Sink Reflect::g_AuthorSink ( "Reflect Author" );
+Profile::Sink Reflect::g_ChecksumSink ( "Reflect Checksum" );
+Profile::Sink Reflect::g_PreSerializeSink ( "Reflect Serialize Pre-Process" );
+Profile::Sink Reflect::g_PostSerializeSink ( "Reflect Serialize Post-Process" );
+Profile::Sink Reflect::g_PreDeserializeSink ( "Reflect Deserialize Pre-Process" );
+Profile::Sink Reflect::g_PostDeserializeSink ( "Reflect Deserialize Post-Process" );
 #endif
 
 template< class T >

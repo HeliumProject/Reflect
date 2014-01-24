@@ -21,15 +21,15 @@ namespace Helium
         typedef SortedMap< uint32_t, Helium::SmartPtr< MetaType > > M_HashToType;
 
         // Profile interface
-#ifdef HELIUM_PROFILE_ACCUMULATION
-        extern Profile::Accumulator g_CloneAccum;
-        extern Profile::Accumulator g_ParseAccum;
-        extern Profile::Accumulator g_AuthorAccum;
-        extern Profile::Accumulator g_ChecksumAccum;
-        extern Profile::Accumulator g_PreSerializeAccum;
-        extern Profile::Accumulator g_PostSerializeAccum;
-        extern Profile::Accumulator g_PreDeserializeAccum;
-        extern Profile::Accumulator g_PostDeserializeAccum;
+#if HELIUM_PROFILE_ENABLE
+        extern Profile::Sink g_CloneSink;
+        extern Profile::Sink g_ParseSink;
+        extern Profile::Sink g_AuthorSink;
+        extern Profile::Sink g_ChecksumSink;
+        extern Profile::Sink g_PreSerializeSink;
+        extern Profile::Sink g_PostSerializeSink;
+        extern Profile::Sink g_PreDeserializeSink;
+        extern Profile::Sink g_PostDeserializeSink;
 #endif
 
         // Init/Cleanup
