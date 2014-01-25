@@ -172,12 +172,16 @@ bool MetaStruct::Equals(void* compositeA, Object* objectA, void* compositeB, Obj
 		for ( ; itr != end; ++itr )
 		{
 			const Field* field = &*itr;
-			Pointer a ( field, compositeA, objectA );
-			Pointer b ( field, compositeB, objectB );
-			bool equality = field->m_Translator->Equals( a, b );
-			if ( !equality )
+
+			for ( uint32_t i=0; i<field->m_Count; ++i )
 			{
-				return false;
+				Pointer a ( field, compositeA, objectA, i );
+				Pointer b ( field, compositeB, objectB, i );
+				bool equality = field->m_Translator->Equals( a, b );
+				if ( !equality )
+				{
+					return false;
+				}
 			}
 		}
 	}
@@ -196,13 +200,17 @@ void MetaStruct::Copy( void* compositeSource, Object* objectSource, void* compos
 			for ( ; itr != end; ++itr )
 			{
 				const Field* field = &*itr;
-				Pointer pointerSource ( field, compositeSource, objectSource );
-				Pointer pointerDestination ( field, compositeDestination, objectDestination );
 
-				// for normal data types, run overloaded assignement operator via data's vtable
-				// for reference container types, this deep copies containers (which is bad for 
-				//  non-cloneable (FieldFlags::Share) reference containers)
-				field->m_Translator->Copy(pointerSource, pointerDestination, shallowCopy || (field->m_Flags & FieldFlags::Share) ? CopyFlags::Shallow : 0);
+				for ( uint32_t i=0; i<field->m_Count; ++i )
+				{
+					Pointer pointerSource ( field, compositeSource, objectSource, i );
+					Pointer pointerDestination ( field, compositeDestination, objectDestination, i );
+
+					// for normal data types, run overloaded assignement operator via data's vtable
+					// for reference container types, this deep copies containers (which is bad for 
+					//  non-cloneable (FieldFlags::Share) reference containers)
+					field->m_Translator->Copy(pointerSource, pointerDestination, shallowCopy || (field->m_Flags & FieldFlags::Share) ? CopyFlags::Shallow : 0);
+				}
 			}
 		}
 	}
