@@ -6,9 +6,9 @@
 using namespace Helium;
 using namespace Helium::Reflect;
 
-void Reflect::Identify( ObjectIdentifier* identifier, Pointer pointer, Name& name )
+bool Reflect::Identify( ObjectIdentifier* identifier, Pointer pointer, Name* name )
 {
-	identifier->Identify( pointer.As< ObjectPtr >(), name );
+	return identifier->Identify( pointer.As< ObjectPtr >(), name );
 }
 
 void Reflect::Resolve( ObjectResolver* resolver, Name name, Pointer pointer )

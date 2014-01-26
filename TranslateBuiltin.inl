@@ -188,7 +188,7 @@ void Helium::Reflect::PointerTranslator<T>::Print( Pointer pointer, String& stri
 	if ( identifier )
 	{
 		Name name;
-		Identify( identifier, pointer, name );
+		Identify( identifier, pointer, &name );
 		string = name.Get();
 	}
 }

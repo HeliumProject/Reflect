@@ -150,7 +150,7 @@ namespace Helium
 			return new PointerTranslator< T >;
 		}
 
-		HELIUM_REFLECT_API void Identify( ObjectIdentifier* identifier, Pointer pointer, Name& name );
+		HELIUM_REFLECT_API bool Identify( ObjectIdentifier* identifier, Pointer pointer, Name* name );
 		HELIUM_REFLECT_API void Resolve( ObjectResolver* resolver, Name name, Pointer pointer );
 
 		//////////////////////////////////////////////////////////////////////////

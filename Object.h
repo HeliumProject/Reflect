@@ -211,7 +211,7 @@ namespace Helium
 		class HELIUM_REFLECT_API ObjectIdentifier
 		{
 		public:
-			virtual bool Identify( Object* object, Name& identity ) = 0;
+			virtual bool Identify( const ObjectPtr& object, Name* identity ) = 0;
 		};
 
 		//
