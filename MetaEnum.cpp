@@ -7,9 +7,9 @@
 using namespace Helium;
 using namespace Helium::Reflect;
 
-#pragma TODO("Ditch STL in favor of Foundation containers")
-#pragma TODO("Switch to uint64_t for wider bitfield support")
-#pragma TODO("Make AddElement return an MetaEnum::Element for easier meta-data addition")
+// TODO: Ditch STL in favor of Foundation containers
+// TODO: Switch to uint64_t for wider bitfield support
+// TODO: Make AddElement return an MetaEnum::Element for easier meta-data addition
 
 MetaEnum::Element::Element()
 	: m_Value( 0x0 )

@@ -6,8 +6,6 @@
 using namespace Helium;
 using namespace Helium::Reflect;
 
-#pragma TODO("Use default template functions here -gorlak")
-
 StringTranslator::StringTranslator()
 	: ScalarTranslator( sizeof( String ), ScalarTypes::String )
 {

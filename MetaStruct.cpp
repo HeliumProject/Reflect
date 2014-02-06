@@ -12,7 +12,7 @@
 using namespace Helium;
 using namespace Helium::Reflect;
 
-#pragma TODO("Remove separate base/derived structure macros in favor of registering Struct (like Object)")
+// TODO: Remove separate base/derived structure macros in favor of registering Struct (like Object)
 
 Field::Field()
 : m_Structure( NULL )
@@ -249,7 +249,7 @@ const Field* MetaStruct::FindFieldByIndex(uint32_t index) const
 
 const Field* MetaStruct::FindFieldByOffset(uint32_t offset) const
 {
-#pragma TODO("Implement binary search")
+	// TODO: Implement binary search
 	for ( const MetaStruct* current = this; current != NULL; current = current->m_Base )
 	{
 		if ( current->m_Fields.GetSize() && offset >= current->m_Fields.GetFirst().m_Offset && offset <= current->m_Fields.GetFirst().m_Offset )
