@@ -149,6 +149,7 @@ Helium::Reflect::Translator* Helium::Reflect::MetaStruct::AllocateTranslator( st
 template < class StructureT, class FieldT >
 Helium::Reflect::Field* Helium::Reflect::MetaStruct::AddField( FieldT StructureT::* field, const char* name, uint32_t flags, Translator* translator )
 {
+	HELIUM_ASSERT( FindField( field ) == NULL );
 	Field* f = AllocateField();
 	f->m_Name = name;
 	f->m_NameCrc = Crc32(name);
