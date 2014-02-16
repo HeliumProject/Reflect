@@ -55,3 +55,7 @@ void Pointer::RaiseChanged( bool doIt )
 	}
 }
 
+uint32_t Translator::GetDefaultFlags()
+{
+	return 0x0;
+}

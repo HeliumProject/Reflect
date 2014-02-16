@@ -33,6 +33,7 @@ struct ObjectRefCountSupport::StaticTranslator
 
 ObjectRefCountSupport::StaticTranslator* ObjectRefCountSupport::sm_pStaticTranslator = NULL;
 
+uint32_t Object::s_DefaultPointerFlags = 0x0;
 const MetaClass* Object::s_MetaClass = NULL;
 MetaClassRegistrar< Object, void > Object::s_Registrar( TXT("Object") );
 

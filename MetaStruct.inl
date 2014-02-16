@@ -156,10 +156,10 @@ Helium::Reflect::Field* Helium::Reflect::MetaStruct::AddField( FieldT StructureT
 	f->m_Size = sizeof(FieldT);
 	f->m_Count = GetCount< FieldT >( std::is_array< FieldT >() );
 	f->m_Offset = GetOffset(field);
-	f->m_Flags = flags;
 	f->m_KeyType = DeduceKeyType<FieldT>( std::is_array< FieldT >() );
 	f->m_ValueType = DeduceValueType<FieldT>( std::is_array< FieldT >() );
 	f->m_Translator = translator ? translator : AllocateTranslator<FieldT>( std::is_array< FieldT >() );
+	f->m_Flags = f->m_Translator->GetDefaultFlags() | flags;
 	return f;
 }
 

@@ -136,6 +136,12 @@ Helium::Reflect::PointerTranslator<T>::PointerTranslator()
 }
 
 template< class T >
+uint32_t Helium::Reflect::PointerTranslator<T>::GetDefaultFlags()
+{
+	return T::s_DefaultPointerFlags;
+}
+
+template< class T >
 void Helium::Reflect::PointerTranslator<T>::Construct( Pointer pointer )
 {
 	DefaultConstruct< StrongPtr< T > >( pointer );

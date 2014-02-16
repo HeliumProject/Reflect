@@ -114,6 +114,7 @@ namespace Helium
 			//
 
 			// Reflection data
+			static uint32_t s_DefaultPointerFlags;
 			static const MetaClass* s_MetaClass;
 			static MetaClassRegistrar< Object, void > s_Registrar;
 

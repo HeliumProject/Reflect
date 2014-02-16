@@ -126,6 +126,7 @@ namespace Helium
 			HELIUM_META_DERIVED( MetaIds::PointerTranslator, PointerTranslator, ScalarTranslator );
 
 			inline PointerTranslator();
+			virtual uint32_t GetDefaultFlags() HELIUM_OVERRIDE;
 			virtual void Construct( Pointer pointer ) HELIUM_OVERRIDE;
 			virtual void Destruct( Pointer pointer ) HELIUM_OVERRIDE;
 			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) HELIUM_OVERRIDE;

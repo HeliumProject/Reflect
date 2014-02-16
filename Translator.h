@@ -91,6 +91,10 @@ namespace Helium
 
 			inline Translator( size_t size );
 
+			// get the default flags for this type of data
+			virtual uint32_t GetDefaultFlags();
+
+			// some templates to do default work
 			template< class T > HELIUM_FORCEINLINE void DefaultConstruct( Pointer pointer );
 			template< class T > HELIUM_FORCEINLINE void DefaultDestruct( Pointer pointer );
 			template< class T > HELIUM_FORCEINLINE void DefaultCopy( Pointer src, Pointer dest, uint32_t flags );
