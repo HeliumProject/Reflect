@@ -95,13 +95,10 @@ void ObjectRefCountSupport::Shutdown()
 	if( Reflect::ObjectRefCountSupport::GetFirstActiveProxy( refCountProxyAccessor ) )
 	{
 		HELIUM_TRACE(
-			TraceLevels::Error,
+			TraceLevels::Warning,
 			TXT( "%" ) PRIuSZ TXT( " reference counted object(s) still active during shutdown!\n" ),
 			Reflect::ObjectRefCountSupport::GetActiveProxyCount() );
   
-#if 0
-		refCountProxyAccessor.Release();
-#else
 		Reflect::ObjectRefCountSupport::GetFirstActiveProxy( refCountProxyAccessor );
 		while( refCountProxyAccessor.IsValid() )
 		{
@@ -109,7 +106,7 @@ void ObjectRefCountSupport::Shutdown()
 			HELIUM_ASSERT( pProxy );
 
 			HELIUM_TRACE(
-				TraceLevels::Error,
+				TraceLevels::Warning,
 				TXT( "   - 0x%p: (%" ) PRIu16 TXT( " strong ref(s), %" ) PRIu16 TXT( " weak ref(s))\n" ),
 				pProxy,
 				pProxy->GetStrongRefCount(),
@@ -118,7 +115,6 @@ void ObjectRefCountSupport::Shutdown()
 			++refCountProxyAccessor;
 		}
 		refCountProxyAccessor.Release();
-#endif
 	}
 #endif  // HELIUM_ENABLE_MEMORY_TRACKING
 
