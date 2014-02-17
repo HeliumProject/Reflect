@@ -66,10 +66,10 @@ namespace Helium
             static void RemoveTypeFromRegistry( const MetaType* type );
 
         private:
-            const char*          m_Name;
-            MetaTypeRegistrar*          m_Next;
-            static MetaTypeRegistrar*   s_Head[ RegistrarTypes::Count ];
-            static MetaTypeRegistrar*   s_Tail[ RegistrarTypes::Count ];
+            const char*               m_Name;
+            MetaTypeRegistrar*        m_Next;
+            static MetaTypeRegistrar* s_Head[ RegistrarTypes::Count ];
+            static MetaTypeRegistrar* s_Tail[ RegistrarTypes::Count ];
         };
     }
 }
