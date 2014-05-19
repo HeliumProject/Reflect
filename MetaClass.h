@@ -38,9 +38,6 @@ namespace Helium
 			StrongPtr< Object >     m_Default;  // a default instance of an object of this class
 		};
 
-		typedef Helium::SmartPtr< MetaClass > ClassPtr;
-		typedef Helium::SmartPtr< const MetaClass > ConstClassPtr;
-
 		// Object, the most base class needs explicit implementation
 		template<>
 		void MetaClass::Create< Object >( MetaClass const*& pointer, const char* name, const char* baseName, CreateObjectFunc creator );
