@@ -143,9 +143,12 @@ bool Registry::RegisterType(const MetaType* type)
 {
     HELIUM_ASSERT( Thread::IsMain() );
 
+    // hold a reference so it isn't deleted if its a redundant entry
+    Helium::SmartPtr< MetaType > typeToRegister ( type );
+
     uint32_t crc = Crc32( type->m_Name );
-	Pair< M_HashToType::Iterator, bool > result = m_TypesByHash.Insert( M_HashToType::ValueType( crc, type ) );
-    if ( !result.Second() )
+    Pair< M_HashToType::Iterator, bool > result = m_TypesByHash.Insert( M_HashToType::ValueType( crc, type ) );
+    if ( !HELIUM_VERIFY( result.Second() ) )
     {
         Log::Error( TXT( "Re-registration of type %s, could be ambigouous crc: 0x%08x\n" ), type->m_Name, crc );
         HELIUM_BREAK();
