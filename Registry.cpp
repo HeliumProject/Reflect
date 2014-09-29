@@ -150,7 +150,7 @@ bool Registry::RegisterType(const MetaType* type)
     Pair< M_HashToType::Iterator, bool > result = m_TypesByHash.Insert( M_HashToType::ValueType( crc, type ) );
     if ( !HELIUM_VERIFY( result.Second() ) )
     {
-        Log::Error( TXT( "Re-registration of type %s, could be ambigouous crc: 0x%08x\n" ), type->m_Name, crc );
+        Log::Error( TXT( "Re-registration of type %s, could be ambigouous crc: 0x%08X\n" ), type->m_Name, crc );
         HELIUM_BREAK();
         return false;
     }
