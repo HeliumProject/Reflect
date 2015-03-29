@@ -103,7 +103,7 @@ bool FilePathTranslator::Equals( Pointer a, Pointer b )
 
 void FilePathTranslator::Print( Pointer pointer, String& string, ObjectIdentifier* identifier )
 {
-	string = pointer.As<FilePath>();
+	string = pointer.As<FilePath>().Data();
 }
 
 void FilePathTranslator::Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged )
