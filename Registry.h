@@ -33,16 +33,14 @@ namespace Helium
 #endif
 
         // Init/Cleanup
-        HELIUM_REFLECT_API bool IsInitialized();
-        HELIUM_REFLECT_API void Initialize();
-        HELIUM_REFLECT_API void Cleanup();
+        HELIUM_REFLECT_API void Startup();
+        HELIUM_REFLECT_API void Shutdown();
 
         class HELIUM_REFLECT_API Registry
         {
         private:
-            friend void Reflect::Initialize();
-            friend bool Reflect::IsInitialized();
-            friend void Reflect::Cleanup();
+            friend void Reflect::Startup();
+            friend void Reflect::Shutdown();
 
             Registry();
             ~Registry();

@@ -65,17 +65,12 @@ namespace Helium
 {
     namespace Reflect
     {
-        int32_t         g_InitCount = 0;
-        Registry*   g_Registry = NULL;
+        int32_t g_InitCount = 0;
+        Registry* g_Registry = NULL;
     }
 }
 
-bool Reflect::IsInitialized()
-{
-    return g_Registry != NULL;
-}
-
-void Reflect::Initialize()
+void Reflect::Startup()
 {
     if (++g_InitCount == 1)
     {
@@ -98,7 +93,7 @@ void Reflect::Initialize()
 #endif
 }
 
-void Reflect::Cleanup()
+void Reflect::Shutdown()
 {
     if ( --g_InitCount == 0 )
     {
