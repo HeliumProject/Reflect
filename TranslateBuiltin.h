@@ -23,12 +23,12 @@ namespace Helium
 			HELIUM_META_DERIVED( MetaIds::SimpleTranslator, SimpleScalarTranslator, ScalarTranslator );
 
 			inline SimpleScalarTranslator();
-			virtual void Construct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Destruct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) HELIUM_OVERRIDE;
-			virtual bool Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
-			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier) HELIUM_OVERRIDE;
-			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
+			virtual void Construct( Pointer pointer ) override;
+			virtual void Destruct( Pointer pointer ) override;
+			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) override;
+			virtual bool Equals( Pointer a, Pointer b ) override;
+			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier) override;
+			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) override;
 		};
 
 		template<> inline SimpleScalarTranslator< bool >::SimpleScalarTranslator()      : ScalarTranslator( 1, ScalarTypes::Boolean ) {}
@@ -94,11 +94,11 @@ namespace Helium
 		{
 		public:
 			inline SimpleStructureTranslator();
-			virtual void Construct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Destruct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) HELIUM_OVERRIDE;
-			virtual bool Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
-			virtual const MetaStruct* GetMetaStruct() const HELIUM_OVERRIDE;
+			virtual void Construct( Pointer pointer ) override;
+			virtual void Destruct( Pointer pointer ) override;
+			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) override;
+			virtual bool Equals( Pointer a, Pointer b ) override;
+			virtual const MetaStruct* GetMetaStruct() const override;
 		};
 
 		template< class T >
@@ -126,13 +126,13 @@ namespace Helium
 			HELIUM_META_DERIVED( MetaIds::PointerTranslator, PointerTranslator, ScalarTranslator );
 
 			inline PointerTranslator();
-			virtual uint32_t GetDefaultFlags() HELIUM_OVERRIDE;
-			virtual void Construct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Destruct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) HELIUM_OVERRIDE;
-			virtual bool Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
-			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier) HELIUM_OVERRIDE;
-			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
+			virtual uint32_t GetDefaultFlags() override;
+			virtual void Construct( Pointer pointer ) override;
+			virtual void Destruct( Pointer pointer ) override;
+			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) override;
+			virtual bool Equals( Pointer a, Pointer b ) override;
+			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier) override;
+			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) override;
 		};
 
 		template< class T >
@@ -163,12 +163,12 @@ namespace Helium
 			HELIUM_META_DERIVED( MetaIds::EnumerationTranslator, EnumerationTranslator, ScalarTranslator );
 
 			inline EnumerationTranslator();
-			virtual void Construct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Destruct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) HELIUM_OVERRIDE;
-			virtual bool Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
-			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier) HELIUM_OVERRIDE;
-			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
+			virtual void Construct( Pointer pointer ) override;
+			virtual void Destruct( Pointer pointer ) override;
+			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) override;
+			virtual bool Equals( Pointer a, Pointer b ) override;
+			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier) override;
+			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) override;
 		};
 
 		template< class T >
@@ -195,12 +195,12 @@ namespace Helium
 			HELIUM_META_DERIVED( MetaIds::TypeTranslator, TypeTranslator, ScalarTranslator );
 
 			TypeTranslator();
-			virtual void Construct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Destruct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) HELIUM_OVERRIDE;
-			virtual bool Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
-			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier) HELIUM_OVERRIDE;
-			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
+			virtual void Construct( Pointer pointer ) override;
+			virtual void Destruct( Pointer pointer ) override;
+			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) override;
+			virtual bool Equals( Pointer a, Pointer b ) override;
+			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier) override;
+			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) override;
 		};
 
 		inline const MetaType* DeduceKeyType( const MetaType*, const MetaType* )

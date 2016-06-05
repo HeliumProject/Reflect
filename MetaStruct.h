@@ -113,8 +113,8 @@ namespace Helium
 			static void Create( const char* name, const char* baseName, PopulateMetaTypeFunc populate, MetaStruct* info );
 
 			// overloaded functions from MetaType
-			virtual void Register() const HELIUM_OVERRIDE;
-			virtual void Unregister() const HELIUM_OVERRIDE;
+			virtual void Register() const override;
+			virtual void Unregister() const override;
 
 			// inheritance hierarchy
 			bool IsType(const MetaStruct* type) const;

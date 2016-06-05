@@ -76,7 +76,7 @@ static Helium::Reflect::Object* CreateObject() { return new OBJECT; }
 public: \
 typedef BASE Base; \
 typedef OBJECT This; \
-virtual const Helium::Reflect::MetaClass* GetMetaClass() const HELIUM_OVERRIDE; \
+virtual const Helium::Reflect::MetaClass* GetMetaClass() const override; \
 static const Helium::Reflect::MetaClass* CreateMetaClass(); \
 static const Helium::Reflect::MetaClass* s_MetaClass;
 

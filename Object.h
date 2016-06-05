@@ -85,7 +85,7 @@ namespace Helium
 		// Object is the abstract base class of a serializable class
 		//
 
-		class HELIUM_REFLECT_API Object HELIUM_ABSTRACT : NonCopyable
+		class HELIUM_REFLECT_API Object : NonCopyable
 		{
 		protected:
 			HELIUM_DECLARE_REF_COUNT( Object, ObjectRefCountSupport );
