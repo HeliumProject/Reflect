@@ -23,8 +23,8 @@
 	typedef __Type This; \
 	typedef __Base Base; \
 	const static Helium::Reflect::MetaId s_MetaId = __Id; \
-	virtual Helium::Reflect::MetaId GetMetaId() const HELIUM_OVERRIDE { return __Id; } \
-	virtual bool IsA(Helium::Reflect::MetaId id) const HELIUM_OVERRIDE { return __Id == id || Base::IsA(id); }
+	virtual Helium::Reflect::MetaId GetMetaId() const override { return __Id; } \
+	virtual bool IsA(Helium::Reflect::MetaId id) const override { return __Id == id || Base::IsA(id); }
 
 namespace Helium
 {

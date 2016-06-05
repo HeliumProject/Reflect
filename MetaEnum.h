@@ -40,8 +40,8 @@ namespace Helium
 			template<class T>
 			static void Create( MetaEnum const*& pointer, const char* name );
 
-			virtual void Register() const HELIUM_OVERRIDE;
-			virtual void Unregister() const HELIUM_OVERRIDE;
+			virtual void Register() const override;
+			virtual void Unregister() const override;
 
 			void AddElement(uint32_t value, const std::string& name, const std::string& helpText = TXT( "FIXME: SET THE HELP TEXT FOR THIS ENUMERATION ELEMENT" ) );
 			bool IsValid(uint32_t value) const;

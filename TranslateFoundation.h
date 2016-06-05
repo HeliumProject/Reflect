@@ -15,12 +15,12 @@ namespace Helium
 		{
 		public:
 			StringTranslator();
-			virtual void Construct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Destruct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) HELIUM_OVERRIDE;
-			virtual bool Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
-			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier ) HELIUM_OVERRIDE;
-			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
+			virtual void Construct( Pointer pointer ) override;
+			virtual void Destruct( Pointer pointer ) override;
+			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) override;
+			virtual bool Equals( Pointer a, Pointer b ) override;
+			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier ) override;
+			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) override;
 		};
 
 		inline const MetaType* DeduceKeyType( const String&, const String& )
@@ -42,12 +42,12 @@ namespace Helium
 		{
 		public:
 			NameTranslator();
-			virtual void Construct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Destruct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) HELIUM_OVERRIDE;
-			virtual bool Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
-			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier ) HELIUM_OVERRIDE;
-			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
+			virtual void Construct( Pointer pointer ) override;
+			virtual void Destruct( Pointer pointer ) override;
+			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) override;
+			virtual bool Equals( Pointer a, Pointer b ) override;
+			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier ) override;
+			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) override;
 		};
 
 		inline const MetaType* DeduceKeyType( const Name&, const Name& )
@@ -69,12 +69,12 @@ namespace Helium
 		{
 		public:
 			FilePathTranslator();
-			virtual void Construct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Destruct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) HELIUM_OVERRIDE;
-			virtual bool Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
-			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier ) HELIUM_OVERRIDE;
-			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) HELIUM_OVERRIDE;
+			virtual void Construct( Pointer pointer ) override;
+			virtual void Destruct( Pointer pointer ) override;
+			virtual void Copy( Pointer src, Pointer dest, uint32_t flags ) override;
+			virtual bool Equals( Pointer a, Pointer b ) override;
+			virtual void Print( Pointer pointer, String& string, ObjectIdentifier* identifier ) override;
+			virtual void Parse( const String& string, Pointer pointer, ObjectResolver* resolver, bool raiseChanged ) override;
 		};
 
 		inline const MetaType* DeduceKeyType( const FilePath&, const FilePath& )
@@ -100,25 +100,25 @@ namespace Helium
 			virtual ~SimpleDynamicArrayTranslator();
 
 			// Translator
-			virtual void        Construct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void        Destruct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void        Copy( Pointer src, Pointer dest, uint32_t flags = 0 ) HELIUM_OVERRIDE;
-			virtual bool        Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
+			virtual void        Construct( Pointer pointer ) override;
+			virtual void        Destruct( Pointer pointer ) override;
+			virtual void        Copy( Pointer src, Pointer dest, uint32_t flags = 0 ) override;
+			virtual bool        Equals( Pointer a, Pointer b ) override;
 
 			// ContainerTranslator
-			virtual size_t      GetLength( Pointer container ) const HELIUM_OVERRIDE;
-			virtual void        Clear( Pointer container ) HELIUM_OVERRIDE;
+			virtual size_t      GetLength( Pointer container ) const override;
+			virtual void        Clear( Pointer container ) override;
 
 			// SequenceTranslator
-			virtual Translator* GetItemTranslator() const HELIUM_OVERRIDE;
-			virtual void        GetItems( Pointer sequence, DynamicArray< Pointer >& items ) const HELIUM_OVERRIDE;
-			virtual void        SetLength( Pointer sequence, size_t length ) HELIUM_OVERRIDE;
-			virtual Pointer     GetItem( Pointer sequence, size_t at ) HELIUM_OVERRIDE;
-			virtual void        SetItem( Pointer sequence, size_t at, Pointer value ) HELIUM_OVERRIDE;
-			virtual void        Insert( Pointer sequence, size_t at, Pointer value ) HELIUM_OVERRIDE;
-			virtual void        Remove( Pointer sequence, size_t at ) HELIUM_OVERRIDE;
-			virtual void        MoveUp( Pointer sequence, Set< size_t >& items ) HELIUM_OVERRIDE;
-			virtual void        MoveDown( Pointer sequence, Set< size_t >& items ) HELIUM_OVERRIDE;
+			virtual Translator* GetItemTranslator() const override;
+			virtual void        GetItems( Pointer sequence, DynamicArray< Pointer >& items ) const override;
+			virtual void        SetLength( Pointer sequence, size_t length ) override;
+			virtual Pointer     GetItem( Pointer sequence, size_t at ) override;
+			virtual void        SetItem( Pointer sequence, size_t at, Pointer value ) override;
+			virtual void        Insert( Pointer sequence, size_t at, Pointer value ) override;
+			virtual void        Remove( Pointer sequence, size_t at ) override;
+			virtual void        MoveUp( Pointer sequence, Set< size_t >& items ) override;
+			virtual void        MoveDown( Pointer sequence, Set< size_t >& items ) override;
 
 		private:
 			void                SwapInternalValues(Pointer sequence, size_t a, size_t b);
@@ -152,21 +152,21 @@ namespace Helium
 			virtual ~SimpleSetTranslator();
 
 			// Translator
-			virtual void        Construct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void        Destruct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void        Copy( Pointer src, Pointer dest, uint32_t flags = 0 ) HELIUM_OVERRIDE;
-			virtual bool        Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
+			virtual void        Construct( Pointer pointer ) override;
+			virtual void        Destruct( Pointer pointer ) override;
+			virtual void        Copy( Pointer src, Pointer dest, uint32_t flags = 0 ) override;
+			virtual bool        Equals( Pointer a, Pointer b ) override;
 
 			// ContainerTranslator
-			virtual size_t      GetLength( Pointer container ) const HELIUM_OVERRIDE;
-			virtual void        Clear( Pointer container ) HELIUM_OVERRIDE;
+			virtual size_t      GetLength( Pointer container ) const override;
+			virtual void        Clear( Pointer container ) override;
 
 			// SetTranslator
-			virtual Translator* GetItemTranslator() const HELIUM_OVERRIDE;
-			virtual void        GetItems( Pointer set, DynamicArray< Pointer >& items ) const HELIUM_OVERRIDE;
-			virtual void        InsertItem( Pointer set, Pointer item ) HELIUM_OVERRIDE;
-			virtual void        RemoveItem( Pointer set, Pointer item ) HELIUM_OVERRIDE;
-			virtual bool        ContainsItem( Pointer set, Pointer item ) const HELIUM_OVERRIDE;
+			virtual Translator* GetItemTranslator() const override;
+			virtual void        GetItems( Pointer set, DynamicArray< Pointer >& items ) const override;
+			virtual void        InsertItem( Pointer set, Pointer item ) override;
+			virtual void        RemoveItem( Pointer set, Pointer item ) override;
+			virtual bool        ContainsItem( Pointer set, Pointer item ) const override;
 
 		private:
 			Translator*         m_InternalTranslator;
@@ -198,22 +198,22 @@ namespace Helium
 			virtual ~SimpleMapTranslator();
 
 			// Translator
-			virtual void              Construct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void              Destruct( Pointer pointer ) HELIUM_OVERRIDE;
-			virtual void              Copy( Pointer src, Pointer dest, uint32_t flags = 0 ) HELIUM_OVERRIDE;
-			virtual bool              Equals( Pointer a, Pointer b ) HELIUM_OVERRIDE;
+			virtual void              Construct( Pointer pointer ) override;
+			virtual void              Destruct( Pointer pointer ) override;
+			virtual void              Copy( Pointer src, Pointer dest, uint32_t flags = 0 ) override;
+			virtual bool              Equals( Pointer a, Pointer b ) override;
 
 			// ContainerTranslator
-			virtual size_t            GetLength( Pointer container ) const HELIUM_OVERRIDE;
-			virtual void              Clear( Pointer container ) HELIUM_OVERRIDE;
+			virtual size_t            GetLength( Pointer container ) const override;
+			virtual void              Clear( Pointer container ) override;
 
 			// AssociationTranslator
-			virtual ScalarTranslator* GetKeyTranslator() const HELIUM_OVERRIDE;
-			virtual Translator*       GetValueTranslator() const HELIUM_OVERRIDE;
-			virtual void              GetItems( Pointer association, DynamicArray<Pointer>& keys, DynamicArray<Pointer>& values ) HELIUM_OVERRIDE;
-			virtual Pointer           GetItem( Pointer association, Pointer key ) HELIUM_OVERRIDE;
-			virtual void              SetItem( Pointer association, Pointer key, Pointer value ) HELIUM_OVERRIDE;
-			virtual void              RemoveItem( Pointer association, Pointer key ) HELIUM_OVERRIDE;
+			virtual ScalarTranslator* GetKeyTranslator() const override;
+			virtual Translator*       GetValueTranslator() const override;
+			virtual void              GetItems( Pointer association, DynamicArray<Pointer>& keys, DynamicArray<Pointer>& values ) override;
+			virtual Pointer           GetItem( Pointer association, Pointer key ) override;
+			virtual void              SetItem( Pointer association, Pointer key, Pointer value ) override;
+			virtual void              RemoveItem( Pointer association, Pointer key ) override;
 
 		private:
 			ScalarTranslator*   m_InternalTranslatorKey;
