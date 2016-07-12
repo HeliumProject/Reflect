@@ -7,7 +7,7 @@ At the time of this writing the big ticket automations that build on Reflect are
 History
 =======
 
-Reflect was initially implemented and was a cornerstone technology for asset persistence within the tools pipeline at Insomniac Games between 2004-2009.  It was grown from the ground up starting with basic type and member metadata implemented by @lpetre, and was extended and refactored years thereafter by @gorlak, @andyburke, @kramdar, and others to include:
+Reflect was initially implemented and was a cornerstone technology for asset persistence within the tools pipeline at Insomniac Games between 2004-2009.  It was grown from the ground up starting with basic type and member metadata implemented by [lpetre](https://github.com/lpetre), and was extended and refactored years thereafter by [gorlak](https://github.com/gorlak), [andyburke](https://github.com/andyburke), [kramdar](https://github.com/kramdar), and others to include:
 * Thread-safe reference counting
 * Type checking with asserting and throwing casting functions (replacement for dynamic_cast<>)
 * Factory allocation with default value extraction and comparison
