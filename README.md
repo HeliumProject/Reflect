@@ -1,4 +1,4 @@
-<a href="http://heliumproject.org/">![Helium Game Engine](https://raw.github.com/HeliumProject/Helium/master/Documentation/Helium.png)</a>
+<a href="http://heliumproject.org/">![Helium Game Engine](https://raw.githubusercontent.com/HeliumProject/Helium/master/Editor/Icons/Helium/Helium.png)</a>
 
 Reflect is an implementation of C++ reflection (also known as introspection).  Reflection adds the ability for a C++ program to know about its own topology and coding factors.  This information can in turn be used to automate what would otherwise be rote programming tasks.  Removing human elements from rote programming tasks can lower the cost of adding new features to an application, and can reduce the number of moving parts that need modification by an engineer (which reduces the number of bugs that can be introduced by any given feature).
 
@@ -7,13 +7,19 @@ At the time of this writing the big ticket automations that build on Reflect are
 History
 =======
 
-Reflect was initially implemented at Insomniac circa 2004, and has continuously evolved.  It was originally a way to just store offset data about member variables to simplify parsing mechanics from XML, but has grown to encompass:
-* Reference counting (replacement for intrusive_ptr<>)
-* Type validation with asserting and throwing casting functions (replacement for dynamic_cast<>)
-* Pointers to other objects, container classes, C-style arrays, and aggregate structures (and nesting of them within each other)
-* Type agnostic container introspection and modification (without instantiating template code of the container)
+Reflect was initially implemented and was a cornerstone technology for asset persistence within the tools pipeline at Insomniac Games between 2004-2009.  It was grown from the ground up starting with basic type and member metadata implemented by [lpetre](https://github.com/lpetre), and was extended and refactored years thereafter by [gorlak](https://github.com/gorlak), [andyburke](https://github.com/andyburke), [kramdar](https://github.com/kramdar), and others to include:
+* Thread-safe reference counting
+* Type checking with asserting and throwing casting functions (replacement for dynamic_cast<>)
+* Factory allocation with default value extraction and comparison
+* Persistence of pointers to nested objects as well as containers of POD and object types
+* Support for string representation of enumerations and bitfields
 
-For reference, there is some more historical detail in [this article written by Geoff Evans in late 2010 for Game Developer Magazine](http://www.lavasandwich.org/2011/02/01/behind-the-mirror/)
+After Insomniac Games turned over their entire tech stack in 2010, Reflect continued development in the public domain:
+* Type agnostic container introspection and modification (without instantiating template code of the container)
+* Support or C-arrays of POD, struct and object types
+* Support for direct aggregate structs in objects
+* Cleaner separation of support for Helium's standard library and the C++ standard library
+* Shift from manually printed XML generation to document-style libraries (JSON via rapidjson and MongoDB's BSON via mongo-c)
 
 Design
 ======
