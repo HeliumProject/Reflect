@@ -35,7 +35,7 @@ ObjectRefCountSupport::StaticTranslator* ObjectRefCountSupport::sm_pStaticTransl
 
 uint32_t Object::s_DefaultPointerFlags = 0x0;
 const MetaClass* Object::s_MetaClass = NULL;
-MetaClassRegistrar< Object, void > Object::s_Registrar( TXT("Object") );
+MetaClassRegistrar< Object, void > Object::s_Registrar( "Object" );
 
 /// Retrieve a reference count proxy from the global pool.
 ///
@@ -96,7 +96,7 @@ void ObjectRefCountSupport::Shutdown()
 	{
 		HELIUM_TRACE(
 			TraceLevels::Warning,
-			TXT( "%" ) PRIuSZ TXT( " reference counted object(s) still active during shutdown!\n" ),
+			"%" PRIuSZ " reference counted object(s) still active during shutdown!\n",
 			Reflect::ObjectRefCountSupport::GetActiveProxyCount() );
   
 		Reflect::ObjectRefCountSupport::GetFirstActiveProxy( refCountProxyAccessor );
@@ -107,7 +107,7 @@ void ObjectRefCountSupport::Shutdown()
 
 			HELIUM_TRACE(
 				TraceLevels::Warning,
-				TXT( "   - 0x%" HELIUM_PRINT_POINTER ": (%" ) PRIu16 TXT( " strong ref(s), %" ) PRIu16 TXT( " weak ref(s))\n" ),
+				"   - 0x%" HELIUM_PRINT_POINTER ": (%" PRIu16 " strong ref(s), %" PRIu16 " weak ref(s))\n",
 				pProxy,
 				pProxy->GetStrongRefCount(),
 				pProxy->GetWeakRefCount() );
@@ -232,7 +232,7 @@ bool Object::IsA( const Reflect::MetaClass* type ) const
 const Reflect::MetaClass* Object::CreateMetaClass()
 {
 	HELIUM_ASSERT( s_MetaClass == NULL );
-	MetaClass::Create<Object>( s_MetaClass, TXT("Object"), NULL );
+	MetaClass::Create<Object>( s_MetaClass, "Object", NULL );
 	return s_MetaClass;
 }
 
@@ -305,7 +305,7 @@ void Object::CopyTo( Object* object )
 			{
 				// This should be impossible... at the very least, Object is a common base class for both pointers.
 				// This exeception means there's a bug in this function.
-				throw Reflect::TypeInformationException( TXT( "Internal error (could not find common base class for %s and %s)" ), thisType->m_Name, objectType->m_Name );
+				throw Reflect::TypeInformationException( "Internal error (could not find common base class for %s and %s)", thisType->m_Name, objectType->m_Name );
 			}
 		}
 

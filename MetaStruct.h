@@ -241,22 +241,22 @@ static Helium::Reflect::MetaStructRegistrar< STRUCTURE, BASE > s_Registrar;
 const Helium::Reflect::MetaStruct* STRUCTURE::CreateMetaStruct() \
 { \
 	HELIUM_ASSERT( s_MetaStruct == NULL ); \
-	Helium::Reflect::MetaStruct::Create<STRUCTURE>( s_MetaStruct, TXT( #STRUCTURE ), NULL ); \
+	Helium::Reflect::MetaStruct::Create<STRUCTURE>( s_MetaStruct, #STRUCTURE, NULL ); \
 	return s_MetaStruct; \
 } \
 const Helium::Reflect::MetaStruct* STRUCTURE::s_MetaStruct = NULL; \
-Helium::Reflect::MetaStructRegistrar< STRUCTURE, void > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
+Helium::Reflect::MetaStructRegistrar< STRUCTURE, void > STRUCTURE::s_Registrar( #STRUCTURE );
 
 #define _REFLECT_DEFINE_DERIVED_STRUCT( STRUCTURE ) \
 const Helium::Reflect::MetaStruct* STRUCTURE::CreateMetaStruct() \
 { \
 	HELIUM_ASSERT( s_MetaStruct == NULL ); \
 	HELIUM_ASSERT( STRUCTURE::Base::s_MetaStruct != NULL ); \
-	Helium::Reflect::MetaStruct::Create<STRUCTURE>( s_MetaStruct, TXT( #STRUCTURE ), STRUCTURE::Base::s_MetaStruct->m_Name ); \
+	Helium::Reflect::MetaStruct::Create<STRUCTURE>( s_MetaStruct, #STRUCTURE, STRUCTURE::Base::s_MetaStruct->m_Name ); \
 	return s_MetaStruct; \
 } \
 const Helium::Reflect::MetaStruct* STRUCTURE::s_MetaStruct = NULL; \
-Helium::Reflect::MetaStructRegistrar< STRUCTURE, STRUCTURE::Base > STRUCTURE::s_Registrar( TXT( #STRUCTURE ) );
+Helium::Reflect::MetaStructRegistrar< STRUCTURE, STRUCTURE::Base > STRUCTURE::s_Registrar( #STRUCTURE );
 
 // declares a concrete object with creator
 #define HELIUM_DECLARE_BASE_STRUCT( STRUCTURE ) \

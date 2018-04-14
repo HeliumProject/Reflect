@@ -91,7 +91,7 @@ inline DerivedT* Helium::Reflect::ThrowCast(Reflect::Object* base)
 {
     if ( base != NULL && !base->IsA( GetMetaClass<DerivedT>() ) )
     {
-        throw CastException ( TXT( "Object of type '%s' cannot be cast to type '%s'" ), base->GetMetaClass()->m_Name, GetMetaClass<DerivedT>()->m_Name );
+        throw CastException ( "Object of type '%s' cannot be cast to type '%s'", base->GetMetaClass()->m_Name, GetMetaClass<DerivedT>()->m_Name );
     }
 
     return static_cast< DerivedT* >( base );
@@ -102,7 +102,7 @@ inline const DerivedT* Helium::Reflect::ThrowCast(const Reflect::Object* base)
 {
     if ( base != NULL && !base->IsA( GetMetaClass<DerivedT>() ) )
     {
-        throw CastException ( TXT( "Object of type '%s' cannot be cast to type '%s'" ), base->GetMetaClass()->m_Name, GetMetaClass<DerivedT>()->m_Name );
+        throw CastException ( "Object of type '%s' cannot be cast to type '%s'", base->GetMetaClass()->m_Name, GetMetaClass<DerivedT>()->m_Name );
     }
 
     return static_cast< const DerivedT* >( base );

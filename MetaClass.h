@@ -94,13 +94,13 @@ const Helium::Reflect::MetaClass* OBJECT::CreateMetaClass() \
 { \
 	HELIUM_ASSERT( s_MetaClass == NULL ); \
 	HELIUM_ASSERT( OBJECT::Base::s_MetaClass != NULL ); \
-	Helium::Reflect::MetaClass::Create< OBJECT >( s_MetaClass, TXT( #OBJECT ), OBJECT::Base::s_MetaClass->m_Name, CREATOR); \
+	Helium::Reflect::MetaClass::Create< OBJECT >( s_MetaClass, #OBJECT, OBJECT::Base::s_MetaClass->m_Name, CREATOR); \
 	return s_MetaClass; \
 } \
 const Helium::Reflect::MetaClass* OBJECT::s_MetaClass = NULL;
 
 #define _REFLECT_DEFINE_CLASS_REGISTRAR( OBJECT, CREATOR ) \
-Helium::Reflect::MetaClassRegistrar< OBJECT, OBJECT::Base > OBJECT::s_Registrar( TXT( #OBJECT ) );
+Helium::Reflect::MetaClassRegistrar< OBJECT, OBJECT::Base > OBJECT::s_Registrar( #OBJECT );
 
 // declares an abstract object (an object that either A: cannot be instantiated or B: is never actually serialized)
 #define HELIUM_DECLARE_ABSTRACT_NO_REGISTRAR( OBJECT, BASE ) \

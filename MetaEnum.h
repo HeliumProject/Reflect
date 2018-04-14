@@ -27,7 +27,7 @@ namespace Helium
 			{
 			public:
 				Element();
-				Element( uint32_t value, const std::string& name, const std::string& helpText = TXT( "FIXME: SET THE HELP TEXT FOR THIS ENUMERATION ELEMENT" ) );
+				Element( uint32_t value, const std::string& name, const std::string& helpText = "FIXME: SET THE HELP TEXT FOR THIS ENUMERATION ELEMENT" );
 
 				uint32_t        m_Value;    // the value of the object
 				std::string     m_Name;     // the name of the object
@@ -43,7 +43,7 @@ namespace Helium
 			virtual void Register() const override;
 			virtual void Unregister() const override;
 
-			void AddElement(uint32_t value, const std::string& name, const std::string& helpText = TXT( "FIXME: SET THE HELP TEXT FOR THIS ENUMERATION ELEMENT" ) );
+			void AddElement(uint32_t value, const std::string& name, const std::string& helpText = "FIXME: SET THE HELP TEXT FOR THIS ENUMERATION ELEMENT" );
 			bool IsValid(uint32_t value) const;
 
 			bool GetValue(const std::string& str, uint32_t& value) const;
@@ -92,11 +92,11 @@ static Helium::Reflect::MetaEnumRegistrar< ENUMERATION > s_Registrar;
 const Helium::Reflect::MetaEnum* ENUMERATION::CreateEnumeration() \
 { \
 	HELIUM_ASSERT( s_Enumeration == NULL ); \
-	Helium::Reflect::MetaEnum::Create< ENUMERATION >( s_Enumeration, TXT( #ENUMERATION ) ); \
+	Helium::Reflect::MetaEnum::Create< ENUMERATION >( s_Enumeration, #ENUMERATION ); \
 	return s_Enumeration; \
 } \
 const Helium::Reflect::MetaEnum* ENUMERATION::s_Enumeration = NULL; \
-Helium::Reflect::MetaEnumRegistrar< ENUMERATION > ENUMERATION::s_Registrar( TXT( #ENUMERATION ) );
+Helium::Reflect::MetaEnumRegistrar< ENUMERATION > ENUMERATION::s_Registrar( #ENUMERATION );
 
 // declares an enumeration
 #define HELIUM_DECLARE_ENUM( ENUMERATION ) \

@@ -20,8 +20,8 @@ HELIUM_COMPILE_ASSERT( sizeof( EmptyBaseCheck ) == sizeof( uint32_t ) ); // chec
 
 void TestEnumeration::PopulateMetaType( MetaEnum& info )
 {
-	info.AddElement( ValueOne, TXT( "Value One" ) );
-	info.AddElement( ValueTwo, TXT( "Value Two" ) );
+	info.AddElement( ValueOne, "Value One" );
+	info.AddElement( ValueTwo, "Value Two" );
 }
 
 TestStructure::TestStructure()

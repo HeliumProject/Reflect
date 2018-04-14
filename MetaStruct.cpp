@@ -95,12 +95,12 @@ void MetaStruct::Register() const
 	for ( ; itr != end; ++itr )
 	{
 		computedSize += itr->m_Size;
-		Log::Debug( TXT( "  Index: %3d, Size %4d, Name: %s\n" ), itr->m_Index, itr->m_Size, itr->m_Name );
+		Log::Debug( "  Index: %3d, Size %4d, Name: %s\n", itr->m_Index, itr->m_Size, itr->m_Name );
 	}
 
 	if (computedSize != m_Size)
 	{
-		Log::Debug( TXT( " %d bytes of hidden fields and padding\n" ), m_Size - computedSize );
+		Log::Debug( " %d bytes of hidden fields and padding\n", m_Size - computedSize );
 	}
 }
 

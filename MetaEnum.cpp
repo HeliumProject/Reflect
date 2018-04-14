@@ -45,7 +45,7 @@ void MetaEnum::Register() const
 	DynamicArray< MetaEnum::Element >::ConstIterator end = m_Elements.End();
 	for ( ; itr != end; ++itr )
 	{
-		Log::Debug( TXT( "  Value: %8d, Name: %s\n" ), itr->m_Value, itr->m_Name.c_str() );
+		Log::Debug( "  Value: %8d, Name: %s\n", itr->m_Value, itr->m_Name.c_str() );
 	}
 }
 
@@ -131,7 +131,7 @@ bool MetaEnum::GetString(const uint32_t value, std::string& str) const
 		{
 			if ( !first )
 			{
-				str += TXT("|");
+				str += "|";
 			}
 
 			first = false;
